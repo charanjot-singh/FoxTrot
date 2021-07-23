@@ -3,6 +3,7 @@
 	require_once(DIR_FS."islogin.php");
 	
     $error = '';
+    $broker_trans=array();
     $return = array();
     $fname = '';
     $lname = '';
@@ -74,6 +75,7 @@
     $get_register=$instance->select_register();
     $get_sponsor = $instance->select_sponsor();
     $select_broker= $instance->select();
+    $broker_trans=$instance->select_broker_transaction($id);
     $select_branch= $instance_branch->select();
     $select_percentage= $instance->select_percentage();
     $broker_charge=$instance->select_broker_charge($id);
