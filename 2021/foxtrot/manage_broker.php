@@ -121,7 +121,10 @@
     }
     //echo '<pre>';print_r($product_category);exit();
     
-    if(isset($_POST['submit'])&& $_POST['submit']=='Save'){//echo '<pre>';print_r($_POST);exit;
+    if((isset($_POST['submit'])&& $_POST['submit']=='Save') 
+        || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
+        || (isset($_POST['submit'])&& $_POST['submit']=='Next') )
+    {//echo '<pre>';print_r($_POST);exit;
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         $fname = isset($_POST['fname'])?$instance->re_db_input($_POST['fname']):'';
     	$lname = isset($_POST['lname'])?$instance->re_db_input($_POST['lname']):'';
@@ -233,7 +236,7 @@
         $return_broker_branches = $instance->insert_update_branches($_POST);
         
         
-        if($return===true){
+        if($return==true && $_POST['submit']=='Save'){
             
             if($for_import == 'true')
             {
@@ -254,6 +257,30 @@
             {
                 header("location:".CURRENT_PAGE);exit;
             }
+        }
+        else if($return==true && $_POST['submit']=='Next')
+        {
+            $return = $instance->get_next_broker($id);
+            
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
+        }
+        else if($return==true && $_POST['submit']=='Previous')
+        {
+            $return = $instance->get_Previous_broker($id);
+            
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
         }
         else{
             $error = !isset($_SESSION['warning'])?$return:'';

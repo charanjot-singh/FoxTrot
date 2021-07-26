@@ -114,3 +114,15 @@ function isFloatNumber(item,evt) {
     }
     return true;
 }
+function isOnlyAlphaNumeric(item,evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if ((charCode > 47 && charCode < 58 ) || (charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123)) 
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

@@ -1102,11 +1102,15 @@
                 {   
                     $alias_name=isset($val['alias_name'])?$this->re_db_input($val['alias_name']):'';
                     $sponsor_company=isset($val['sponsor_company'])?$this->re_db_input($val['sponsor_company']):0;
+                    $state=isset($val['state'])?$this->re_db_input($val['state']):0;
+                    $termdate=isset($val['termdate'])?$this->re_db_input(date('Y-m-d',strtotime($val['termdate']))):'0000-00-00';
                     $date=isset($val['date'])?$this->re_db_input(date('Y-m-d',strtotime($val['date']))):'0000-00-00';
-                    if($alias_name!='' && $sponsor_company!='' && $date!=''){
+                    
+                    if($alias_name!='' && $sponsor_company!='' && $date!='' && $state!='' && $termdate!=''){
                         
                         $q = "INSERT INTO `".BROKER_ALIAS."` SET `broker_id`='".$_SESSION['last_insert_id']."' ,`alias_name`='".$alias_name."' ,`sponsor_company`='".$sponsor_company."' , 
-                        `date`='".$date."' ".$this->insert_common_sql();
+                        `state`='".$state."' , 
+                        `date`='".$date."',`termdate`='".$termdate."' ".$this->insert_common_sql();
         				$res = $this->re_db_query($q);
                     }
                     else
@@ -1122,14 +1126,17 @@
                     $alias_name=isset($val['alias_name'])?$this->re_db_input($val['alias_name']):'';
                     $sponsor_company=isset($val['sponsor_company'])?$this->re_db_input($val['sponsor_company']):0;
                     $date=isset($val['date'])?$this->re_db_input(date('Y-m-d',strtotime($val['date']))):'0000-00-00';
-                    if($alias_name!='' && $sponsor_company!='' && $date!=''){
+                    $state=isset($val['state'])?$this->re_db_input($val['state']):0;
+                    $termdate =isset($val['termdate'])?$this->re_db_input(date('Y-m-d',strtotime($val['termdate']))):'0000-00-00';
+                     if($alias_name!='' && $sponsor_company!='' && $date!='' && $state!='' && $termdate!=''){
                         if($flag8==0){
                             $qq="update `".BROKER_ALIAS."` SET is_delete=1 where `broker_id`=".$id."";
                             $res = $this->re_db_query($qq);
                             $flag8=1;
                         }
                         $q = "INSERT INTO `".BROKER_ALIAS."` SET `broker_id`='".$id."' ,`alias_name`='".$alias_name."' ,`sponsor_company`='".$sponsor_company."' , 
-                        `date`='".$date."' ".$this->insert_common_sql();
+                        `state`='".$state."' , 
+                        `date`='".$date."',`termdate`='".$termdate."' ".$this->insert_common_sql();
         				$res = $this->re_db_query($q);
                     }
                     else

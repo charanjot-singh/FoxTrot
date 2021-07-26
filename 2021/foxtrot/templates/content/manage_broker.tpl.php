@@ -109,8 +109,10 @@ function add_split(doc1){
                         <?php } } ?>
                         '</select>'+
                     '</td>'+
-                    '<td>'+
-                        '<input type="number" step="0.001" name="split[rate]['+flag2+']" value="" class="form-control" />'+
+                    '<td>'+'<div class="input-group">'
+                    +
+                        '<input type="number" step="0.001" onchange="handleChange(this);" name="split[rate]['+flag2+']" value="" class="form-control" />'+
+                        '<span class="input-group-addon">%</span>'+'</div>'+
                     '</td>'+
                     '<td>'+
                         '<div id="demo-dp-range">'+
@@ -161,8 +163,8 @@ function add_rate(doc){
                         <?php } } ?>
                         '</select>'+
                     '</td>'+
-                    '<td>'+
-                        '<input type="number" step="0.001" name="override[per1]['+flag1+']" value="" class="form-control" />'+
+                    '<td>'+'<div class="input-group">'+
+                        '<input type="number" step="0.001" onchange="handleChange(this);" name="override[per1]['+flag1+']" value="" class="form-control" />'+'<span class="input-group-addon">%</span>'+'</div>'+
                     '</td>'+
                     '<td>'+
                         '<div id="demo-dp-range">'+
@@ -374,9 +376,6 @@ function addMoreAlias(note_doc){
     else{ test++ ; }
     var html = '<tr class="tr">'+
                     '<td>'+
-                        '<input type="text" name="alias[alias_name]['+test+']" value="" max="20" class="form-control"/>'+
-                    '</td>'+
-                    '<td>'+
                         '<select name="alias[sponsor_company]['+test+']" class="form-control">'+
                             '<option value="0">All Companies</option>'+
                             <?php foreach($get_sponsor as $key_sponsor=>$val_sponsor){?>
@@ -385,12 +384,30 @@ function addMoreAlias(note_doc){
                         '</select>'+
                     '</td>'+
                     '<td>'+
+                        '<input type="text" name="alias[alias_name]['+test+']"  onkeypress="return isOnlyAlphaNumeric(this,event)"  value="" max="20" class="form-control"/>'+
+                    '</td>'+
+                    '<td>'+
                         '<div id="demo-dp-range">'+
                             '<div class="input-daterange input-group" id="datepicker">'+
                                 '<input type="text" name="alias[date]['+test+']" value="<?php echo date('m/d/Y');?>" class="form-control" />'+
                             '</div>'+
                         '</div>'+
                     '</td>'+
+                    '<td>'+
+                        ' <select name="alias[state]['+test+']" class="form-control">'
+                         +'<option value="0">Select State</option>'+
+                         <?php foreach($get_state as $statekey=>$stateval){?>               
+                            '<option value="<?php echo $stateval['id'];?>" ><?php echo $stateval['name'];?></option>'+
+                         <?php } ?>+                                                          '</select>'+
+                    '</td>'+
+                    '<td>'+
+                        '<div id="demo-dp-range">'+
+                            '<div class="input-daterange input-group" id="datepicker">'+
+                                '<input type="text" name="alias[termdate]['+test+']" value="<?php echo date('m/d/Y');?>" class="form-control" />'+
+                            '</div>'+
+                        '</div>'+
+                    '</td>'+
+
                     '<td>'+
                         '<button type="button" tabindex="-1" class="btn remove-row btn-icon btn-circle"><i class="fa fa-minus"></i></button>'+
                     '</td>'+
@@ -573,7 +590,6 @@ var waitingDialog = waitingDialog || (function ($) {
                                                 <div class="form-group">
                                                     
                                                     <select name="active_status_cdd" id="active_status_cdd" class="form-control">
-                                                        <option value="">Select Status</option>
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 1){echo "selected='selected'";}?> value="1">Active</option>
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 5){echo "selected='selected'";}?> value="5">Inactive</option>
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 6){echo "selected='selected'";}?> value="6">Suspended</option>
@@ -1113,7 +1129,7 @@ var waitingDialog = waitingDialog || (function ($) {
             	            <thead class="thead_fixed_title">
             	                <tr>
                                     <th>BROKER NAME</th>
-                                    <th>ID</th>
+                                    <th>CRD#</th>
                                     <th>CLEAR#</th>
                                     <th>CRD</th>
                                     <th>U4 DATE</th>
@@ -2467,7 +2483,28 @@ var waitingDialog = waitingDialog || (function ($) {
                                     <h3 class="panel-title" style="font-size: 25px;"><b>Register</b></h3>
                                 </div>
             					<div class="panel-body">
+
                                     <div class="row">
+
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Product Category </label>
+                                                                    <select class="form-control" name="product_category" style="display: inline !important;">
+                                                                        <option value="">Select Category</option>
+                                                                        <?php foreach($product_category as $key=>$val){?>
+                                                                        <option value="<?php echo $val['id'];?>" <?php if(isset($row2) && $row2==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                    <!--<select name="product_category"  class="form-control">
+                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==0){ ?> selected="true"<?php } } ?> value="0">Select Category</option>
+                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==1){ ?> selected="true"<?php } } ?> value="1">Active</option>
+                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==2){ ?> selected="true"<?php } } ?> value="2">Received</option>
+                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==3){ ?> selected="true"<?php } } ?> value="3">Terminated</option>
+                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==4){ ?> selected="true"<?php } } ?> value="4">Reason</option>
+                                                                    </select>-->
+                                                                </div>
+                                                            </div>
+                                                        
                                         <div class="col-md-12">
                                             <div class="table-responsive" id="table-scroll">
                                                 <table class="table table-bordered table-stripped table-hover">
@@ -2488,6 +2525,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                         <tr>
                                                             <td><?php echo $regval['id'];?></a></td>
                                                             <td><?php echo $regval['type'];?></td>
+                                                            
                                                             <td>
                                                                 <div id="demo-dp-range">
                 					                                <div class="input-daterange input-group" id="datepicker">
@@ -2510,6 +2548,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                         <tr>
                                                             <td><?php echo $regval['id'];?></a></td>
                                                             <td><?php echo $regval['type'];?></td>
+                                                            
                                                             <td>
                                                                 <div id="demo-dp-range">
                 					                                <div class="input-daterange input-group" id="datepicker">
@@ -2677,6 +2716,8 @@ var waitingDialog = waitingDialog || (function ($) {
                                                         <th>Sponsor company</th>
                                                         <th>Alias/Appointment#</th>             
                                                         <th>Date</th>
+                                                        <th>State</th>             
+                                                        <th>Term Date</th>
                                                         <th>Add/Remove</th>
                                                     </thead>
                                                     <tbody>
@@ -2694,7 +2735,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" name="alias[alias_name][<?php echo $doc_id;?>]" value="<?php echo $val['alias_name']; ?>" max="20" class="form-control"/>
+                                                                    <input type="text" onkeypress="return isOnlyAlphaNumeric(this,event)" name="alias[alias_name][<?php echo $doc_id;?>]" value="<?php echo $val['alias_name']; ?>" max="20" class="form-control"/>
                                                                 </td>
                                                                 
                                                                 <td>
@@ -2705,15 +2746,28 @@ var waitingDialog = waitingDialog || (function ($) {
                  					                                </div>
                                                                 </td>
                                                                 <td>
+                                                                        <select name="alias[state][<?php echo $doc_id;?>]" class="form-control">
+                                                                        <option value="0">Select State</option>
+                                                                        <?php foreach($get_state as $statekey=>$stateval){?>
+                                                                        <option value="<?php echo $stateval['id'];?>" <?php if($val['state'] != '' && $val['state']==$stateval['id']){echo "selected='selected'";} ?>><?php echo $stateval['name'];?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                            </td>
+                                                                <td>
+                                                                    <div id="demo-dp-range">
+                                                                        <div class="input-daterange input-group" id="datepicker">
+                                                                            <input type="text" name="alias[termdate][<?php echo $doc_id;?>]" value="<?php if(isset($val['termdate']) && $val['termdate'] != ''){ echo date('m/d/Y',strtotime($val['termdate'])); }?>" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                
+                                                                <td>
                                                                     <button type="button" tabindex="-1" class="btn remove-row btn-icon btn-circle"><i class="fa fa-minus"></i></button>
                                                                 </td>
                                                             </tr>
                                                       <?php } }$doc_id  ++;  ?>
                                                       
                                                        <tr id="add_row_alias">
-                                                            <td>
-                                                                <input type="text" name="alias[alias_name][<?php echo $doc_id;?>]" value="<?php if(isset($alias_number) && $alias_number != ''){ echo $alias_number;}?>" max="20" class="form-control"/>
-                                                            </td>
                                                             <td>
                                                                 <select name="alias[sponsor_company][<?php echo $doc_id;?>]" class="form-control">
                                                                     <option value="0">All Companies</option>
@@ -2723,11 +2777,32 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                 </select>
                                                             </td>
                                                             <td>
+                                                                <input type="text" name="alias[alias_name][<?php echo $doc_id;?>]" onkeypress="return isOnlyAlphaNumeric(this,event)" value="<?php if(isset($alias_number) && $alias_number != ''){ echo $alias_number;}?>" max="20" class="form-control" pattern="^[A-Za-z0-9 ]*$"/>
+                                                            </td>
+                                                            <td>
                                                                 <div id="demo-dp-range">
                 					                                <div class="input-daterange input-group" id="datepicker">
                                                                         <input type="text" name="alias[date][<?php echo $doc_id;?>]" value="<?php echo date('m/d/Y');?>" class="form-control" />
                 					                                </div>
              					                                </div>
+                                                            </td>
+                                                            <td>
+                                                                
+                                                                <select name="alias[state][<?php echo $doc_id;?>]" class="form-control">
+                                                                        <option value="0">Select State</option>
+                                                                        <?php foreach($get_state as $statekey=>$stateval){?>
+                                                                        <option value="<?php echo $stateval['id'];?>" <?php if(isset($alias_state['state']) ==$stateval['id']){echo "selected='selected'";} ?>><?php echo $stateval['name'];?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                
+
+                                                            </td>
+                                                            <td>
+                                                                <div id="demo-dp-range">
+                                                                    <div class="input-daterange input-group" id="datepicker">
+                                                                        <input type="text" name="alias[termdate][<?php echo $doc_id;?>]" value="<?php echo date('m/d/Y');?>" class="form-control" />
+                                                                    </div>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <button type="button" onclick="addMoreAlias(<?php echo $doc_id; ?>);" class="btn btn-purple btn-icon btn-circle"><i class="fa fa-plus"></i></button>
@@ -2940,8 +3015,8 @@ var waitingDialog = waitingDialog || (function ($) {
                         <input type="hidden" name="file_id" id="file_id" class="form-control" value="<?php echo $_GET['file_id']; ?>" />
                         <input type="hidden" name="temp_data_id" id="temp_data_id" class="form-control" value="<?php echo $_GET['exception_data_id']; ?>" />
                         <?php }?>
-                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previous" value="&laquo; Previous" /></a><?php } ?>
-                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a" ><input type="button" name="next" value="Next &raquo;" /></a><?php } ?>
+                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
+                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a" ><input type="submit" name="submit" value="Next" /></a><?php } ?>
                          <?php if($action=='edit' && $id>0){?>
                             <a href="#view_changes" data-toggle="modal"><input type="button" name="view_changes" value="View Changes" style="margin-left: 10% !important;"/></a>
                          <?php } ?>
@@ -2950,6 +3025,7 @@ var waitingDialog = waitingDialog || (function ($) {
                          <a href="#broker_attach" data-toggle="modal"><input type="button"  onclick="get_broker_attach();" name="attach" value="Attachments" style="margin-right: 10% !important;"/></a>
                          <a href="<?php echo CURRENT_PAGE;?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
                          <input type="submit" name="submit" value="Save" style="float: right;"/>
+                         
                     </div>
                  </div>   
             </form>
@@ -3549,7 +3625,8 @@ var waitingDialog = waitingDialog || (function ($) {
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 6 ] }, 
                         { "bSearchable": false, "aTargets": [ 6 ] }]
         });
-        $("div.toolbar").html('<div class="panel-control">'+
+        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+
+            '<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
@@ -3941,14 +4018,24 @@ function validation()
         return false;
         }
 }
+$.fn.regexMask = function(mask) {
+    $(this).keypress(function (event) {
+        if (!event.charCode) return true;
+        var part1 = this.value.substring(0, this.selectionStart);
+        var part2 = this.value.substring(this.selectionEnd, this.value.length);
+        if (!mask.test(part1 + String.fromCharCode(event.charCode) + part2))
+            return false;
+    });
+};
 
 
 </script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#telephone_general').mask("(999)999-9999");
     
+    $('#telephone_general').mask("(999)999-9999");
+      
     $('body').on('focus',".input-daterange",function(){
         $(this).datepicker({
             format: "mm/dd/yyyy",
