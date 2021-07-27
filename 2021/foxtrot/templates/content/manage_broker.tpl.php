@@ -384,7 +384,7 @@ function addMoreAlias(note_doc){
                         '</select>'+
                     '</td>'+
                     '<td>'+
-                        '<input type="text" name="alias[alias_name]['+test+']"  onkeypress="return isOnlyAlphaNumeric(this,event)"  value="" max="20" class="form-control"/>'+
+                        '<input type="text" name="alias[alias_name]['+test+']"   onkeypress="return isOnlyAlphaNumeric(this,event)"  value="" maxlength="20" class="form-control"/>'+
                     '</td>'+
                     '<td>'+
                         '<div id="demo-dp-range">'+
@@ -2735,7 +2735,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" onkeypress="return isOnlyAlphaNumeric(this,event)" name="alias[alias_name][<?php echo $doc_id;?>]" value="<?php echo $val['alias_name']; ?>" max="20" class="form-control"/>
+                                                                    <input type="text" onkeypress="return isOnlyAlphaNumeric(this,event)" maxlength="20" name="alias[alias_name][<?php echo $doc_id;?>]" value="<?php echo $val['alias_name']; ?>" class="form-control"/>
                                                                 </td>
                                                                 
                                                                 <td>
@@ -2777,7 +2777,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="alias[alias_name][<?php echo $doc_id;?>]" onkeypress="return isOnlyAlphaNumeric(this,event)" value="<?php if(isset($alias_number) && $alias_number != ''){ echo $alias_number;}?>" max="20" class="form-control" pattern="^[A-Za-z0-9 ]*$"/>
+                                                                <input type="text" name="alias[alias_name][<?php echo $doc_id;?>]" maxlength="20" onkeypress="return isOnlyAlphaNumeric(this,event)" value="<?php if(isset($alias_number) && $alias_number != ''){ echo $alias_number;}?>" max="20" class="form-control" pattern="^[A-Za-z0-9 ]*$"/>
                                                             </td>
                                                             <td>
                                                                 <div id="demo-dp-range">

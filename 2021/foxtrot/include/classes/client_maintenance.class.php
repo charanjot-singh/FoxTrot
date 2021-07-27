@@ -43,20 +43,69 @@
             $telephone_brack1 = str_replace("(", '', $telephone_no);
             $telephone = str_replace(")", '', $telephone_brack1);
             $contact_status = isset($data['contact_status'])?$this->re_db_input($data['contact_status']):'';
+            $number = isset($data['number'])?$this->re_db_input($data['number']):'';
+            $expiration = isset($data['expiration'])?$this->re_db_input(date('Y-m-d',strtotime($data['expiration']))):'0000-00-00';
+            $date_verified = isset($data['date_verified'])?$this->re_db_input(date('Y-m-d',strtotime($data['date_verified']))):'0000-00-00';
+             $income = isset($data['income'])?$this->re_db_input($data['income']):'';
+            $goal_horizone = isset($data['goal_horizone'])?$this->re_db_input($data['goal_horizone']):'';
+            $net_worth = isset($data['net_worth'])?$this->re_db_input($data['net_worth']):'';
+            $objectives = isset($data['objectives'])?$this->re_db_input($data['objectives']):'';
+            
             $birth_date = isset($data['birth_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['birth_date']))):'0000-00-00';
             $date_established = isset($data['date_established'])?$this->re_db_input(date('Y-m-d',strtotime($data['date_established']))):'0000-00-00';
             $open_date = isset($data['open_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['open_date']))):'0000-00-00';
             $naf_date = isset($data['naf_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['naf_date']))):'0000-00-00';
             $last_contacted = isset($data['last_contacted'])?$this->re_db_input(date('Y-m-d',strtotime($data['last_contacted']))):'0000-00-00';
-            //print_r($last_contacted);exit;
+            
             if($lname==''){
 				$this->errors = 'Please enter last name.';
+			}
+			else if($birth_date=='' || $birth_date=='1970-01-01')
+			{
+				$this->errors = 'Please select birth date.';
+			}
+			else if($naf_date=='' || $naf_date=='1970-01-01')
+			{
+				$this->errors = 'Please select NAF date.';
 			}
             else if($broker_name==''){
 				$this->errors = 'Please select broker name.';
 			}
             else if($client_file_number==''){
 				$this->errors = 'Please enter client file number.';
+			}
+			else if($number=='')
+            {
+				$this->errors = 'Please enter number.';
+
+			}
+			else if($expiration=='' || $expiration=='1970-01-01')
+			{
+				$this->errors = 'Please enter expiration date.';
+			}
+			else if($date_verified=='' || $date_verified=='1970-01-01')
+			{
+				$this->errors = 'Please enter date verified.';
+			}
+			else if($income=='')
+            {
+				$this->errors = 'Please select income.';
+
+			}
+			else if($net_worth=='')
+            {
+				$this->errors = 'Please select net worth.';
+
+			}
+			else if($goal_horizone=='')
+            {
+				$this->errors = 'Please select goal horizone.';
+
+			}
+			else if($objectives=='')
+            {
+				$this->errors = 'Please select at lease 1 objective.';
+
 			}
 			if($this->errors!=''){
 				return $this->errors;
@@ -138,20 +187,22 @@
             $telephone_brack1 = str_replace("(", '', $telephone_no);
             $telephone_employment = str_replace(")", '', $telephone_brack1);
             
-            if($id==0){
-				$q = "INSERT INTO `".CLIENT_EMPLOYMENT."` SET `client_id`='".$_SESSION['client_id']."',`occupation`='".$occupation."',`employer`='".$employer."',`address`='".$address_employement."',`position`='".$position."',`security_related_firm`='".$security_related_firm."',`finra_affiliation`='".$finra_affiliation."',`spouse_name`='".$spouse_name."',`spouse_ssn`='".$spouse_ssn."',`dependents`='".$dependents."',`salutation`='".$salutation."',`options`='".$options."',`other`='".$other."',`number`='".$number."',`expiration`='".$expiration."',`state`='".$state_employe."',`date_verified`='".$date_verified."',`telephone`='".$telephone_employment."'".$this->insert_common_sql();
-				$res = $this->re_db_query($q);
-                $id = $this->re_db_insert_id();
-				if($res){
-				    $_SESSION['success'] = INSERT_MESSAGE;
-					return true;
+			 if($id==0)
+            	{
+					$q = "INSERT INTO `".CLIENT_EMPLOYMENT."` SET `client_id`='".$_SESSION['client_id']."',`occupation`='".$occupation."',`employer`='".$employer."',`address`='".$address_employement."',`position`='".$position."',`security_related_firm`='".$security_related_firm."',`finra_affiliation`='".$finra_affiliation."',`spouse_name`='".$spouse_name."',`spouse_ssn`='".$spouse_ssn."',`dependents`='".$dependents."',`salutation`='".$salutation."',`options`='".$options."',`other`='".$other."',`number`='".$number."',`expiration`='".$expiration."',`state`='".$state_employe."',`date_verified`='".$date_verified."',`telephone`='".$telephone_employment."'".$this->insert_common_sql();
+					$res = $this->re_db_query($q);
+	                $id = $this->re_db_insert_id();
+					if($res){
+					    $_SESSION['success'] = INSERT_MESSAGE;
+						return true;
+					}
+					else{
+						$_SESSION['warning'] = UNKWON_ERROR;
+						return false;
+					}
 				}
-				else{
-					$_SESSION['warning'] = UNKWON_ERROR;
-					return false;
-				}
-			}
-			else if($id>0){
+			else if($id>0)
+			{
 			    
 				$q = "UPDATE `".CLIENT_EMPLOYMENT."` SET `client_id`='".$id."',`occupation`='".$occupation."',`employer`='".$employer."',`address`='".$address_employement."',`position`='".$position."',`security_related_firm`='".$security_related_firm."',`finra_affiliation`='".$finra_affiliation."',`spouse_name`='".$spouse_name."',`spouse_ssn`='".$spouse_ssn."',`dependents`='".$dependents."',`salutation`='".$salutation."',`options`='".$options."',`other`='".$other."',`number`='".$number."',`expiration`='".$expiration."',`state`='".$state_employe."',`date_verified`='".$date_verified."',`telephone`='".$telephone_employment."'".$this->update_common_sql()." WHERE `client_id`='".$id."'";
 				$res = $this->re_db_query($q);
@@ -164,6 +215,7 @@
 					return false;
 				}
 			}
+		
 		}
         public function insert_update_account($data){
 			$id = isset($data['account_id'])?$this->re_db_input($data['account_id']):0;
@@ -295,17 +347,17 @@
         public function insert_update_objectives($data){
             
             $objectives = isset($data['objectives'])?$this->re_db_input($data['objectives']):'';
-            
-            $q = "INSERT INTO `".CLIENT_OBJECTIVES."` SET `client_id`='".$_SESSION['client_id']."',`objectives`='".$objectives."'".$this->insert_common_sql();
-			$res = $this->re_db_query($q);
-            $id = $this->re_db_insert_id();
-			if($res){
-			    return true;
-			}
-			else{
-				$_SESSION['warning'] = UNKWON_ERROR;
-				return false;
-			}
+
+                $q = "INSERT INTO `".CLIENT_OBJECTIVES."` SET `client_id`='".$_SESSION['client_id']."',`objectives`='".$objectives."'".$this->insert_common_sql();
+				$res = $this->re_db_query($q);
+	            $id = $this->re_db_insert_id();
+				if($res){
+				    return true;
+				}
+				else{
+					$_SESSION['warning'] = UNKWON_ERROR;
+					return false;
+				}
 			
 			
 		}
@@ -384,13 +436,7 @@
             $employer_add = isset($data['employer_add'])?$this->re_db_input($data['employer_add']):'';
             
             
-            if($joint_name==''){
-				$this->errors = 'Please enter Joint name.';
-			}
-			if($this->errors!=''){
-				return $this->errors;
-			}
-			else{
+            
                 if($account_id==0){
                     $q = "INSERT INTO `".CLIENT_ACCOUNT_JOIN."` SET `joint_name`='".$joint_name."',`ssn`='".$ssn."',`dob`='".$dob."',`securities`='".$securities."',`income`='".$income."',`occupation`='".$occupation."',`position`='".$position."',`employer`='".$employer."',`employer_add`='".$employer_add."'".$this->insert_common_sql();
 			        $res = $this->re_db_query($q);
@@ -419,7 +465,7 @@
     					return false;
     				}
     			}
-            }
+            
 		}
         public function insert_update_client_attach($data){//print_r($data);exit;
             $attach_id = isset($data['attach_id'])?$this->re_db_input($data['attach_id']):0;

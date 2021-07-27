@@ -28,6 +28,11 @@ h1{
 .td_space{
     padding: 2px !important;
 }
+div.dataTables_wrapper div.dataTables_filter label {
+    font-weight: bold !important;
+    white-space: nowrap;
+    text-align: left;
+}
 ::-webkit-input-placeholder { /* Chrome */
  color: inherit;
  opacity: 1;
@@ -308,8 +313,8 @@ select::-ms-expand {
 
 /* Lightbox ennd */
 .checkbox{
-  width: 25px; /*Desired width*/
-  height: 25px; /*Desired height*/
+  width: 18px; /*Desired width*/
+  height: 18px; /*Desired height*/
 }
 .radio{
   width: 20px; /*Desired width*/
