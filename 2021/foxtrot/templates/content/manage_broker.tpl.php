@@ -530,21 +530,22 @@ var waitingDialog = waitingDialog || (function ($) {
 
 </script>
 <div class="container">
-<h1 class="<?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}?>">Broker Maintenance</h1>
-<div class="col-lg-12 well <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}?>">
+<h1 class="<?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}*/?>">Broker Maintenance</h1>
+<div class="col-lg-12 well <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}*/?>">
 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
-    <div class="tab-content col-md-12">
+   <div class="tab-content col-md-12">
+        
          <?php
         if($action=='add_new'||($action=='edit' && $id>0)){
             ?>
-        <ul class="nav nav-tabs <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}?>">
+        <ul class="nav nav-tabs <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}*/?>">
           <!--<li class="active"><a href="#tab_default" data-toggle="pill">Home</a></li>-->
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="general"){ echo "active"; }else if(!isset($_GET['tab'])){echo "active";}else{ echo '';} ?>"><a href="#tab_a" data-toggle="pill">General</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="payouts"){ echo "active"; } ?>"><a href="#tab_b" data-toggle="pill">Payouts</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="overrides"){ echo "active"; } ?>"><a href="#tab_g" data-toggle="pill">Overrides & Splits</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="charges"){ echo "active"; } ?>"><a href="#tab_c" data-toggle="pill">Charges</a></li>
-          <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="licences"){ echo "active"; } ?>"><a href="#tab_d" data-toggle="pill">Licences</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="registers"){ echo "active"; } ?>"><a href="#tab_e" data-toggle="pill">Series Registrations</a></li>
+          <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="licences"){ echo "active"; } ?>"><a href="#tab_d" data-toggle="pill">Licences</a></li>          
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="required_docs"){ echo "active"; } ?>"><a href="#tab_f" data-toggle="pill">Required Docs</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="alias_appoinments"){ echo "active"; } ?>"><a href="#tab_h" data-toggle="pill">Aliases & Appointments</a></li>
           <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="branches"){ echo "active"; } ?>"><a href="#tab_i" data-toggle="pill">Branches</a></li>
@@ -2032,7 +2033,10 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                     <label>Product Category </label>
                                                                     <select class="form-control" name="product_category" style="display: inline !important;">
                                                                         <option value="">Select Category</option>
-                                                                        <?php foreach($product_category as $key=>$val){?>
+
+                                                                        <?php
+                                                                         $product_category_based_on_series = $instance->select_category_based_on_series($regval['id']);
+                                                                          foreach($product_category_based_on_series as $key=>$val){?>
                                                                         <option value="<?php echo $val['id'];?>" <?php if(isset($row2) && $row2==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
                                                                         <?php } ?>
                                                                     </select>
@@ -2484,33 +2488,13 @@ var waitingDialog = waitingDialog || (function ($) {
                                 </div>
             					<div class="panel-body">
 
-                                    <div class="row">
-
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label>Product Category </label>
-                                                                    <select class="form-control" name="product_category" style="display: inline !important;">
-                                                                        <option value="">Select Category</option>
-                                                                        <?php foreach($product_category as $key=>$val){?>
-                                                                        <option value="<?php echo $val['id'];?>" <?php if(isset($row2) && $row2==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
-                                                                        <?php } ?>
-                                                                    </select>
-                                                                    <!--<select name="product_category"  class="form-control">
-                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==0){ ?> selected="true"<?php } } ?> value="0">Select Category</option>
-                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==1){ ?> selected="true"<?php } } ?> value="1">Active</option>
-                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==2){ ?> selected="true"<?php } } ?> value="2">Received</option>
-                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==3){ ?> selected="true"<?php } } ?> value="3">Terminated</option>
-                                                                        <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==4){ ?> selected="true"<?php } } ?> value="4">Reason</option>
-                                                                    </select>-->
-                                                                </div>
-                                                            </div>
-                                                        
+                                    <div class="row">                                           
                                         <div class="col-md-12">
                                             <div class="table-responsive" id="table-scroll">
                                                 <table class="table table-bordered table-stripped table-hover">
                                                     <thead>
-                                                        <th>Series</th>
-                                                        <th>License Name / Description</th>
+                                                        <th>Series</th>        
+                                                        <th>License Name / Description</th>        
                                                         <th>Approval Date</th>
                                                         <th>Expiration Date</th>
                                                         <th>Reason</th>
@@ -2524,8 +2508,21 @@ var waitingDialog = waitingDialog || (function ($) {
                                                             ?>
                                                         <tr>
                                                             <td><?php echo $regval['id'];?></a></td>
-                                                            <td><?php echo $regval['type'];?></td>
-                                                            
+                                                             <td><?php echo $regval['type'];?></td>
+                                                            <!--  
+                                                            <select class="form-control" name="series_product_category" style="display: inline !important;">
+                                                                        <option value="">Select Category</option>
+                                                                        <?php 
+                                                                        $product_category_based_on_series = $instance->select_category_based_on_series($regval['id']);
+                                                                        foreach($product_category_based_on_series as $key_pc=>$val_pc){?>
+                                                                        <option value="<?php echo $val['id'];?>" <?php if(isset($row2) && $row2==$val_pc['id']){echo "selected='selected'";} ?>>
+                                                                            <?php echo $val_pc['type'];?>
+                                                                                
+                                                                            </option>
+                                                                        <?php } ?>
+                                                                    </select>                                                                
+                                                             -->
+                                                                                                                      
                                                             <td>
                                                                 <div id="demo-dp-range">
                 					                                <div class="input-daterange input-group" id="datepicker">
@@ -2548,7 +2545,6 @@ var waitingDialog = waitingDialog || (function ($) {
                                                         <tr>
                                                             <td><?php echo $regval['id'];?></a></td>
                                                             <td><?php echo $regval['type'];?></td>
-                                                            
                                                             <td>
                                                                 <div id="demo-dp-range">
                 					                                <div class="input-daterange input-group" id="datepicker">
@@ -3496,7 +3492,7 @@ var waitingDialog = waitingDialog || (function ($) {
                 <form method="post">
                 <div class="inputpopup">
                     <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
-                        <table id="Broker_trans_data" class="table table-bordered table-stripped table-hover">
+                        <table  class="table table-bordered table-stripped table-hover">
                             <thead>
                               <!--  <th>#NO</th>-->
                                 <th>Trade No</th>
@@ -3512,15 +3508,16 @@ var waitingDialog = waitingDialog || (function ($) {
                             <?php $doc_id=0; //echo '<pre>';print_r($edit_required_docs);
                                                         if(isset($_GET['action']) && $_GET['action']=='edit' && isset($edit_required_docs) ){
                             foreach($broker_trans as $key=>$val){
+                                  $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
                                 ?>
                                    <tr>
                                         <td><?php echo $val['broker_name']; ?></td>
                                         <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
-                                        <td><?php echo $val['product']; ?></td>
-                                        <td><?php echo $val['client_name']; ?></td>
+                                          <td><?php echo $product_name; ?></td>
+                                        <td><?php echo $val['client_number']; ?></td>
                                         <td><?php echo $val['invest_amount']; ?></td>
                                         <td><?php echo $val['commission_received']; ?></td>
-                                        <td><?php echo $val['client_number']; ?></td>
+                                        <td><?php echo $val['account_no']; ?></td>
                                     </tr>
                             <?php } }?>
                            
@@ -3615,16 +3612,7 @@ var waitingDialog = waitingDialog || (function ($) {
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 6 ] }, 
                         { "bSearchable": false, "aTargets": [ 6 ] }]
         });
-        $('#Broker_trans_data').DataTable({
-        "pageLength": 10,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bInfo": false,
-        "bAutoWidth": false,
-        "dom": '<"toolbar">frtip',
-        "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 6 ] }, 
-                        { "bSearchable": false, "aTargets": [ 6 ] }]
-        });
+       
         $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+
             '<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+

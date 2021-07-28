@@ -1,9 +1,26 @@
 <script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js" integrity="sha256-H28SdxWrZ387Ldn0qogCzFiUDDxfPiNIyJX7BECQkDE=" crossorigin="anonymous"></script>
 
+    <script type="text/javascript">
+        $.fn.regexMask = function(mask) {
+    $(this).keypress(function (event) {
+        if (!event.charCode) return true;
+        var part1 = this.value.substring(0, this.selectionStart);
+        var part2 = this.value.substring(this.selectionEnd, this.value.length);
+        if (!mask.test(part1 + String.fromCharCode(event.charCode) + part2))
+            return false;
+    });
+};
+$(document).ready(function(){
     
+    $('#telephone').mask("(999)999-9999");
+    $('#facsimile').mask("(999)999-9999");
+});
+
+   
+   </script>
 <div class="container">
-    <h1 class="<?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}?>">Multi-Company Maintenance</h1>
-    <div class="col-lg-12 well <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}?>">
+    <h1 class="<?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}*/?>">Multi-Company Maintenance</h1>
+    <div class="col-lg-12 well <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}*/?>">
         <div class="tab-content col-md-12">
             <div class="tab-pane active" id="tab_a">
     <!-- Add table data and some process -->
@@ -12,7 +29,7 @@
     if($action=='add_new'||($action=='edit' && $id>0)){
         ?>
         <form method="post">
-            <ul class="nav nav-tabs <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}?>">
+            <ul class="nav nav-tabs <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}*/?>">
                 <li class="active"><a href="#tab_aa" data-toggle="tab">General</a></li>
                 <li><a href="#tab_bb" data-toggle="tab">Commissions</a></li>
                 <li><a href="#tab_cc" data-toggle="tab">Registrations</a></li>
@@ -32,7 +49,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>Company/Practice Name <span class="text-red">*</span></label>
+                                <label>Company/ Entity Name <span class="text-red">*</span></label>
                                 <input type="text" name="company_name" id="company_name" value="<?php if($action=='edit'){echo $company_name;} ?>"  class="form-control" />
                             </div>
                         </div>
@@ -40,7 +57,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Company/Practice Type </label>
+                                <label>Company/ Entity Type </label>
                                 <input type="text" name="company_type" id="company_type" value="<?php if($action=='edit'){echo $company_type;} ?>"  class="form-control" />
                             </div>
                         </div>
@@ -51,7 +68,7 @@
                                 <select name="manager_name" id="manager_name" class="form-control">
                                     <option value="0">Select Manager</option>
                                     <?php foreach($get_manager as $statekey=>$stateval){?>
-                                    <option  <?php if($action=='edit'){if($manager_name == $stateval['id']){ ?>selected="true" <?php }} ?> value="<?php echo $stateval['id']; ?>"><?php echo $stateval['first_name'].' '.$stateval['middle_name'].' '.$stateval['last_name']; ?></option>
+                                    <option  <?php if($action=='edit'){if($manager_name == $stateval['id']){ ?>selected="true" <?php }} ?> value="<?php echo $stateval['id']; ?>"><?php echo $stateval['last_name'].' '.$stateval['first_name']; ?></option>
                                     <?php } ?>
                                 </select>
                                 </select>
@@ -61,7 +78,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Business Address 1 <span class="text-red">*</span></label>
+                                <label>Business Address 1 </label>
                                 <input type="text" name="address1" id="address1" value="<?php if($action=='edit'){echo $address1;} ?>" class="form-control" />
                             </div>
                         </div>
@@ -73,15 +90,15 @@
                         </div>
                    </div>
                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label>Business City <span class="text-red">*</span></label>
+                                <label>Business City </label>
                                 <input type="text" name="business_city" id="business_city" value="<?php if($action=='edit'){echo $business_city;} ?>" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label>State <span class="text-red">*</span></label>
+                                <label>State </label>
                                 <select name="state_general" id="state_general" class="form-control">
                                     <option value="">Select State</option>
                                     <?php foreach($get_state as $statekey=>$stateval){?>
@@ -90,37 +107,38 @@
                                 </select>
                             </div>
                         </div>
-                   </div>
-                   <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Business Zipcode <span class="text-red">*</span></label>
                                 <input type="text" name="zip" id="zip" value="<?php if($action=='edit'){echo $zip;} ?>" class="form-control" />
                             </div>
                         </div>
+                   </div>
+                   <div class="row">
+                        
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing Address1 </label>
                                 <input type="text" name="mail_address1" id="mail_address1" value="<?php if($action=='edit'){echo $mail_address1;} ?>" class="form-control" />
                             </div>
                         </div>
-                   </div>
-                   <div class="row">
-                        <div class="col-md-6">
+                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing Address2 </label>
                                 <input type="text" name="mail_address2" id="mail_address2" value="<?php if($action=='edit'){echo $mail_address2;} ?>" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-6">
+                   </div>
+                   <div class="row">
+                       
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Mailing City </label>
                                 <input type="text" name="m_city" id="m_city" value="<?php if($action=='edit'){echo $m_city;} ?>" class="form-control" />
                             </div>
                         </div>
-                   </div>
-                   <div class="row">
-                         <div class="col-md-6">
+
+                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Mailing State </label>
                                 <select name="state_mailing" id="state_mailing" class="form-control">
@@ -131,13 +149,15 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Mailing Zipcode</label>
                                 <input type="text" name="m_zip" id="m_zip" value="<?php if($action=='edit'){echo $m_zip;} ?>" class="form-control" />
                             </div>
                         </div>
+                   
                    </div>
+                   
                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -155,7 +175,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Date Established <span class="text-red">*</span> </label><br />
+                                <label>Date Established </label><br />
                                 <div id="demo-dp-range">
 	                                <div class="input-daterange input-group" id="datepicker">
                                         <input type="text" name="e_date" id="e_date" value="<?php if($action=='edit'){echo date('m/d/Y',strtotime($e_date));} ?>" class="form-control" />
@@ -175,21 +195,21 @@
                         </div>
                    </div>
                 </div>
-                <div class="tab-pane" id="tab_bb">
+                <div class="tab-pane" id="tab_bb" style="font-size:14px; padding: 0px; padding-left:5px;">
                 <br />
-                    <div class="row">
-                        <div class="col-md-6">
+                    <div class="row" >
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Payout Level </label><br />
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="1" <?php if($action=='edit'){if($payout_level==1){ ?>checked="true"<?php }} ?>/>Company/Practice Level
+                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="1" <?php if($action=='edit'){if($payout_level==1){ ?>checked="true"<?php }}else{?>checked="true"<?php } ?>/>Company/Entity 
                                 </label>
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="2" <?php if($action=='edit'){if($payout_level==2){ ?>checked="true"<?php }} ?>/>Broker Level
+                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="2" <?php if($action=='edit'){if($payout_level==2){ ?>checked="true"<?php }} ?>/>Broker 
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Clearing Charge Calculation </label><br />
                                 <label class="radio-inline">
@@ -200,9 +220,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div><br />
-                    <div class="row">
-                        <div class="col-md-12">
+                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Sliding Scale Commission Basis </label><br />
                                 <label class="radio-inline">
@@ -217,6 +235,7 @@
                             </div>
                         </div>
                     </div><br />
+                 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -653,30 +672,33 @@
         <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
             <table class="table table-bordered table-stripped table-hover">
                 <thead>
-                    <th>#NO</th>
                     <th>Trade No</th>
-                    <th>Date</th>
-                    <th>Product</th>
-                    <th>Client No</th>
-                    <th>Trade Amount</th>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Broker</th>
+                                <th>Client No</th>
+                                <th>Trade Amount</th>
+                                <th>Commision Amount</th>
+                        
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>30</td>
-                        <td>28/11/2017</td>
-                        <td>Electronics</td>
-                        <td>20</td>
-                        <td>$200</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>30</td>
-                        <td>28/11/2017</td>
-                        <td>Mobile accessories</td>
-                        <td>20</td>
-                        <td>$200</td>
-                    </tr>
+                  <?php  if(isset($_GET['action']) && $_GET['action']=='edit'){
+                            foreach($broker_trans as $key=>$val)
+                            {
+                                $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
+                                ?>
+                                   <tr>
+                                        <td><?php echo $val['client_number']; ?></td>
+                                        <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
+                                        <td><?php echo $product_name; ?></td>
+                                        <td><?php echo $val['brk_name']; ?></td>
+                                        <td><?php echo $val['client_number']; ?></td>
+                                        <td><?php echo $val['invest_amount']; ?></td>
+                                        <td><?php echo $val['commission_received']; ?></td>
+                                        
+                                    </tr>
+                            <?php } }?>
+                          
               </tbody>
             </table>
         </div>
@@ -760,7 +782,7 @@
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 6 ] }, 
                         { "bSearchable": false, "aTargets": [ 6 ] }]
         });
-        $("div.toolbar").html('<div class="panel-control">'+
+        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+'<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+

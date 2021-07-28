@@ -1,6 +1,27 @@
+<script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js" integrity="sha256-H28SdxWrZ387Ldn0qogCzFiUDDxfPiNIyJX7BECQkDE=" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+        $.fn.regexMask = function(mask) {
+    $(this).keypress(function (event) {
+        if (!event.charCode) return true;
+        var part1 = this.value.substring(0, this.selectionStart);
+        var part2 = this.value.substring(this.selectionEnd, this.value.length);
+        if (!mask.test(part1 + String.fromCharCode(event.charCode) + part2))
+            return false;
+    });
+};
+$(document).ready(function(){
+    
+    $('#business_zipcode').mask("99999-9999");
+    $('#mailing_zipcode').mask("99999-9999");
+    $('#telephone').mask("(999)999-9999");
+    $('#facsimile').mask("(999)999-9999");
+});
+</script>
 <div class="container">
-<h1 class="<?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}?>">Branch Maintenance</h1>
-<div class="col-lg-12 well <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}?>">
+<h1 class="<?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}*/?>">Branch Maintenance</h1>
+<div class="col-lg-12 well <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}*/?>">
 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
 <div class="tab-content col-md-12">
 <?php
@@ -36,9 +57,35 @@ if($action=='add_new'||($action=='edit' && $id>0)){
 					</ul>
 				</div>
 			</div>
-            <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add_new'?'Add':'Edit'; ?> Branch</h3>
+          <!--   <h3  class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add_new'?'Add':'Edit'; ?> Branch</h3> -->
 		</div>
         <div class="panel-body">
+             <div class="row">
+             <div class="col-md-3">
+                <div class="form-group">
+                    <label>OSJ </label><br />
+                    <input type="checkbox" name="osj" id="osj" class="checkbox" value="1" <?php if($osj>0){echo "checked='checked'";}?>/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Non-Registered </label><br />
+                    <input type="checkbox" name="non_registered" id="non_registered" class="checkbox" value="1" <?php if($non_registered>0){echo "checked='checked'";}?>/>
+                </div>
+            </div>
+            <div class="col-md-6" style="visibility: hidden;">
+                <div class="form-group">
+                    <label>Company </label><br />
+                    <select class="form-control" name="company">
+                        <option value="">Select Company</option>
+                        <?php foreach($get_multi_company as $key=>$val){?>
+                        <option value="<?php echo $val['id'];?>" <?php if($company != '' && $company==$val['id']){echo "selected='selected'";} ?>><?php echo $val['company_name'];?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+           
+        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -52,7 +99,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
                     <select class="form-control" name="broker">
                         <option value="">Select Manager</option>
                         <?php foreach($get_broker as $key=>$val){?>
-                        <option value="<?php echo $val['id'];?>" <?php if($broker != '' && $broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['first_name'];?></option>
+                        <option value="<?php echo $val['id'];?>" <?php if($broker != '' && $broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['last_name'].' '.$val['first_name'];?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -61,7 +108,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Contact </label><br />
+                    <label>Manager#2 </label><br />
                     <input type="text" maxlength="40" class="form-control" name="contact" value="<?php echo $contact;?>"  />
                 </div>
             </div>
@@ -81,43 +128,19 @@ if($action=='add_new'||($action=='edit' && $id>0)){
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Company </label><br />
-                    <select class="form-control" name="company">
-                        <option value="">Select Company</option>
-                        <?php foreach($get_multi_company as $key=>$val){?>
-                        <option value="<?php echo $val['id'];?>" <?php if($company != '' && $company==$val['id']){echo "selected='selected'";} ?>><?php echo $val['company_name'];?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>OSJ </label><br />
-                    <input type="checkbox" name="osj" id="osj" class="checkbox" value="1" <?php if($osj>0){echo "checked='checked'";}?>/>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Non-Registered </label><br />
-                    <input type="checkbox" name="non_registered" id="non_registered" class="checkbox" value="1" <?php if($non_registered>0){echo "checked='checked'";}?>/>
-                </div>
-            </div>
-        </div>
+       
         <br />
         <div style="display: block; border: 1px solid #ddd;">
         <div class="row" style="padding: 10px;">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Business Address </label><br />
+                    <label>Business Address 1 </label><br />
                     <input type="text"  class="form-control" maxlength="50" name="business_address1" value="<?php echo $business_address1;?>" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label> </label><br />
+                    <label>Business Address 2 </label><br />
                     <input type="text"  class="form-control" maxlength="50" name="business_address2" value="<?php echo $business_address2;?>" />
                 </div>
             </div>
@@ -143,20 +166,20 @@ if($action=='add_new'||($action=='edit' && $id>0)){
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Business Zipcode </label><br />
-                    <input type="text" maxlength="10" class="form-control" name="business_zipcode" value="<?php echo $business_zipcode;?>"  />
+                    <input type="text" maxlength="10" class="form-control" id="business_zipcode" name="business_zipcode" value="<?php echo $business_zipcode;?>"  />
                 </div>
             </div>
         </div>
         <div class="row" style="padding: 10px;">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Mailing Address </label><br />
+                    <label>Mailing Address 1 </label><br />
                     <input type="text"  class="form-control" maxlength="50" name="mailing_address1" value="<?php echo $mailing_address1;?>" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label> </label><br />
+                    <label>Mailing Address 2 </label><br />
                     <input type="text"  class="form-control" maxlength="50" name="mailing_address2" value="<?php echo $mailing_address2;?>" />
                 </div>
             </div>
@@ -182,7 +205,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Mailing Zipcode </label><br />
-                    <input type="text" maxlength="10" class="form-control" name="mailing_zipcode" value="<?php echo $mailing_zipcode;?>"  />
+                    <input type="text" maxlength="10" class="form-control" id="mailing_zipcode" name="mailing_zipcode" value="<?php echo $mailing_zipcode;?>"  />
                 </div>
             </div>
         </div>
@@ -205,14 +228,14 @@ if($action=='add_new'||($action=='edit' && $id>0)){
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Phone </label><br />
-                    <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="13" class="form-control" name="phone" value="<?php echo $phone;?>"  />
+                    <label>Telephone </label><br />
+                    <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="13" class="form-control" name="phone" id="telephone" value="<?php echo $phone;?>"  />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Facsimile </label><br />
-                    <input type="text" maxlength="13" class="form-control" name="facsimile" value="<?php echo $facsimile;?>"  />
+                    <input type="text" maxlength="13" id="facsimile" class="form-control" name="facsimile" value="<?php echo $facsimile;?>"  />
                 </div>
             </div>
         </div>
@@ -274,7 +297,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
             <div class="col-md-6">
                 <div class="form-group">
                     <label>FINRA Fee </label><br />
-                    <input type="text" onblur="round(this.value)" maxlength="50" class="form-control" name="finra_fee" id="finra_fee" value="<?php echo $finra_fee;?>"  />
+                    <input type="text" onkeypress="return isFloatNumber(this,event)"  onblur="round2digit(this.value)" maxlength="50" class="form-control" name="finra_fee" id="finra_fee" value="<?php echo $finra_fee;?>"  />
                 </div>
             </div>
         </div>
@@ -506,6 +529,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
 	</div><!-- End of Modal content -->
 	</div><!-- End of Modal dialog -->
 </div><!-- End of Modal -->
+ 
 <script type="text/javascript">
     $(document).ready(function() {
         $('#data-table').DataTable({
@@ -518,7 +542,7 @@ if($action=='add_new'||($action=='edit' && $id>0)){
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 2 ] }, 
                         { "bSearchable": false, "aTargets": [ 2 ] }]
         });
-        $("div.toolbar").html('<div class="panel-control">'+
+        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+'<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
@@ -792,5 +816,14 @@ function round(fee)
     var rounded = round.toFixed(2);
     
     document.getElementById("finra_fee").value = rounded;
+}
+function round2digit(feerate)
+{
+    
+        var round = Math.round( feerate * 100 ) / 100;
+        var rounded = round.toFixed(2);
+    
+    document.getElementById("finra_fee").value = rounded;
+    
 }
 </script>

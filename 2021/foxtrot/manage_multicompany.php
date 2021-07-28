@@ -3,12 +3,14 @@
     require_once(DIR_FS."islogin.php");
      
     $error = '';
+    $broker_trans=array();
     $type = '';
     $action = isset($_GET['action'])&&$_GET['action']!=''?$dbins->re_db_input($_GET['action']):'view';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
     
     $instance = new manage_company();
     $get_state  = $instance->select_state();
+    $broker_trans=$instance->select_broker_transaction($id);
     $get_manager  = $instance->select_manager();
     $get_product  = $instance->select_product_category();
     if(isset($_POST['submit'])&& $_POST['submit']=='Save'){

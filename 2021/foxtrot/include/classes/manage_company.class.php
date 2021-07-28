@@ -4,15 +4,18 @@
 		public $table = COMPANY_MASTER;
 		public $errors = '';
         public $last_inserted_id = '';
+        public $product_category='';
         /**
 		 * @param post array
 		 * @return true if success, error message if any errors
 		 * */
-		public function insert_update($data){
+		public function insert_update($data)
+		{
 		       
 			$id = isset($data['id'])?$this->re_db_input($data['id']):0;
             $state_values="";
-            if(isset($_POST['state'])){
+            if(isset($_POST['state']))
+            {
                 foreach($_POST['state'] as $ste)
                 {
                     if($state_values==''){ 
@@ -68,7 +71,7 @@
 			if($company_name==''){
 				$this->errors .= 'Please enter company name.<br />';
 			}
-            if($address1==''){
+           /* if($address1==''){
 				$this->errors .= 'Please enter address1.<br />';
 			}
             if($business_city==''){
@@ -82,16 +85,13 @@
 			}
             if($e_date==''){
 				$this->errors .= 'Please enter establish date.<br />';
-			}
+			}*/
   
 			if($this->errors!=''){
 				return $this->errors;
 			}
 			else{
-				if($this->errors!=''){
-					return $this->errors;
-				}
-				else if($id>=0){
+				
 					if($id==0){
 						$q = "INSERT INTO `".$this->table."` SET `company_name`='".$company_name."',`company_type`='".$company_type."',`manager_name`='".$manager_name."',`address1`='".$address1."',`address2`='".$address2."',`business_city`='".$business_city."',`state_general`='".$state_general."',
                         `zip`='".$zip."',`mail_address1`='".$mail_address1."',`mail_address2`='".$mail_address2."',`m_city`='".$m_city."', `m_state`='".$state_mailing."',`m_zip`='".$m_zip."',`telephone`='".$telephone."',`facsimile`='".$facsimile."',
@@ -133,11 +133,8 @@
 						}
 					}
 				}
-				else{
-					$_SESSION['warning'] = UNKWON_ERROR;
-					return false;
-				}
-			}
+				
+			
 		}
         
         /**
@@ -157,6 +154,52 @@
     			while($row = $this->re_db_fetch_array($res)){
     			     array_push($return,$row);
                      
+    			}
+            }
+			return $return;
+		}
+
+		 public function select_broker_transaction($id='0'){
+					$broker_trans = array();
+					
+					$q = "SELECT CONCAT_WS(' ',`brk`.`last_name`,`brk`.`first_name`) as `brk_name`
+						,'' as `prod_name`,`at`.*
+							FROM `".TRANSACTION_MASTER."` AS `at`
+                            left join `".BROKER_MASTER."` `brk` on `brk`.`id`=`at`.`broker_name`
+                            WHERE `at`.`is_delete`='0' AND `at`.`company`='".$id."'
+		                    ORDER BY `at`.`id` ASC";
+
+					$res = $this->re_db_query($q);
+		            if($this->re_db_num_rows($res)>0){
+		                $a = 0;
+		    			while($row = $this->re_db_fetch_array($res)){
+		    			     array_push($broker_trans,$row);
+		                     
+		    			}
+		            }
+					return $broker_trans;
+		}
+
+		 public function get_product_from_cat_id_and_id($id,$prod_cat_id){
+			$return ='' ;
+            $con ='';
+
+            if($id != '')
+            {
+                $con = "and id='".$id."'";
+            }
+			
+			$q = "SELECT `at`.`name`
+					FROM `product_category_".$prod_cat_id."` AS `at`
+                    WHERE `at`.`is_delete`='0' ".$con."
+                    ORDER BY `at`.`id` desc LIMIT 1";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0)
+            {
+            	
+                while($row = $this->re_db_fetch_array($res))
+                {
+                	$return=$row['name'];
     			}
             }
 			return $return;

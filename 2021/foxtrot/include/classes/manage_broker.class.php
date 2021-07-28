@@ -1161,11 +1161,15 @@
                     {       
                         $approval_date=isset($val['approval_date'])?$this->re_db_input(date('Y-m-d',strtotime($val['approval_date']))):'';
                         $expiration_date=isset($val['expiration_date'])?$this->re_db_input(date('Y-m-d',strtotime($val['expiration_date']))):'';
-                        $register_reason=isset($val['register_reason'])?$this->re_db_input($val['register_reason']):'';
+                        $register_reason=isset($val['register_reason'])?$this->re_db_input($val['register_reason']):'';                         
                         $type = isset($val['type'])?$this->re_db_input($val['type']):'';
-                        $q = "INSERT INTO `".BROKER_REGISTER_MASTER."` SET `broker_id`='".$_SESSION['last_insert_id']."' ,`license_id`='".$key."' ,`license_name`='".$type."' , 
-                        `approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->insert_common_sql();
-    					$res = $this->re_db_query($q);
+                        if($approval_date!='' && $expiration_date!='')
+                        {
+                        	$q = "INSERT INTO `".BROKER_REGISTER_MASTER."` SET `broker_id`='".$_SESSION['last_insert_id']."' ,`license_id`='".$key."' ,`license_name`='".$type."' , 
+                        	`approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->insert_common_sql();
+    						$res = $this->re_db_query($q);
+    					}  					
+
                     }   
                           
                     if($res){
@@ -1189,19 +1193,21 @@
                         $expiration_date=isset($val['expiration_date'])?$this->re_db_input(date('Y-m-d',strtotime($val['expiration_date']))):'';
                         $register_reason=isset($val['register_reason'])?$this->re_db_input($val['register_reason']):'';
                         $type = isset($val['type'])?$this->re_db_input($val['type']):'';
-                           
-                        if($variable>0)
-                        {                 
-        				    $q = "UPDATE `".BROKER_REGISTER_MASTER."` SET `license_id`='".$key."' ,`license_name`='".$type."' , 
-                            `approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->update_common_sql()." WHERE  `license_id`='".$key."' and `broker_id`='".$id."'";
-                            $res = $this->re_db_query($q);
-      					}
-                        else
+                        if($approval_date!='' && $expiration_date!='')
                         {
-                            $q = "INSERT INTO `".BROKER_REGISTER_MASTER."` SET `broker_id`='".$id."' ,`license_id`='".$key."' ,`license_name`='".$type."' , 
-                            `approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->insert_common_sql();
-        					$res = $this->re_db_query($q);
-                        }
+	                        if($variable>0)
+	                        {                 
+	        				    $q = "UPDATE `".BROKER_REGISTER_MASTER."` SET `license_id`='".$key."' ,`license_name`='".$type."' , 
+	                            `approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->update_common_sql()." WHERE  `license_id`='".$key."' and `broker_id`='".$id."'";
+	                            $res = $this->re_db_query($q);
+	      					}
+	                        else
+	                        {
+	                            $q = "INSERT INTO `".BROKER_REGISTER_MASTER."` SET `broker_id`='".$id."' ,`license_id`='".$key."' ,`license_name`='".$type."' , 
+	                            `approval_date`='".$approval_date."' , `expiration_date`='".$expiration_date."' ,`reason`='".$register_reason."' ".$this->insert_common_sql();
+	        					$res = $this->re_db_query($q);
+	                        }
+	                    }
                         
 		          }
                     	if($res){
@@ -1458,9 +1464,10 @@
 		 public function select_broker_transaction($id='0'){
 					$broker_trans = array();
 					
-					$q = "SELECT `at`.*
+					$q = "SELECT `at`.*,ac_no.account_no
 							FROM `".TRANSACTION_MASTER."` AS `at`
-		                    WHERE `at`.`is_delete`='0' AND `at`.`broker_name`='".$id."'
+							left join `ft_client_account_no` as ac_no on ac_no.client_id=at.client_name
+		                    WHERE `at`.`is_delete`='0' AND `at`.`company`='".$id."'
 		                    ORDER BY `at`.`id` ASC";
 					$res = $this->re_db_query($q);
 		            if($this->re_db_num_rows($res)>0){
@@ -1473,6 +1480,32 @@
 					return $broker_trans;
 		}
 
+		 public function get_product_from_cat_id_and_id($id,$prod_cat_id){
+			$return ='' ;
+            $con ='';
+
+            if($id != '')
+            {
+                $con = "and id='".$id."'";
+            }
+			
+			$q = "SELECT `at`.`name`
+					FROM `product_category_".$prod_cat_id."` AS `at`
+                    WHERE `at`.`is_delete`='0' ".$con."
+                    ORDER BY `at`.`id` desc LIMIT 1";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0)
+            {
+            	
+                while($row = $this->re_db_fetch_array($res))
+                {
+                	$return=$row['name'];
+    			}
+            }
+			return $return;
+		}
+        
+
         public function select_category(){
 			$return = array();
 			
@@ -1480,6 +1513,24 @@
 					FROM `".PRODUCT_TYPE."` AS `at`
                     WHERE `at`.`is_delete`='0'
                     ORDER BY `at`.`id` ASC";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    			     array_push($return,$row);
+                     
+    			}
+            }
+			return $return;
+		}
+
+		 public function select_category_based_on_series($series_id ='0')
+		 {
+			$return = array();
+			
+			$q = "SELECT `at`.* FROM `".PRODUCT_TYPE."` AS `at`
+left join `".series_wise_product_category."` as `series` on `series`.`prod_cat_id`=`at`.`id`
+WHERE `at`.`is_delete`='0' and `series`.`series_id` in ('".$series_id."') ORDER BY `at`.`id` ASC";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
                 $a = 0;

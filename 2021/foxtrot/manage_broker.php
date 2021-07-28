@@ -84,6 +84,8 @@
     $select_docs = $instance->select_docs();
     $select_broker_docs = $instance->get_broker_doc_name();
     $product_category = $instance->select_category();
+    $product_category_based_on_series = $instance->select_category_based_on_series();
+    
     $get_payout_schedule = $instance->get_payout_schedule();
     $get_branch_office = $instance->select_branch_office();
     if(isset($_GET['file_id']) && ($_GET['file_id'] && $_GET['exception_data_id']) >0 )
