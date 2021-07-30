@@ -9,7 +9,9 @@
 		 * @return true if success, error message if any errors
 		 * */ 
          
-		public function insert_update($data){//echo '<pre>';print_r($data);exit;
+		public function insert_update($data)
+		{
+		
             $_SESSION['client_id'] = 0;
 			$id = isset($data['id'])?$this->re_db_input($data['id']):0;
 			$fname = isset($data['fname'])?$this->re_db_input($data['fname']):'';
@@ -57,7 +59,8 @@
             $naf_date = isset($data['naf_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['naf_date']))):'0000-00-00';
             $last_contacted = isset($data['last_contacted'])?$this->re_db_input(date('Y-m-d',strtotime($data['last_contacted']))):'0000-00-00';
             
-            if($lname==''){
+            if($lname=='')
+            {
 				$this->errors = 'Please enter last name.';
 			}
 			else if($birth_date=='' || $birth_date=='1970-01-01')
@@ -68,16 +71,17 @@
 			{
 				$this->errors = 'Please select NAF date.';
 			}
-            else if($broker_name==''){
+            else if($broker_name=='')
+            {
 				$this->errors = 'Please select broker name.';
 			}
-            else if($client_file_number==''){
+            else if($client_file_number=='')
+            {
 				$this->errors = 'Please enter client file number.';
 			}
 			else if($number=='')
             {
 				$this->errors = 'Please enter number.';
-
 			}
 			else if($expiration=='' || $expiration=='1970-01-01')
 			{
@@ -90,49 +94,59 @@
 			else if($income=='')
             {
 				$this->errors = 'Please select income.';
-
 			}
 			else if($net_worth=='')
             {
 				$this->errors = 'Please select net worth.';
-
 			}
 			else if($goal_horizone=='')
             {
 				$this->errors = 'Please select goal horizone.';
-
-			}
+			}                                   
 			else if($objectives=='')
             {
 				$this->errors = 'Please select at lease 1 objective.';
-
 			}
-			if($this->errors!=''){
+			else 
+			{
+				$this->errors = '';
+			}
+			if($this->errors!='')
+			{
+				
 				return $this->errors;
 			}
-			else{
+			else
+			{
 				
 				/* check duplicate record */
 				$con = '';
-				if($id>0){
+				if($id>0)
+				{
 					$con = " AND `id`!='".$id."'";
 				}
 				$q = "SELECT * FROM `".$this->table."` WHERE `is_delete`='0' AND `first_name`='".$fname."' ".$con;
 				$res = $this->re_db_query($q);
 				$return = $this->re_db_num_rows($res);
-				if($return>0){
+				if($return>0)
+				{
 					$this->errors = 'This client is already exists.';
 				}
 				
-				if($this->errors!=''){
+				if($this->errors!='')
+				{
 					return $this->errors;
 				}
-				else if($id>=0){
-					if($id==0){
+				else if($id>=0)
+				{
+					//print("shaima");exit;
+					if($id==0)
+					{
 						$q = "INSERT INTO `".$this->table."` SET `first_name`='".$fname."',`last_name`='".$lname."',`mi`='".$mi."',`do_not_contact`='".$do_not_contact."',`active`='".$active."',`ofac_check`='".$ofak_check."',`fincen_check`='".$fincen_check."',`long_name`='".$long_name."',`client_file_number`='".$client_file_number."',`clearing_account`='".$clearing_account."',`client_ssn`='".$client_ssn."',`house_hold`='".$household."',`split_broker`='".$split_broker."',`split_rate`='".$split_rate."',`address1`='".$address1."',`address2`='".$address2."',`city`='".$city."',`state`='".$state."',`zip_code`='".$zip_code."',`citizenship`='".$citizenship."',`birth_date`='".$birth_date."',`date_established`='".$date_established."',`age`='".$age."',`open_date`='".$open_date."',`naf_date`='".$naf_date."',`last_contacted`='".$last_contacted."',`account_type`='".$account_type."',`broker_name`='".$broker_name."',`telephone`='".$telephone."',`contact_status`='".$contact_status."',`reviewed_at`='".$reviewed_at."',`reviewed_by`='".$reviewed_by."',`is_reviewed`='".$is_reviewed."'".$this->insert_common_sql();
 						$res = $this->re_db_query($q);
                         $_SESSION['client_id'] = $this->re_db_insert_id();
-                        $get_name = $this->get_client_name($_SESSION['client_id']);//print_r($get_name);exit;
+                        $get_name = $this->get_client_name($_SESSION['client_id']);
+                        print("hiiii");exit;
                         $_SESSION['client_full_name'] = $get_name[0]['first_name'].' '.$get_name[0]['mi'].'.'.$get_name[0]['last_name'];
 						if($res){
 						    $_SESSION['success'] = INSERT_MESSAGE;
@@ -143,8 +157,9 @@
 							return false;
 						}
 					}
-					else if($id>0){
-					    
+					else if($id>0)
+					{
+					    print("hiiii_up");exit;
 						$q = "UPDATE `".$this->table."` SET `first_name`='".$fname."',`last_name`='".$lname."',`mi`='".$mi."',`do_not_contact`='".$do_not_contact."',`active`='".$active."',`ofac_check`='".$ofak_check."',`fincen_check`='".$fincen_check."',`long_name`='".$long_name."',`client_file_number`='".$client_file_number."',`clearing_account`='".$clearing_account."',`client_ssn`='".$client_ssn."',`house_hold`='".$household."',`split_broker`='".$split_broker."',`split_rate`='".$split_rate."',`address1`='".$address1."',`address2`='".$address2."',`city`='".$city."',`state`='".$state."',`zip_code`='".$zip_code."',`citizenship`='".$citizenship."',`birth_date`='".$birth_date."',`date_established`='".$date_established."',`age`='".$age."',`open_date`='".$open_date."',`naf_date`='".$naf_date."',`last_contacted`='".$last_contacted."',`account_type`='".$account_type."',`broker_name`='".$broker_name."',`telephone`='".$telephone."',`contact_status`='".$contact_status."',`reviewed_at`='".$reviewed_at."',`reviewed_by`='".$reviewed_by."',`is_reviewed`='".$is_reviewed."'".$this->update_common_sql()." WHERE `id`='".$id."'";
 						$res = $this->re_db_query($q);
 						if($res){
@@ -156,12 +171,13 @@
 							return false;
 						}
 					}
-				}
-				else{
+				
+				}else{
 					$_SESSION['warning'] = UNKWON_ERROR;
 					return false;
 				}
 			}
+			
 		}
         public function insert_update_employment($data){//echo '<pre>';print_r($data);exit;
 			$id = isset($data['employment_id'])?$this->re_db_input($data['employment_id']):0;
@@ -186,8 +202,10 @@
             $telephone_no = str_replace("-", '', $telephone_mask);
             $telephone_brack1 = str_replace("(", '', $telephone_no);
             $telephone_employment = str_replace(")", '', $telephone_brack1);
+
             
 			 if($id==0)
+
             	{
 					$q = "INSERT INTO `".CLIENT_EMPLOYMENT."` SET `client_id`='".$_SESSION['client_id']."',`occupation`='".$occupation."',`employer`='".$employer."',`address`='".$address_employement."',`position`='".$position."',`security_related_firm`='".$security_related_firm."',`finra_affiliation`='".$finra_affiliation."',`spouse_name`='".$spouse_name."',`spouse_ssn`='".$spouse_ssn."',`dependents`='".$dependents."',`salutation`='".$salutation."',`options`='".$options."',`other`='".$other."',`number`='".$number."',`expiration`='".$expiration."',`state`='".$state_employe."',`date_verified`='".$date_verified."',`telephone`='".$telephone_employment."'".$this->insert_common_sql();
 					$res = $this->re_db_query($q);
@@ -202,8 +220,7 @@
 					}
 				}
 			else if($id>0)
-			{
-			    
+			{							    
 				$q = "UPDATE `".CLIENT_EMPLOYMENT."` SET `client_id`='".$id."',`occupation`='".$occupation."',`employer`='".$employer."',`address`='".$address_employement."',`position`='".$position."',`security_related_firm`='".$security_related_firm."',`finra_affiliation`='".$finra_affiliation."',`spouse_name`='".$spouse_name."',`spouse_ssn`='".$spouse_ssn."',`dependents`='".$dependents."',`salutation`='".$salutation."',`options`='".$options."',`other`='".$other."',`number`='".$number."',`expiration`='".$expiration."',`state`='".$state_employe."',`date_verified`='".$date_verified."',`telephone`='".$telephone_employment."'".$this->update_common_sql()." WHERE `client_id`='".$id."'";
 				$res = $this->re_db_query($q);
 				if($res){

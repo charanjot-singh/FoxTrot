@@ -119,7 +119,14 @@
     $user_instance=new user_master();
     $u_id=$_SESSION['user_id'];
     $logged_user=$user_instance->get_user($u_id);
-    if(isset($_POST['submit'])&& $_POST['submit']=='Save'){//print_r($_POST);exit;
+
+
+    
+if((isset($_POST['submit'])&& $_POST['submit']=='Save') 
+        || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
+        || (isset($_POST['submit'])&& $_POST['submit']=='Next') )
+    {
+
         
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         $fname = isset($_POST['fname'])?$instance->re_db_input($_POST['fname']):'';
@@ -207,11 +214,16 @@
         
                
         $return = $instance->insert_update($_POST);
-        $return1 = $instance->insert_update_employment($_POST);
-        $return2 = $instance->insert_update_account($_POST);
-        $return3 = $instance->insert_update_suitability($_POST);
         
-        if($return===true){
+        if($return==true)
+        {
+            $return1 = $instance->insert_update_employment($_POST);
+            $return2 = $instance->insert_update_account($_POST);
+            $return3 = $instance->insert_update_suitability($_POST);
+        }
+        
+        if($return===true && $_POST['submit']=='Save')
+        {
             
             if($for_import == 'true')
             {
@@ -233,7 +245,36 @@
                 header("location:".CURRENT_PAGE);exit;
             }
         }
-        else{
+        else if($return===true && $_POST['submit']=='Next')
+        {
+            $return = $instance->get_next_client($id);
+            
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
+        }
+        else if($return===true && $_POST['submit']=='Previous')
+        {
+            $return = $instance->get_previous_client($id);
+            
+            if($return!=false)
+            {
+
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
+        }
+
+        else
+        {
+           
             $error = !isset($_SESSION['warning'])?$return:'';
         }
     }

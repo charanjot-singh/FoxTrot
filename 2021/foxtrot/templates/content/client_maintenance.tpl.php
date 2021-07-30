@@ -452,14 +452,13 @@ $(document).on('change', '#is_reviewed', function(event) {
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Securities-Related Firm </label><br />
-                                                        <input type="checkbox" name="security_related_firm" id="security_related_firm" class="checkbox" value="1" <?php if($security_related_firm>0){echo "checked='checked'";}?>/>
+                                                        <input type="checkbox" name="security_related_firm" id="security_related_firm" class="checkbox" style="display: inline !important;" value="1" <?php if($security_related_firm>0){echo "checked='checked'";}?>/>
+                                                        <label>Securities-Related Firm</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>FINRA Affiliation </label>
-                                                        <input type="checkbox" name="finra_affiliation" id="finra_affiliation" class="checkbox" value="1" <?php if($finra_affiliation>0){echo "checked='checked'";}?>/>
+                                                    <div class="form-group">    
+                                                        <input type="checkbox" style="display: inline !important;" name="finra_affiliation" id="finra_affiliation" class="checkbox" value="1" <?php if($finra_affiliation>0){echo "checked='checked'";}?>/> <label>FINRA Affiliation</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -950,17 +949,18 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                            	<div class="col-md-6">
+                                            	
+                                             </div>
+                                             <div class="row">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Signed By </label>
                                                         <input type="text" name="signed_by" id="signed_by" class="form-control" value="<?php echo $signed_by;?>"/>
                                                     </div>
                                                 </div>
-                                             </div>
-                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Sign Date </label>
+                                                        <label>Signed Date </label>
                                                         <div id="demo-dp-range">
         					                                <div class="input-daterange input-group" id="datepicker">
                                                                 <input type="text" name="sign_date" id="sign_date" value="<?php echo date('m/d/Y',strtotime($sign_date));?>" class="form-control" />
@@ -968,14 +968,15 @@ $(document).on('change', '#is_reviewed', function(event) {
         				                                </div>
                                                     </div>
                                                 </div>
-                                            	<div class="col-md-6">
+                                            	
+                                             </div>
+                                             <div class="row">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Tax Bracket </label>
                                                         <input type="number" name="tax_bracket" onkeypress="return isFloatNumber(this,event)" onblur="round2digit(this.value);"  id="tax_bracket" class="form-control" value="<?php echo $tax_bracket;?>"/>
                                                     </div>
                                                 </div>
-                                             </div>
-                                             <div class="row">
                                                   <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Tax ID </label>
@@ -1005,8 +1006,13 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         <input type="hidden" name="file_id" id="file_id" class="form-control" value="<?php echo $_GET['file_id']; ?>" />
                                         <input type="hidden" name="temp_data_id" id="temp_data_id" class="form-control" value="<?php echo $_GET['exception_data_id']; ?>" />
                                         <?php }?>
-                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
-                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?>
+                                        
+                                        <!-- <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
+                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?> -->
+
+                                        <?php if($_GET['action']=='edit' && $_GET['id']){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
+                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a" ><input type="submit" name="submit" value="Next" /></a><?php } ?>
+
                                         <?php if($action=='edit' && $id>0){?>
                                         <a href="#view_changes" data-toggle="modal"><input type="button" name="view_changes" style="margin-left: 4% !important;" value="View Changes"/></a>
                                         <?php } ?>
@@ -1559,6 +1565,8 @@ function close_other()
 <script type="text/javascript">
 $(document).ready(function(){
     $('#telephone').mask("(999)-999-9999");
+    $('#tax_id').mask("99-9999999");
+    
 });
 $(document).ready(function(){
     $('#zip_code').mask("99999-9999");

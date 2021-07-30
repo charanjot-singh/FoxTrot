@@ -1,3 +1,5 @@
+    
+
 <script type="text/javascript">
 $(function() {
     $('.multiselect-ui').multiselect({
@@ -582,15 +584,16 @@ var waitingDialog = waitingDialog || (function ($) {
                                         <div class="col-md-6" style="padding-left: 0px;">
                                         <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add_new'?'Add':'Edit'; ?> New Broker/Advisor</h3>
                                         </div>
-                                        <div class="col-md-2">
-                                                <div class="form-group" style="text-align:right ;">
-                                                    <label>Status</label>
+                                     <!--   <div class="col-md-6">
+                                                <div class="form-group" style="text-align:right ; padding-right: 0px;">
+                                                   
                                                 </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    
-                                                    <select name="active_status_cdd" id="active_status_cdd" class="form-control">
+                                        </div>  -->
+                                        <div class="col-md-6" style="text-align:right;padding-right: 0px;">
+                                                <div class="form-inline"  style="text-align: right !important; display: inline !important; ">
+                                                     <label>Status</label>
+
+                                                    <select name="active_status_cdd" id=" active_status_cdd" style="width: 50%; " class="form-control">
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 1){echo "selected='selected'";}?> value="1">Active</option>
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 5){echo "selected='selected'";}?> value="5">Inactive</option>
                                                         <option <?php if(isset($active_status_cdd) && $active_status_cdd == 6){echo "selected='selected'";}?> value="6">Suspended</option>
@@ -600,6 +603,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                     </select>
                                                 </div>
                                             </div>
+                                            <br/>
                 					</div>
                                     <div class="panel-body">
                                         <div class="row">
@@ -931,9 +935,15 @@ var waitingDialog = waitingDialog || (function ($) {
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group">
+                                            <div class="form-grup">
                                                 <label>Web Password </label><br />
-                                                <input type="password" name="web_password_general" id="web_password_general" value="<?php if($action=='edit'){ echo $web_password; } ?>" class="form-control" />
+                                                <div class="input-group">
+                                                <input type="password" name="web_password_general" style="display: inline !important;" id="web_password_general" value="<?php if($action=='edit'){ echo $web_password; } ?>" class="form-control" />
+                                                <span  class="input-group-addon" >
+                                                    <i class="far fa-eye" id="togglePassword" style=" cursor: pointer;" ></i>
+                                                    <!-- <input type="checkbox" onclick="Toggle()"/> -->
+                                                </span>
+                                                </div>
                                             </div>
                                         </div>
                                    </div>
@@ -1200,6 +1210,10 @@ var waitingDialog = waitingDialog || (function ($) {
                 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
                         <div class="panel-overlay-wrap">
                             <div class="panel">
+                                 <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
             					<div class="panel-body">
                                 <h4>Payout Schedule <!--<a href="#broker_payout_schedule" data-toggle="modal" class="btn btn-sm btn-success" style="display: inline !important; float: right !important;"><i class="fa fa-plus"></i> Add New Payout</a>--></h4><br />
                                    <div class="panel" id="div_fixed_rates">
@@ -1212,7 +1226,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                             <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_payout_fixed_rates)){?>
                                                             <?php foreach($edit_payout_fixed_rates as $key=>$val){?>
                                                             <tr>
-                                                                <td style="float: right;border-top:0px; "><label><?php echo $val['type'];?>: </label></td>
+                                                                <td style="float: right;padding-top: 15px;border-top:0px; "><label><?php echo $val['type'];?>: </label></td>
                                                                 <td style="border-top:0px;width: 130px;">
                                                                     <input type="hidden" name="fixed_category_id[]" value="<?php echo $val['category_id'];?>"/>
                                                                     <div class="input-group">
@@ -1224,7 +1238,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                             <?php } }else{?>
                                                             <?php foreach($product_category as $key=>$val){?>
                                                             <tr>
-                                                                <td style="float: right;border-top:0px;"><label><?php echo $val['type'];?>: </label></td>
+                                                                <td style="float: right;border-top:0px;padding-top: 15px;"><label><?php echo $val['type'];?>: </label></td>
                                                                 <td style="border-top:0px;">
                                                                     <input type="hidden" name="fixed_category_id[]" value="<?php echo $val['id'];?>"/>
                                                                     <div class="input-group">
@@ -1411,15 +1425,16 @@ var waitingDialog = waitingDialog || (function ($) {
                                    </div>-->
                                    <div class="panel" style="border: 1px solid #cccccc !important; padding: 10px !important;">
                                    <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Basis </label><br />
                                                 <!--<input type="radio" name="basis" <?php if(isset($edit_payout['basis']) && $edit_payout['basis']=='1'){?>checked="true"<?php } ?>  class="radio" style="display: inline;" value="1"/>&nbsp;<label>Net Earnings</label>&nbsp;&nbsp;-->
+                                                 <input type="radio" name="basis" <?php if(isset($edit_payout['basis']) && $edit_payout['basis']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Net Commission</label>&nbsp;&nbsp;
                                                 <input type="radio" name="basis" <?php if(isset($edit_payout['basis']) && $edit_payout['basis']=='1'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="1"/>&nbsp;<label>Gross Concessions</label>&nbsp;&nbsp;
-                                                <input type="radio" name="basis" <?php if(isset($edit_payout['basis']) && $edit_payout['basis']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Principal</label>&nbsp;&nbsp;
+                                               
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Cumulative </label><br />
                                                 <input type="radio" name="cumulative" <?php if(isset($edit_payout['cumulative']) && $edit_payout['cumulative']=='1'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="1"/>&nbsp;<label>Payroll-To-Date</label>&nbsp;&nbsp;
@@ -1427,16 +1442,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                 <input type="radio" name="cumulative" <?php if(isset($edit_payout['cumulative']) && $edit_payout['cumulative']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Year-To-Date</label>&nbsp;&nbsp;
                                             </div>
                                         </div>
-                                   </div>
-                                   <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Year </label><br />
-                                                <input type="radio" name="year" <?php if(isset($edit_payout['year']) && $edit_payout['year']=='1'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="1"/>&nbsp;<label>Calendar</label>&nbsp;&nbsp;
-                                                <input type="radio" name="year" <?php if(isset($edit_payout['year']) && $edit_payout['year']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Rolling</label>&nbsp;&nbsp;
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Reset </label>
                                                 <div id="demo-dp-range">
@@ -1453,7 +1459,17 @@ var waitingDialog = waitingDialog || (function ($) {
                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Calculation Detail </label><br />
+                                                <label>Year </label><br />
+                                                <input type="radio" name="year" <?php if(isset($edit_payout['year']) && $edit_payout['year']=='1'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="1"/>&nbsp;<label>Calendar</label>&nbsp;&nbsp;
+                                                <input type="radio" name="year" <?php if(isset($edit_payout['year']) && $edit_payout['year']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Rolling</label>&nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                        
+                                   </div>
+                                   <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Calculation Detail When Threshold Crossed </label><br />
                                                 <input type="radio" name="calculation_detail" <?php if(isset($edit_payout['calculation_detail']) && $edit_payout['calculation_detail']=='1'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="1"/>&nbsp;<label>Apply Incremental Payout Rate</label>&nbsp;&nbsp;
                                                 <input type="radio" name="calculation_detail" <?php if(isset($edit_payout['calculation_detail']) && $edit_payout['calculation_detail']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Apply Higher Payout Rate</label>&nbsp;&nbsp;
                                                 <!--<input type="radio" name="calculation_detail" <?php if(isset($edit_payout['calculation_detail']) && $edit_payout['calculation_detail']=='3'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="3"/>&nbsp;<label>Use Lower Level Rate</label>&nbsp;&nbsp;-->
@@ -1521,15 +1537,16 @@ var waitingDialog = waitingDialog || (function ($) {
                                                 <input type="radio" name="clearing_charge_deducted_from" <?php if(isset($edit_payout['clearing_charge_deducted_from']) && $edit_payout['clearing_charge_deducted_from']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Gross</label>&nbsp;&nbsp;
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        
+                                   </div>
+                                   <div class="row">
+                                    <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Hold Commissions </label><br />
                                                 <input type="checkbox" class="checkbox" name="hold_commissions" value="1" <?php if(isset($edit_payout['hold_commissions']) && $edit_payout['hold_commissions']!=''){ echo "checked='true'"; } ?>/>
                                             </div>
                                         </div>
-                                   </div>
-                                   <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                             <label>Until </label>
                                             <div id="demo-dp-range">
@@ -1542,7 +1559,7 @@ var waitingDialog = waitingDialog || (function ($) {
 				                            </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                             <label>After </label>
                                             <div id="demo-dp-range">
@@ -1568,6 +1585,11 @@ var waitingDialog = waitingDialog || (function ($) {
                 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
                         <div class="panel-overlay-wrap">
                             <div class="panel">
+                                   <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
+
             					<div class="panel-body">
                                     <h4>Overrides </h4>
                                     <div class="panel" style="border: 1px solid #cccccc !important; padding: 10px !important;">
@@ -1712,7 +1734,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Apply Overrides To </label><br />
-                                            <input type="radio" name="apply_to" <?php if(isset($edit_payout['apply_to']) && $edit_payout['apply_to']=='1'){?>checked="true"<?php } ?>  class="radio" style="display: inline;" value="1"/>&nbsp;<label>All Trades</label>&nbsp;&nbsp;
+                                            <input type="radio" name="apply_to" <?php if(isset($edit_payout['apply_to']) && $edit_payout['apply_to']=='1'){?>checked="true"<?php } ?>  class="radio" style="display: inline;" value="1"/>&nbsp;<label>All Unpaid Trades</label>&nbsp;&nbsp;
                                             <input type="radio" name="apply_to" <?php if(isset($edit_payout['apply_to']) && $edit_payout['apply_to']=='2'){?>checked="true"<?php } ?> class="radio" style="display: inline;" value="2"/>&nbsp;<label>Only Going Forward</label>&nbsp;&nbsp;
                                         </div>
                                     </div>
@@ -1860,7 +1882,12 @@ var waitingDialog = waitingDialog || (function ($) {
                  <?php require_once(DIR_FS_INCLUDES."alerts.php");?>
                         <div class="panel-overlay-wrap">
                             <div class="panel">
+                                   <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                 <div class="panel-heading">
+
                                     <h4 class="panel-title" ><input type="checkbox"  class="checkbox" value="1"  name="pass_through1" id="pass_through1" style="display: inline !important;" onclick="pass_through_check();"<?php if(isset($edit_charge_check['none_check']) && $edit_charge_check['none_check'] == 1){echo 'checked="true"';}?> /><b> None (Pass Through)</b></h4>
                                 </div>
             					<div class="panel-body">
@@ -2021,8 +2048,13 @@ var waitingDialog = waitingDialog || (function ($) {
                                     <div class="tab-pane <?php if(!isset($_GET['sub_tab'])){echo "active";}else{ echo '';} ?>" id="tab_securities">
                                             <div class="panel-overlay-wrap">
                                                 <div class="panel">
+                                                       <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                                 <?php if(isset($edit_licences_securities)){foreach($edit_licences_securities as $key=>$val)
                                                 {   $row1 = $val['waive_home_state_fee']; $row2 = $val['product_category']; }}  ?>
+                                                
                                                    <div class="panel-heading">
                                                         <h4 class="panel-title" style="font-size: 20px;"><input type="checkbox" class="checkbox" <?php if(isset($_GET['action']) && $_GET['action'] == 'edit' && (isset($row1) && $row1 == '1'))    { ?>checked="true"<?php }?> name="pass_through" value="1" style="display: inline !important;"/> Waive Home State Fee</h4>
                                                     </div>
@@ -2190,6 +2222,10 @@ var waitingDialog = waitingDialog || (function ($) {
                                       
                                             <div class="panel-overlay-wrap">
                                                 <div class="panel">
+                                                    <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                                    <div class="panel-heading">
                                                     <?php if(isset($edit_licences_insurance) && !empty($edit_licences_insurance)){ foreach($edit_licences_insurance as $key=>$val)
                                                 {   $row1 = $val['waive_home_state_fee'];  } }  ?>
@@ -2333,6 +2369,10 @@ var waitingDialog = waitingDialog || (function ($) {
                                        
                                             <div class="panel-overlay-wrap">
                                                 <div class="panel">
+                                                    <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                                    <div class="panel-heading">
                                                         <?php if(isset($edit_licences_ria) && !empty($edit_licences_ria)) {foreach($edit_licences_ria as $key=>$val)
                                                         {   $row1 = $val['waive_home_state_fee'];  }  } ?>
@@ -2482,8 +2522,12 @@ var waitingDialog = waitingDialog || (function ($) {
                  <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
                         <div class="panel-overlay-wrap">
                             <div class="panel">
+                                 <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                 <div class="panel-heading">
-                                   
+                                  
                                     <h3 class="panel-title" style="font-size: 25px;"><b>Register</b></h3>
                                 </div>
             					<div class="panel-body">
@@ -2582,13 +2626,16 @@ var waitingDialog = waitingDialog || (function ($) {
                         <div class="panel-overlay-wrap">
                             <div class="panel">
                                 <div class="panel-heading">
-                                    
+                                    <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                     <h3 class="panel-title" style="font-size: 25px;"><b>Required Documents</b></h3>
                                 </div>
             					<div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="table-responsive" id="table-scroll">
+                                            <div class="table-responsive" style="height:auto;" id="table-scroll">
                                                 <table class="table table-bordered table-stripped table-hover">
                                                     <thead>
                                                         <th>Received</th>
@@ -2700,13 +2747,16 @@ var waitingDialog = waitingDialog || (function ($) {
                         <div class="panel-overlay-wrap">
                             <div class="panel">
                                 <div class="panel-heading">
-                                    
+                                    <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                     <h3 class="panel-title" style="font-size: 25px;"><b>Aliases & Appointments</b></h3>
                                 </div>
             					<div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="table-responsive" id="table-scroll">
+                                            <div class="table-responsive" style="height:auto;" id="table-scroll">
                                                 <table class="table table-bordered table-stripped table-hover">
                                                     <thead>
                                                         <th>Sponsor company</th>
@@ -2818,6 +2868,10 @@ var waitingDialog = waitingDialog || (function ($) {
                  <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
                         <div class="panel-overlay-wrap">
                             <div class="panel">
+                                <div class="panel-heading">
+                                                    <h4 class="panel-title" style="font-size: 20px;">
+                                                    <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?></h4>
+                                </div>
                                 <div class="panel-body">
                                     <!--<div class="row">
                                         <div class="col-md-3">
@@ -4144,6 +4198,8 @@ function open_address(value)
 }
 </script>
 <link href="<?php echo SITE_PLUGINS; ?>chosen/chosen.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
 <script src="<?php echo SITE_PLUGINS; ?>chosen/chosen.jquery.min.js"></script>
 <style>
 .chosen-container{
@@ -4169,5 +4225,30 @@ width: 100% !important;
         $('.chosen-select').chosen();
         
     });
+     // function Toggle() {
+     //        var temp = document.getElementById("web_password_general");
+     //       // var temp_show_eye = document.getElementById("togglePassword");
+     //        //'fa-eye-slash'
+     //        if (temp.type === "password") 
+     //        {
+
+     //            temp.type = "text";
+     //        }
+     //        else {
+
+     //            temp.type = "password";
+     //        }
+     //    }
+
+    const togglePassword = document.querySelector('#togglePassword');
+     const password = document.querySelector('#web_password_general');
+ 
+  togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
 </script>
 

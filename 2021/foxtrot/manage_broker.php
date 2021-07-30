@@ -9,6 +9,7 @@
     $lname = '';
     $mname = '';
     $suffix = '';
+    $_SESSION['broker_full_name'] ='';
     $fund = '';
     $internal = '';
     $display_on_statement = '';
@@ -448,6 +449,7 @@
         $fname = isset($return['first_name'])?$instance->re_db_output($return['first_name']):'';
         $lname = isset($return['last_name'])?$instance->re_db_output($return['last_name']):'';
         $mname = isset($return['middle_name'])?$instance->re_db_output($return['middle_name']):'';
+        $_SESSION['broker_full_name'] = $return['first_name'].' '.$return['middle_name'].' '.$return['last_name'];
         $suffix = isset($return['suffix'])?$instance->re_db_output($return['suffix']):'';
         $fund = isset($return['fund'])?$instance->re_db_output($return['fund']):'';
     	$internal = isset($return['internal'])?$instance->re_db_output($return['internal']):'';

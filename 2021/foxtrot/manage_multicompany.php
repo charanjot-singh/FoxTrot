@@ -13,7 +13,11 @@
     $broker_trans=$instance->select_broker_transaction($id);
     $get_manager  = $instance->select_manager();
     $get_product  = $instance->select_product_category();
-    if(isset($_POST['submit'])&& $_POST['submit']=='Save'){
+    
+if((isset($_POST['submit'])&& $_POST['submit']=='Save') 
+        || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
+        || (isset($_POST['submit'])&& $_POST['submit']=='Next') )
+    {
         
         //echo '<pre>';print_r($_POST);exit();
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
@@ -58,9 +62,38 @@
         
         $return = $instance->insert_update($_POST);
         
-        if($return===true){
-            header("location:".CURRENT_PAGE);
+        
+        if($return==true && $_POST['submit']=='Save'){
+            
+            
+                header("location:".CURRENT_PAGE);exit;
+            
         }
+        else if($return==true && $_POST['submit']=='Next')
+        {
+            $return = $instance->get_next_company($id);
+            
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
+        }
+        else if($return==true && $_POST['submit']=='Previous')
+        {
+            $return = $instance->get_previous_company($id);
+            
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
+             }
+        }
+
         else{
             $error = !isset($_SESSION['warning'])?$return:'';
         }
