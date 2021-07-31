@@ -127,7 +127,7 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Settlement Date <span class="text-red">*</span></label><br />
+                        <label>Settlement Date </label><br />
                         <div id="demo-dp-range">
                             <div class="input-daterange input-group" id="datepicker">
                                 <input type="text" name="settlement_date" id="settlement_date" value="<?php if(isset($settlement_date) && $settlement_date != '0000-00-00') {echo date('m/d/Y',strtotime($settlement_date));}?>" class="form-control" />
@@ -180,6 +180,7 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
             </div>
             <div class="row">
+                <div id="div_sponsor">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Sponsor </label><br />
@@ -191,6 +192,7 @@ $(document).on('click','.remove-row_override',function(){
                         </select>
                     </div>
                 </div>
+            </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Product <span class="text-red">*</span></label><br />
@@ -217,7 +219,7 @@ $(document).on('click','.remove-row_override',function(){
                     <div class="form-group">
                         <label>Investment Amount</label><br />
                         <div id="demo-dp-range">
-                            <input type="text" maxlength="12" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="invest_amount" id="invest_amount"  value="<?php if(isset($invest_amount)) {echo $invest_amount;}?>"/>  
+                            <input type="text" maxlength="12" onChange="setnumber_format(this)" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="invest_amount" id="invest_amount"  value="<?php if(isset($invest_amount)) {echo $invest_amount;}?>"/>  
                         </div>
                     </div>
                 </div>
@@ -226,18 +228,18 @@ $(document).on('click','.remove-row_override',function(){
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Charge Amount </label><br />
-                        <input type="text" maxlength="9" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="charge_amount"  value="<?php if(isset($charge_amount) && $charge_amount != '') {echo $charge_amount;}else{echo '0';}?>"/>
+                        <input type="text" maxlength="9" onChange="setnumber_format(this)" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="charge_amount"  value="<?php if(isset($charge_amount) && $charge_amount != '') {echo $charge_amount;}else{echo '0';}?>"/>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Commission Received Amount <span class="text-red">*</span></label><br />
-                        <input type="text" maxlength="12" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="commission_received"  value="<?php if(isset($commission_received)) {echo $commission_received;}?>"/>
+                        <input type="text" maxlength="12" onChange="setnumber_format(this)" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="commission_received"  value="<?php if(isset($commission_received)) {echo $commission_received;}?>"/>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Commission Received Date </label><br />
+                        <label>Commission Received Date <span class="text-red">*</span></label><br />
                         <div id="demo-dp-range">
                             <div class="input-daterange input-group" id="datepicker">
                                 <input type="text" name="commission_received_date" id="commission_received_date" value="<?php if(isset($commission_received_date) && $commission_received_date!='0000-00-00 00:00:00') {echo date('m/d/Y',strtotime($commission_received_date));}else{ echo ''; }?>" class="form-control" />
@@ -748,7 +750,14 @@ $('.decimal').chargeFormat();
 function get_product(category_id,selected=''){
         category_id = document.getElementById("product_cate").value;
         sponsor = document.getElementById("sponsor").value;
-    
+     if(category_id =='2' ||category_id =='3'|| category_id =='6'||category_id =='7'||category_id =='8')
+        {
+            div_sponsor.style.visibility='hidden';
+        }
+        else
+        {
+            div_sponsor.style.visibility='visible';
+        }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) 
@@ -784,6 +793,14 @@ function get_commission_date(batch_id)
         };
         xmlhttp.open("GET", "ajax_get_client_account.php?batch_id="+batch_id, true);
         xmlhttp.send();
+}
+function setnumber_format(inputtext)
+{
+    var a = inputtext.value;
+    var options = { style: 'currency', currency: 'USD'};
+    inputtext.value=(new Intl.NumberFormat(options).format(a));
+    
+
 }
 //get client split rate on client select
 function get_client_split_rates(client_id){
