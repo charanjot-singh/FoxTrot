@@ -60,7 +60,7 @@ class transaction extends db{
 			else if($commission_received==''){
 				$this->errors = 'Please enter commission received.';
 			}
-            else if($trade_date=='' || $trade_date-='01/01/1970'){
+            else if($trade_date=='' || $trade_date=='01/01/1970'){
 				$this->errors = 'Please enter trade date.';
 			}
             else if($commission_received_date=='' || $commission_received_date=='01/01/1970'){
