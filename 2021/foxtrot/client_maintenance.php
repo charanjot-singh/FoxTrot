@@ -224,25 +224,31 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         
         if($return===true && $_POST['submit']=='Save')
         {
-            
-            if($for_import == 'true')
+            if($action=='add_client_from_trans')
             {
-                if(isset($file_id) && $file_id >0 )
-                {
-                    header("location:".SITE_URL."import.php?tab=review_files&id=".$file_id);exit;
-                }
-                else
-                {
-                    header("location:".SITE_URL."import.php");exit;
-                }
-            }
-            else if($action == 'edit')
-            {
-                header("location:".CURRENT_PAGE);exit;
+                header("location:".SITE_URL."transaction.php?action=add");exit;
             }
             else
             {
-                header("location:".CURRENT_PAGE);exit;
+                if($for_import == 'true')
+                {
+                    if(isset($file_id) && $file_id >0 )
+                    {
+                        header("location:".SITE_URL."import.php?tab=review_files&id=".$file_id);exit;
+                    }
+                    else
+                    {
+                        header("location:".SITE_URL."import.php");exit;
+                    }
+                }
+                else if($action == 'edit')
+                {
+                    header("location:".CURRENT_PAGE);exit;
+                }
+                else
+                {
+                    header("location:".CURRENT_PAGE);exit;
+                }
             }
         }
         else if($return===true && $_POST['submit']=='Next')

@@ -89,6 +89,7 @@ $(document).on('click','.remove-row_override',function(){
                 <div class="col-md-12">
                     <div class="form-group"><br /><div class="selectwrap">
                         <input type="submit" name="transaction" onclick="waitingDialog.show();" value="Save"/>	
+
                         <a href="<?php echo CURRENT_PAGE.'?action=view';?>"><input type="button" name="cancel" value="Cancel" /></a>
                     </div>
                  </div>
@@ -139,7 +140,7 @@ $(document).on('click','.remove-row_override',function(){
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Client Name <span class="text-red">*</span></label><br />
+                        <label>Client Name <span class="text-red">* </span> </label><a href="client_maintenance.php?action=add_client_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
                         <select class="livesearch form-control" name="client_name" onchange="get_client_account_no(this.value);">
                             <option value="0">Select Client</option>
                             <?php foreach($get_client as $key=>$val){?>
@@ -195,7 +196,7 @@ $(document).on('click','.remove-row_override',function(){
             </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Product <span class="text-red">*</span></label><br />
+                        <label>Product <span class="text-red">*</span><a href="product_cate.php?action=add_product_from_trans&category=1" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
                         <select class="form-control" name="product"  id="product">
                             <option value="0">Select Product</option>
                         </select>
@@ -273,7 +274,7 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Split Commission<span class="text-red">*</span></label><br />
                         <label class="radio-inline">
@@ -284,7 +285,7 @@ $(document).on('click','.remove-row_override',function(){
                         </label>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Hold Commission <span class="text-red">*</span></label><br />
                         <label class="radio-inline">
@@ -295,10 +296,27 @@ $(document).on('click','.remove-row_override',function(){
                         </label>
                     </div>
                 </div>
-                <div class="col-md-4" id="div_hold_reason" style="<?php if(isset($hold_commission) && $hold_commission==1){ echo'display:true'; }else{ echo'display:none'; }?>">
+               
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label>Hold Reason </label><br />
-                        <input type="text"  class="form-control" value="<?php if(isset($hold_resoan)) {echo $hold_resoan;}?>" name="hold_resoan" id="hold_resoan"  />
+                        <label>Buy/Sell </label><br />
+                        <label class="radio-inline">
+                          <input type="radio" class="radio"  name="buy_sell" <?php if((isset($buy_sell) && $buy_sell==1) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="1"/>Buy    
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" class="radio" name="buy_sell" <?php if(isset($buy_sell) && $buy_sell==2){ echo'checked="true"'; }?> value="2" />Sell
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Cancel </label><br />
+                        <label class="radio-inline">
+                          <input type="radio" class="radio" name="cancel" <?php if(isset($cancel) && $cancel==1){ echo'checked="true"'; }?> value="1"/>YES
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" class="radio" name="cancel" <?php if((isset($cancel) && $cancel==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="2" />NO
+                        </label>
                     </div>
                 </div>
                 <!--<div class="col-md-8" id="split_div" <?php  if((isset($split) && $split!=1) || (isset($_GET['action']) && $_GET['action']=='add')){?>style="display: none;"<?php } ?>>
@@ -509,26 +527,10 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
            </div>-->
             <div class="row">
-                <div class="col-md-4">
+                 <div class="col-md-6" id="div_hold_reason" style="<?php if(isset($hold_commission) && $hold_commission==1){ echo'display:true'; }else{ echo'display:none'; }?>">
                     <div class="form-group">
-                        <label>Buy/Sell </label><br />
-                        <label class="radio-inline">
-                          <input type="radio" class="radio"  name="buy_sell" <?php if((isset($buy_sell) && $buy_sell==1) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="1"/>Buy    
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" name="buy_sell" <?php if(isset($buy_sell) && $buy_sell==2){ echo'checked="true"'; }?> value="2" />Sell
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Cancel </label><br />
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" name="cancel" <?php if(isset($cancel) && $cancel==1){ echo'checked="true"'; }?> value="1"/>YES
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" name="cancel" <?php if((isset($cancel) && $cancel==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="2" />NO
-                        </label>
+                        <label>Hold Reason </label><br />
+                        <input type="text"  class="form-control" value="<?php if(isset($hold_resoan)) {echo $hold_resoan;}?>" name="hold_resoan" id="hold_resoan"  />
                     </div>
                 </div>
             </div> 
@@ -537,6 +539,7 @@ $(document).on('click','.remove-row_override',function(){
             <div class="selectwrap">
                 <a href="<?php echo CURRENT_PAGE.'?action=view';?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
                 <input type="submit" name="transaction" onclick="waitingDialog.show();" value="Save" style="float: right;"/>	
+                <input type="submit" name="transaction" onclick="waitingDialog.show();" value="Save & Copy" style="float: right;"/>    
             </div>
           </div>
           </div>
@@ -720,7 +723,8 @@ $('.decimal').chargeFormat();
                         { "bSearchable": false, "aTargets": [ 8,9 ] }]
         });
         
-        $("div.toolbar").html('<div class="panel-control">'+
+        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+
+            '<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+

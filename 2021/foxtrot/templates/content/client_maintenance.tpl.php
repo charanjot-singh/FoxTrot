@@ -60,8 +60,8 @@ $(document).on('change', '#is_reviewed', function(event) {
         <div class="tab-content col-md-12">
             <div class="tab-pane active" id="tab_a">
                     <?php
-                    if($action=='add_new'||($action=='edit' && $id>0)){
-                        if($action=='add_new')
+                    if($action=='add_new' || $action='add_client_from_trans'||($action=='edit' && $id>0)){
+                        if($action=='add_new' || $action='add_client_from_trans')
                         {
                             $_SESSION['client_full_name']='';
                         }

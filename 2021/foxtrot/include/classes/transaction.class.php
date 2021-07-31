@@ -16,12 +16,12 @@ class transaction extends db{
             $sponsor = isset($data['sponsor'])?$this->re_db_input($data['sponsor']):'';
             $product = isset($data['product'])?$this->re_db_input($data['product']):'';
             $batch = isset($data['batch'])?$this->re_db_input($data['batch']):'';
-            $invest_amount = isset($data['invest_amount'])?$this->re_db_input($data['invest_amount']):0;
-            $charge_amount = isset($data['charge_amount'])?$this->re_db_input($data['charge_amount']):0;
-            $commission_received = isset($data['commission_received'])?$this->re_db_input($data['commission_received']):0;
+            $invest_amount = isset($data['invest_amount'])?$this->re_db_input(str_replace(',', '', $data['invest_amount'])):0;
+            $charge_amount = isset($data['charge_amount'])?$this->re_db_input(str_replace(',', '', $data['charge_amount'])):0;
+            $commission_received = isset($data['commission_received'])?$this->re_db_input(str_replace(',', '', $data['commission_received'])):0;
    //          $formatter = new NumberFormatter('de_DE', NumberFormatter::CURRENCY);
 			// $commission_received=var_dump($formatter->parseCurrency($data['commission_received'], $curr));
-			//print number_format($commission_received,2); exit;
+			
             $commission_received_date = isset($data['commission_received_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['commission_received_date']))):'0000-00-00';
             $posting_date = isset($data['posting_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['posting_date']))):'0000-00-00';
             $trade_date = isset($data['trade_date'])?$this->re_db_input(date('Y-m-d',strtotime($data['trade_date']))):'0000-00-00';

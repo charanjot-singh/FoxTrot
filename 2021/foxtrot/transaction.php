@@ -24,7 +24,7 @@
     $units = 0;
     $shares = 0; 
     
-    if(isset($_POST['transaction'])&& $_POST['transaction']=='Save'){ 
+    if((isset($_POST['transaction'])&& $_POST['transaction']=='Save')|| (isset($_POST['transaction'])&& $_POST['transaction']=='Save & Copy')){ 
         //echo '<pre>';print_r($_POST);exit();
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         //$trade_number = isset($_POST['trade_number'])?$instance->re_db_input($_POST['trade_number']):0;
@@ -65,7 +65,18 @@
                 exit;
             }
             else{
-                header("location:".CURRENT_PAGE."?action=view");exit;
+                if($_POST['transaction']=='Save & Copy')
+                {
+                    $commission_received='';
+                    $units=0;
+                    $invest_amount ='';
+                    $shares=0;
+                    $charge_amount ='';
+                }
+                else
+                {
+                    header("location:".CURRENT_PAGE."?action=view");exit;
+                }
             }
         }
         else{
