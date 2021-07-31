@@ -5,7 +5,7 @@ $instance = new transaction();
 if(isset($_GET['client_id']) && $_GET['client_id'] > 0)
 {
     $client_id = isset($_GET['client_id'])?$instance->re_db_input($_GET['client_id']):'';
-    $get_client_account = $instance->select_client_account_no($client_id);
+    $get_client_account = $instance->select_client_account_no($client_id);    
     echo $get_client_account;
 }
 if(isset($_GET['batch_id']) && $_GET['batch_id'] > 0)

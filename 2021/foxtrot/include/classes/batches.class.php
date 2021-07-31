@@ -39,12 +39,13 @@
             $prompt_for_check_amount= isset($data['prompt_for_check_amount'])?$this->re_db_input($data['prompt_for_check_amount']):0;
             $posted_amounts= isset($data['posted_amounts'])?$this->re_db_input($data['posted_amounts']):0;
             			
-			if($pro_category==''){
-				$this->errors = 'Please select product category.';
+			if($batch_date=='' || $batch_date=='1970-01-01')
+			{
+				$this->errors = 'Please select batch date.';
 			}
-            /*else if($batch_number==''){
-				$this->errors = 'Please enter batch number';
-			}*/
+            else if($batch_desc==''){
+				$this->errors = 'Please enter batch description';
+			}
 			else if($sponsor==''){
 				$this->errors = 'Please select sponsor.';
 			}

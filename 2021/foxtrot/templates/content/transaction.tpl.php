@@ -73,8 +73,8 @@ $(document).on('click','.remove-row_override',function(){
 });
 </script>
 <div class="container">
-<h1 class="<?php if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'topfixedtitle';}?>">Transactions</h1> 
-    <div class="col-lg-12 well <?php if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'fixedwell';}?>">
+<h1 class="<?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'topfixedtitle';}*/?>">Transactions</h1> 
+    <div class="col-lg-12 well <?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'fixedwell';}*/?>">
     <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
    
     
@@ -95,12 +95,6 @@ $(document).on('click','.remove-row_override',function(){
                  </div>
              </div> -->
         <div class="panel">            
-       
-            <div class="panel-footer">
-                <div class="selectwrap" style="float: right;">
-                    <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
-                </div>
-           </div>
             <div class="panel-heading">
                 <div class="panel-control" style="float: right;">
     				<div class="btn-group dropdown">
@@ -113,6 +107,7 @@ $(document).on('click','.remove-row_override',function(){
                 <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add'?'Add':'Edit'; ?> Transactions</h3>
     		</div>
             <div class="panel-body">
+            <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">

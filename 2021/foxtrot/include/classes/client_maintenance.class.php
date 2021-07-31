@@ -95,6 +95,10 @@
             {
 				$this->errors = 'Please select income.';
 			}
+			else if($objectives=='')
+            {
+				$this->errors = 'Please select at lease 1 objective.';
+			}
 			else if($net_worth=='')
             {
 				$this->errors = 'Please select net worth.';
@@ -103,10 +107,7 @@
             {
 				$this->errors = 'Please select goal horizone.';
 			}                                   
-			else if($objectives=='')
-            {
-				$this->errors = 'Please select at lease 1 objective.';
-			}
+			
 			else 
 			{
 				$this->errors = '';
@@ -146,7 +147,7 @@
 						$res = $this->re_db_query($q);
                         $_SESSION['client_id'] = $this->re_db_insert_id();
                         $get_name = $this->get_client_name($_SESSION['client_id']);
-                        print("hiiii");exit;
+                        
                         $_SESSION['client_full_name'] = $get_name[0]['first_name'].' '.$get_name[0]['mi'].'.'.$get_name[0]['last_name'];
 						if($res){
 						    $_SESSION['success'] = INSERT_MESSAGE;
@@ -159,7 +160,7 @@
 					}
 					else if($id>0)
 					{
-					    print("hiiii_up");exit;
+					    
 						$q = "UPDATE `".$this->table."` SET `first_name`='".$fname."',`last_name`='".$lname."',`mi`='".$mi."',`do_not_contact`='".$do_not_contact."',`active`='".$active."',`ofac_check`='".$ofak_check."',`fincen_check`='".$fincen_check."',`long_name`='".$long_name."',`client_file_number`='".$client_file_number."',`clearing_account`='".$clearing_account."',`client_ssn`='".$client_ssn."',`house_hold`='".$household."',`split_broker`='".$split_broker."',`split_rate`='".$split_rate."',`address1`='".$address1."',`address2`='".$address2."',`city`='".$city."',`state`='".$state."',`zip_code`='".$zip_code."',`citizenship`='".$citizenship."',`birth_date`='".$birth_date."',`date_established`='".$date_established."',`age`='".$age."',`open_date`='".$open_date."',`naf_date`='".$naf_date."',`last_contacted`='".$last_contacted."',`account_type`='".$account_type."',`broker_name`='".$broker_name."',`telephone`='".$telephone."',`contact_status`='".$contact_status."',`reviewed_at`='".$reviewed_at."',`reviewed_by`='".$reviewed_by."',`is_reviewed`='".$is_reviewed."'".$this->update_common_sql()." WHERE `id`='".$id."'";
 						$res = $this->re_db_query($q);
 						if($res){

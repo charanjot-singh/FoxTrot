@@ -252,7 +252,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         <select name="split_broker" id="split_broker" class="form-control">
                                                             <option value="">Select Broker</option>
                                                             <?php foreach($get_broker as $key=>$val){?>
-                                                            <option value="<?php echo $val['id'];?>" <?php if($split_broker != '' && $split_broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['first_name'].' '.$val['last_name'];?></option>
+                                                            <option value="<?php echo $val['id'];?>" <?php if($split_broker != '' && $split_broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['last_name'].','.$val['first_name'];?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -1065,7 +1065,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                             foreach($return as $key=>$val){
                                 ?>
             	                   <tr>
-                                        <td><?php echo $val['first_name']." ".$val['last_name']; ?></td>
+                                        <td><?php echo $val['last_name'].",".$val['first_name']; ?></td>
                                         <td><?php echo $val['client_file_number']; ?></td>
                                         <td><?php echo $val['clearing_account']; ?></td>
                                         <td><?php echo $val['account_type']; ?></td>
