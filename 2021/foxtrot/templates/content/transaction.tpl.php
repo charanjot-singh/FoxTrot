@@ -141,7 +141,7 @@ $(document).on('click','.remove-row_override',function(){
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Client Name <span class="text-red">* </span> </label><a href="client_maintenance.php?action=add_client_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
-                        <select class="livesearch form-control" name="client_name" onchange="get_client_account_no(this.value);">
+                        <select class="livesearch form-control" id="client_name" name="client_name" onchange="get_client_account_no(this.value);">
                             <option value="0">Select Client</option>
                             <?php foreach($get_client as $key=>$val){?>
                             <option value="<?php echo $val['id'];?>" <?php if(isset($client_name) && $client_name==$val['id']){ ?>selected="true"<?php } ?>><?php echo $val['first_name'].' '.$val['mi'].' '.$val['last_name'];?></option>
@@ -152,7 +152,7 @@ $(document).on('click','.remove-row_override',function(){
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Client Number <span class="text-red">*</span></label><br />
-                        <input type="text" maxlength="26" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="client_number"  id="client_number" value="<?php if(isset($client_number)) {echo $client_number;}?>"/>
+                        <input type="text" maxlength="26" onchange="get_client_id(this.value);" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="client_number"  id="client_number" value="<?php if(isset($client_number)) {echo $client_number;}?>"/>
                     </div>
                 </div>
             </div>
@@ -196,7 +196,7 @@ $(document).on('click','.remove-row_override',function(){
             </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Product <span class="text-red">*</span><a href="product_cate.php?action=add_product_from_trans&category=1" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
+                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="product_cate.php?redirect=add_product_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
                         <select class="form-control" name="product"  id="product">
                             <option value="0">Select Product</option>
                         </select>
@@ -252,12 +252,13 @@ $(document).on('click','.remove-row_override',function(){
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Batch <span class="text-red">*</span></label><br />
-                        <select class="form-control" name="batch" onchange="get_commission_date(this.value);">
-                            <option value="0">Select Batch</option>
+                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="batches.php?action=add_batches_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
+                        <select class="form-control" name="batch" onchange="get_commission_date(this.value);">            
+                            <option value="0">Select Batch</option>                
                              <?php foreach($get_batch as $key=>$val){?>
-                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php } ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
+                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php }else if(isset($key) && $key==0){?> selected="true"<?php } ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
                             <?php } ?>
+                            
                         </select>
                     </div>
                 </div>
@@ -754,6 +755,8 @@ $('.decimal').chargeFormat();
 function get_product(category_id,selected=''){
         category_id = document.getElementById("product_cate").value;
         sponsor = document.getElementById("sponsor").value;
+        $("#add_new_prod").attr("href","product_cate.php?action=add_product_from_trans&category="+category_id);
+        
      if(category_id =='2' ||category_id =='3'|| category_id =='6'||category_id =='7'||category_id =='8')
         {
             div_sponsor.style.visibility='hidden';
@@ -783,6 +786,20 @@ function get_client_account_no(client_id){
             }
         };
         xmlhttp.open("GET", "ajax_get_client_account.php?client_id="+client_id, true);
+        xmlhttp.send();
+}
+function get_client_id(client_number){
+        
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) 
+            {              
+
+                $('#client_name').val(this.responseText).trigger("chosen:updated");
+             //   alert($('#client_name').val());
+            }
+        };
+        xmlhttp.open("GET", "ajax_get_client_account.php?client_number="+client_number, true);
         xmlhttp.send();
 }
 //get default commission date on batch date

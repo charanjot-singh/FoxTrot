@@ -67,12 +67,13 @@ $(document).on('click','.remove-row',function(){
 });
 </script>
 <div class="container">
-<h1 class="<?php if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtitle';}?>">  Product Maintenance  </h1>
-<div class="col-lg-12 well <?php if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'fixedwell';}?>">
+<h1 class="<?php /*if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtitle';}*/?>">  Product Maintenance  </h1>
+<div class="col-lg-12 well <?php/* if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'fixedwell';}*/?>">
 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
             <?php
                     if(isset($_GET['action']) && $_GET['action']=='view_product') {?>
                 <div class="panel">
+
             		<!--<div class="panel-heading">
                         <div class="panel-control">
                             <div class="btn-group dropdown" style="float: right;">
@@ -182,7 +183,7 @@ $(document).on('click','.remove-row',function(){
                 </form>
                 </div>
                 <?php
-                    }else if($action=='add_product' || ($action=='edit_product' && $id>0)){
+                    }else if($action=='add_product' || $action=='add_product_from_trans' || ($action=='edit_product' && $id>0)){
                 ?>   
                 <ul class="nav nav-tabs <?php if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtabs';}?>">
                   <li class="active"><a href="#tab_aa" data-toggle="tab">General</a></li>

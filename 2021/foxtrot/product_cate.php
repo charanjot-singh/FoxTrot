@@ -2,6 +2,7 @@
     require_once("include/config.php");
     require_once(DIR_FS."islogin.php");
     $error = '';
+    $redirect='';
     $return = array();
     $search_text = '';
     $category = '';
@@ -41,6 +42,7 @@
     
  
     $action = isset($_GET['action'])&&$_GET['action']!=''?$dbins->re_db_input($_GET['action']):'select_cat';
+    $redirect = isset($_GET['redirect'])&&$_GET['redirect']!=''?$dbins->re_db_input($_GET['redirect']):'';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
     $category = isset($_GET['category'])&&$_GET['category']!=''?$dbins->re_db_input($_GET['category']):1;
     
@@ -57,7 +59,8 @@
             header("location:".CURRENT_PAGE.'?action=view_product&category='.$category.'');exit;
         }
     }
-    else if(isset($_POST['product'])&& $_POST['product']=='Save'){
+    else if(isset($_POST['product'])&& $_POST['product']=='Save')
+    {
         //echo '<pre>'; print_r($_POST);exit;
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         $category = isset($_POST['product_category'])?$instance->re_db_input($_POST['product_category']):'';
@@ -97,10 +100,12 @@
         
         $return = $instance->insert_update($_POST);
         
-        if($return===true){
+        if($return===true)
+        {
             
             if($for_import == 'true')
             {
+
                 if(isset($file_id) && $file_id >0 )
                 {
                     header("location:".SITE_URL."import.php?tab=review_files&id=".$file_id);exit;
@@ -112,10 +117,18 @@
             }
             else
             {
-                header("location:".CURRENT_PAGE.'?action=select_cat');exit;
+                if($redirect=='add_product_from_trans')
+                {
+                    header("location:".SITE_URL."transaction.php?action=add");exit;  
+                }
+                else
+                {
+                    header("location:".CURRENT_PAGE.'?action=select_cat');exit;
+                }
             }
         }
-        else{
+        else
+        {
             $error = !isset($_SESSION['warning'])?$return:'';
         }
     }

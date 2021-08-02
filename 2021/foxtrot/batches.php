@@ -12,7 +12,8 @@
     $get_sponsor = $instance->select_sponsor();
     $get_commission_amount = array();
     
-    if(isset($_POST['batches'])&& $_POST['batches']=='Save'){ 
+    if(isset($_POST['batches'])&& $_POST['batches']=='Save')
+    { 
         //echo '<pre>';print_r($_POST);exit();
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         $pro_category = isset($_POST['pro_category'])?$instance->re_db_input($_POST['pro_category']):'';
@@ -31,10 +32,19 @@
         
         $return = $instance->insert_update($_POST);
         
-        if($return===true){
-            header("location:".CURRENT_PAGE."?action=view_batches");exit;
+        if($return===true)
+        {
+            if($action=='add_batches_from_trans')
+            {
+                header("location:".SITE_URL."transaction.php?action=add");exit;
+            }
+            else
+            {
+                header("location:".CURRENT_PAGE."?action=view_batches");exit;
+            }
         }
-        else{
+        else
+        {
             $error = !isset($_SESSION['warning'])?$return:'';
         }
  

@@ -8,6 +8,12 @@ if(isset($_GET['client_id']) && $_GET['client_id'] > 0)
     $get_client_account = $instance->select_client_account_no($client_id);    
     echo $get_client_account;
 }
+if(isset($_GET['client_number']) && $_GET['client_number'] > 0)
+{
+    $client_number = isset($_GET['client_number'])?$instance->re_db_input($_GET['client_number']):'';
+    $get_client_id = $instance->select_client_id($client_number);    
+    echo $get_client_id;
+}
 if(isset($_GET['batch_id']) && $_GET['batch_id'] > 0)
 {
     $batch_id = isset($_GET['batch_id'])?$instance->re_db_input($_GET['batch_id']):'';

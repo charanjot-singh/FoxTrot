@@ -4,7 +4,7 @@
     <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
         <?php  
     
-    if((isset($_GET['action']) && $_GET['action']=='add_batches') || (isset($_GET['action']) && ($_GET['action']=='edit_batches' && $id>0))){
+    if((isset($_GET['action']) && $_GET['action']=='add_batches') || (isset($_GET['action']) && $_GET['action']=='add_batches_from_trans') || (isset($_GET['action']) && ($_GET['action']=='edit_batches' && $id>0))){
         ?>
         <form name="frm2" method="POST">
             <!--<div class="row">

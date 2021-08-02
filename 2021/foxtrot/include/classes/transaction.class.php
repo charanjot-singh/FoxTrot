@@ -376,6 +376,23 @@ class transaction extends db{
             }
 			return $return;
 		}
+		 public function select_client_id($client_number){
+			$return = '';
+			
+			$q = "SELECT `at`.`client_id`
+					FROM `".CLIENT_ACCOUNT."` AS `at`
+                    WHERE `at`.`is_delete`='0' AND `at`.`account_no`=".$client_number."
+                    ORDER BY `at`.`client_id` ASC limit 1";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    			     $return = $row['client_id'];
+                     
+    			}
+            }
+			return $return;
+		}
         public function select_broker(){
 			$return = array();
 			
@@ -399,7 +416,7 @@ class transaction extends db{
 			$q = "SELECT `at`.*
 					FROM `".BATCH_MASTER."` AS `at`
                     WHERE `at`.`is_delete`='0'
-                    ORDER BY `at`.`id` ASC";
+                    ORDER BY `at`.`id` desc";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
                 $a = 0;

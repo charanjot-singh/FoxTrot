@@ -60,7 +60,7 @@ $(document).on('change', '#is_reviewed', function(event) {
         <div class="tab-content col-md-12">
             <div class="tab-pane active" id="tab_a">
                     <?php
-                    if($action=='add_new' || $action='add_client_from_trans'||($action=='edit' && $id>0)){
+                    if($action=='add_new' || $action=='add_client_from_trans'||($action=='edit' && $id>0)){
                         if($action=='add_new' || $action='add_client_from_trans')
                         {
                             $_SESSION['client_full_name']='';
@@ -651,7 +651,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                    
+                                                    </div>
                                                 </div>
                                             </div>
                                             </div>
@@ -667,7 +667,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                     </div>
                                 
                                 </div>
-                            </div>
+
                                 <div class="tab-pane <?php if(isset($_GET['tab'])&&$_GET['tab']=="account_no"){ echo "active"; } ?>" id="tab_dd">
                                   
                                         <div class="panel-overlay-wrap">
@@ -1010,7 +1010,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         <!-- <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
                                         <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?> -->
 
-                                        <?php if($_GET['action']=='edit' && $_GET['id']){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
+                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && $_GET['id']){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
                          <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a" ><input type="submit" name="submit" value="Next" /></a><?php } ?>
 
                                         <?php if($action=='edit' && $id>0){?>
