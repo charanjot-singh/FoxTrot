@@ -68,7 +68,7 @@ $(document).on('click','.remove-row',function(){
 </script>
 <div class="container">
 <h1 class="<?php /*if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtitle';}*/?>">  Product Maintenance  </h1>
-<div class="col-lg-12 well <?php/* if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'fixedwell';}*/?>">
+<div class="col-lg-12 well <?php /*if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'fixedwell';}*/?>">
 <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
             <?php
                     if(isset($_GET['action']) && $_GET['action']=='view_product') {?>
@@ -161,14 +161,15 @@ $(document).on('click','.remove-row',function(){
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Product Category </label><br />
-                                <select class="form-control" name="set_category" style="display: inline !important;">
-                                    <option value="">Select Category</option>
+                                <select class="form-control" id="set_category" onchange="product_category_autoredirect(this.value)" name="set_category" style="display: inline !important;">
+                                    <option value="0" selected="true">Select Category</option>
                                     <?php foreach($product_category as $key=>$val){?>
                                     <option value="<?php echo $val['id'];?>" <?php if($category==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
                                     <?php } ?>
                                 </select>
                             </div>
                         </div>
+                        <div id="next_btn" style="visibility:hidden;">
                         <div class="col-md-6">
                             <div class="form-group">
                             <label>&nbsp;</label><br />
@@ -176,6 +177,7 @@ $(document).on('click','.remove-row',function(){
                                     <input type="submit" name="next" value="Next" />
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                     
@@ -185,14 +187,14 @@ $(document).on('click','.remove-row',function(){
                 <?php
                     }else if($action=='add_product' || $action=='add_product_from_trans' || ($action=='edit_product' && $id>0)){
                 ?>   
-                <ul class="nav nav-tabs <?php if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtabs';}?>">
+                <ul class="nav nav-tabs <?php /*if($action=='add_product'||($action=='edit_product' && $id>0)){ echo 'topfixedtabs';}*/?>">
                   <li class="active"><a href="#tab_aa" data-toggle="tab">General</a></li>
                   <li><a href="#tab_bb" data-toggle="tab">Suitability</a></li>
                   <!--<li><a href="#tab_ee" data-toggle="tab">Documents</a></li>-->
                     <div class="btn-group dropdown" style="float: right;">
 						<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
 						<ul class="dropdown-menu dropdown-menu-right" style="">
-							<li><a href="<?php echo CURRENT_PAGE; ?>"><i class="fa fa-eye"></i> View List</a></li>
+							<li><a href="<?php echo CURRENT_PAGE; ?>?action=view_product&category=<?php echo $category;?>"><i class="fa fa-eye"></i> View List</a></li>
 						</ul>
 					</div>
 				</ul> 
@@ -256,14 +258,16 @@ $(document).on('click','.remove-row',function(){
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div id="div_sponsor">
                                     <div class="form-group">
                                         <label>Sponsor <span class="text-red">*</span></label><br />
-                                        <select class="form-control" name="sponsor">
+                                        <select class="form-control" name="sponsor" id="sponsor">
                                             <option value="">Select Sponsor</option>
                                              <?php foreach($get_sponsor as $key=>$val){?>
                                             <option value="<?php echo $val['id'];?>" <?php if($sponsor != '' && $sponsor==$val['id']){echo "selected='selected'";} ?>><?php echo $val['name'];?></option>
                                             <?php } ?>
                                         </select>
+                                    </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -683,8 +687,8 @@ $(document).on('click','.remove-row',function(){
                             <input type="hidden" name="temp_data_id" id="temp_data_id" class="form-control" value="<?php echo $_GET['exception_data_id']; ?>" />
                             <?php }?>
                             <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
-                            <?php if($_GET['action']=='edit_product' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous&category=<?php echo $category;?>" class="previous next_previous_a" style="float: left;"><input type="button" name="Previous" value="&laquo; Previous" /></a><?php } ?>
-        					<?php if($_GET['action']=='edit_product' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next&category=<?php echo $category;?>" class="next next_previous_a"><input type="button" name="Next" value="Next &raquo;" /></a><?php } ?>
+                            <?php if($_GET['action']=='edit_product' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous&category=<?php echo $category;?>" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
+        					<?php if($_GET['action']=='edit_product' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next&category=<?php echo $category;?>" class="next next_previous_a"><input type="submit" name="submit" value="Next" /></a><?php } ?>
                             
                             <?php if($action=='edit_product' && $id>0){?>
                             <a href="#view_changes" data-toggle="modal"><input type="button" name="view_changes" value="View Changes" style="margin-left: 10%;"/></a>
@@ -1331,7 +1335,8 @@ $(document).on('click','.remove-row',function(){
                         { "bSearchable": false, "aTargets": [ 4 ] }]
         });
         
-        $("div.toolbar").html('<div class="panel-control">'+
+        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_product&category=<?php echo $category; ?>" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+
+            '<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
@@ -1340,6 +1345,7 @@ $(document).on('click','.remove-row',function(){
                         '</ul>'+
     				'</div>'+
     			'</div>');
+        hideshow_sponser_based_on_product_category(<?php echo $category; ?>);
 } );
 </script>
 <style type="text/css">
@@ -1466,6 +1472,17 @@ function get_product_attach(){
         xmlhttp.open("GET", "ajax_product_attach.php", true);
         xmlhttp.send();
 }
+function hideshow_sponser_based_on_product_category(product_category)
+{
+     if(product_category =='2' ||product_category =='3'|| product_category =='6'||product_category =='7'||product_category =='8')
+        {
+            div_sponsor.style.visibility='hidden';
+        }
+        else
+        {
+            div_sponsor.style.visibility='visible';
+        }
+}
 function openedit(note_id){
     
     var frm_element = document.getElementById("add_client_notes_"+note_id);
@@ -1473,6 +1490,14 @@ function openedit(note_id){
     name = frm_element.elements["client_note"].removeAttribute("style"); 
     //$(name).css('pointer-events','');
     console.log(name);
+}
+function product_category_autoredirect(product_category){
+    
+    if(product_category!='0')
+    {
+        window.location="product_cate.php?action=view_product&category="+product_category;
+    }
+    
 }
 </script>
 <script>

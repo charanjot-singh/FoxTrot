@@ -44,22 +44,33 @@
     $action = isset($_GET['action'])&&$_GET['action']!=''?$dbins->re_db_input($_GET['action']):'select_cat';
     $redirect = isset($_GET['redirect'])&&$_GET['redirect']!=''?$dbins->re_db_input($_GET['redirect']):'';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
-    $category = isset($_GET['category'])&&$_GET['category']!=''?$dbins->re_db_input($_GET['category']):1;
+    $category = isset($_GET['category'])&&$_GET['category']!=''?$dbins->re_db_input($_GET['category']):'';
     
     $instance = new product_maintenance();
     $product_category = $instance->select_category();
     $get_sponsor = $instance->select_sponsor();
-    $get_product_transactions = $instance->get_transaction_on_product($id,$category);//print_r($get_product_transactions);exit;
+    if($category=='' || $category=='0')
+    {
+        $get_product_transactions='';
+    }
+    else
+    {
+        $get_product_transactions = $instance->get_transaction_on_product($id,$category);//print_r($get_product_transactions);exit;
+    }
     
-    if(isset($_POST['next'])&& $_POST['next']=='Next'){
+    if(isset($_POST['next'])&& $_POST['next']=='Next')
+    {
         
         $category = isset($_POST['set_category'])?$instance->re_db_input($_POST['set_category']):'';
         
-        if($category!=''){
+        if($category!='')
+        {
             header("location:".CURRENT_PAGE.'?action=view_product&category='.$category.'');exit;
         }
     }
-    else if(isset($_POST['product'])&& $_POST['product']=='Save')
+    else if((isset($_POST['product'])&& $_POST['product']=='Save')
+        || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
+        || (isset($_POST['submit'])&& $_POST['submit']=='Next'))
     {
         //echo '<pre>'; print_r($_POST);exit;
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
@@ -102,36 +113,70 @@
         
         if($return===true)
         {
-            
-            if($for_import == 'true')
+            if($return===true && $_POST['product']=='Save')
             {
+         
+                if($for_import == 'true')
+                {
 
-                if(isset($file_id) && $file_id >0 )
-                {
-                    header("location:".SITE_URL."import.php?tab=review_files&id=".$file_id);exit;
+                    if(isset($file_id) && $file_id >0 )
+                    {
+                        header("location:".SITE_URL."import.php?tab=review_files&id=".$file_id);exit;
+                    }
+                    else
+                    {
+                        header("location:".SITE_URL."import.php");exit;
+                    }
                 }
                 else
                 {
-                    header("location:".SITE_URL."import.php");exit;
+                    if($redirect=='add_product_from_trans')
+                    {
+                        header("location:".SITE_URL."transaction.php?action=add");exit;  
+                    }
+                    else
+                    {
+                        header("location:".CURRENT_PAGE.'?action=select_cat');exit;
+                    }
                 }
             }
-            else
+        else if($return==true && $_POST['submit']=='Next')
+        {
+            $id = $instance->re_db_input($_GET['id']);
+            $category =$instance->re_db_input($_GET['category']);
+            
+            $return = $instance->get_next_product($id,$category);
+            //print($return);exit();
+            if($return!=false)
             {
-                if($redirect=='add_product_from_trans')
-                {
-                    header("location:".SITE_URL."transaction.php?action=add");exit;  
-                }
-                else
-                {
-                    header("location:".CURRENT_PAGE.'?action=select_cat');exit;
-                }
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
             }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
+            }
+        }
+        else if($return==true && $_POST['submit']=='Previous')
+        {
+            $id = $instance->re_db_input($_GET['id']);
+            $category =$instance->re_db_input($_GET['category']);
+            $return = $instance->get_previous_product($id,$category);
+                
+            if($return!=false){
+                $id=$return['id'];
+                header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
+            }
+            else{
+                header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
+            }
+            
         }
         else
         {
             $error = !isset($_SESSION['warning'])?$return:'';
         }
     }
+}
     else if(isset($_POST['submit']) && ($_POST['submit']=='Add Note' || $_POST['submit']=='Update Note')){
         $note_id = isset($_POST['note_id'])?$instance->re_db_input($_POST['note_id']):0;
         $note_date = isset($_POST['note_date'])?$instance->re_db_input($_POST['note_date']):'';
@@ -208,10 +253,10 @@
             
         if($return!=false){
             $id=$return['id'];
-            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."");exit;
+            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
         }
         else{
-            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."");exit;
+            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
         }
         
     }
@@ -221,13 +266,13 @@
         $category =$instance->re_db_input($_GET['category']);
         
         $return = $instance->get_next_product($id,$category);
-            
+        //print($return);exit();
         if($return!=false){
             $id=$return['id'];
-            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."");exit;
+            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
         }
         else{
-            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."");exit;
+            header("location:".CURRENT_PAGE."?action=edit_product&id=".$id."&category=".$category."");exit;
         }
         
     } 
@@ -294,7 +339,8 @@
         if($return==true){
             header('location:'.CURRENT_PAGE.'?action=view_product&category='.$category);exit;
         }
-        else{
+        else
+        {
             header('location:'.CURRENT_PAGE);exit;
         }
     } 
@@ -305,8 +351,15 @@
        $return = $instance->search_product($search_text_product,$search_product_category);
     }
     else if($action=='view_product'){
-        
-        $return = $instance->select_product_category($category);//echo'<pre>';print_r($return);exit;
+        if($category=='' || $category=='0')
+        {
+            $category='1';
+            $return = $instance->select_product_category($category);
+        }
+        else
+        {
+            $return = $instance->select_product_category($category);
+        }
         
     }
     $content = "product_cate";

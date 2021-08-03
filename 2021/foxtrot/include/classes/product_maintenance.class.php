@@ -54,7 +54,8 @@
             else if($category==''){
 				$this->errors = 'Please select product category.';
 			}
-			else if($sponsor==''){
+			else if($sponsor=='' && ($category !='2' && $category!='3'&& $category!='6' && $category!='7'&& $category !='8'))
+			{
 				$this->errors = 'Please select sponsor.';
 			}
 			if($this->errors!=''){
