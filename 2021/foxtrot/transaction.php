@@ -5,11 +5,16 @@
     
     $action = isset($_GET['action'])&&$_GET['action']!=''?$dbins->re_db_input($_GET['action']):'view';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
-    
+    $ch_date ='';
+    $ch_amount ='';
+    $ch_no ='';
+    $ch_pay_to ='';
     $instance = new transaction();
     $instance_batch = new batches();
     $product_category = $instance->select_category();
     $get_sponsor = $instance->select_sponsor();
+    $client_account_array=$instance->select_all_client_account_no();
+    //echo '<pre>'; print_r($client_account_array); exit;
     $get_broker =$instance->select_broker();
     $get_client= $instance->select_client();
     $get_batch = $instance->select_batch();
@@ -17,6 +22,7 @@
     $client_name='';
     $broker_name='';
     $product = '';
+    $is_pending_order='';
     $batch = '';
     $split_broker = array();
     $split_rate = array();
@@ -25,11 +31,20 @@
     $shares = 0; 
     
     if((isset($_POST['transaction'])&& $_POST['transaction']=='Save')|| (isset($_POST['transaction'])&& $_POST['transaction']=='Save & Copy')){ 
-        //echo '<pre>';print_r($_POST);exit();
+       // echo '<pre>';print_r($_POST);exit();
+
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
+
         //$trade_number = isset($_POST['trade_number'])?$instance->re_db_input($_POST['trade_number']):0;
         $client_name = isset($_POST['client_name'])?$instance->re_db_input($_POST['client_name']):'';
         $client_number = isset($_POST['client_number'])?$instance->re_db_input($_POST['client_number']):'';
+        // $client_id_from_ac_no =0;
+        // $client_id_from_ac_no=$instance->select_client_id($client_number);
+        // if($client_id_from_ac_no=='' || $client_id_from_ac_no)
+        // {
+
+        // }
+
         $broker_name = isset($_POST['broker_name'])?$instance->re_db_input($_POST['broker_name']):'';
         $product_cate = isset($_POST['product_cate'])?$instance->re_db_input($_POST['product_cate']):'';
         $sponsor = isset($_POST['sponsor'])?$instance->re_db_input($_POST['sponsor']):'';
@@ -39,6 +54,12 @@
         $charge_amount = isset($_POST['charge_amount'])?$instance->re_db_input($_POST['charge_amount']):'';
         $commission_received = isset($_POST['commission_received'])?$instance->re_db_input($_POST['commission_received']):'';
         $commission_received_date = isset($_POST['commission_received_date'])?$instance->re_db_input($_POST['commission_received_date']):'';
+
+        $ch_date =isset($_POST['ch_date'])?$instance->re_db_input($_POST['ch_date']):'';
+        $ch_amount =isset($_POST['ch_amount'])?$instance->re_db_input($_POST['ch_amount']):'';
+        $ch_no =isset($_POST['ch_no'])?$instance->re_db_input($_POST['ch_no']):'';
+        $ch_pay_to =isset($_POST['ch_pay_to'])?$instance->re_db_input($_POST['ch_pay_to']):'';
+
         $trade_date = isset($_POST['trade_date'])?$instance->re_db_input($_POST['trade_date']):'';
         $settlement_date = isset($_POST['settlement_date'])?$instance->re_db_input($_POST['settlement_date']):'';
         $split = isset($_POST['split'])?$instance->re_db_input($_POST['split']):'';
@@ -55,6 +76,7 @@
         $units = isset($_POST['units'])?$instance->re_db_input($_POST['units']):'';
         $shares = isset($_POST['shares'])?$instance->re_db_input($_POST['shares']):'';
         
+
         $return = $instance->insert_update($_POST);
         
         if($return===true){
@@ -67,6 +89,8 @@
             else{
                 if($_POST['transaction']=='Save & Copy')
                 {
+                    $is_pending_order=1;
+                    $trade_number='';
                     $commission_received='';
                     $units=0;
                     $invest_amount ='';
@@ -111,6 +135,13 @@
         $invest_amount = isset($return['invest_amount'])?$instance->re_db_output($return['invest_amount']):'';
         $charge_amount = isset($return['charge_amount'])?$instance->re_db_output($return['charge_amount']):'';
         $commission_received = isset($return['commission_received'])?$instance->re_db_output($return['commission_received']):'';
+
+         $ch_date =isset($return['ch_date']) && $return['ch_date']!=''?$instance->re_db_output($return['ch_date']):'';
+            $ch_amount =isset($return['ch_amount'])?$instance->re_db_output($return['ch_amount']):'';
+            $ch_no =isset($return['ch_no'])?$instance->re_db_output($return['ch_no']):'';
+            $ch_pay_to =isset($return['ch_pay_to'])?$instance->re_db_output($return['ch_pay_to']):'';
+
+
         $commission_received_date = isset($return['commission_received_date'])?$instance->re_db_output($return['commission_received_date']):'';
         $trade_date = isset($return['trade_date'])?$instance->re_db_output($return['trade_date']):'';
         $settlement_date = isset($return['settlement_date'])?$instance->re_db_output($return['settlement_date']):'';

@@ -10,7 +10,24 @@ class transaction extends db{
 			$id = isset($data['id'])?$this->re_db_input($data['id']):0;
             //$trade_number = isset($data['trade_number'])?$this->re_db_input($data['trade_number']):0;
             $client_name = isset($data['client_name'])?$this->re_db_input($data['client_name']):'0';
-            $client_number = isset($data['client_number'])?$this->re_db_input($data['client_number']):'0';
+            $client_number = isset($data['client_number'])?$this->re_db_input($data['client_number']):'0';            
+            $client_id_from_ac_no =0;
+            //print(select_client_id($client_number));
+	        $client_id_from_ac_no=$this->select_client_id($client_number);
+	        if($client_id_from_ac_no=='' || $client_id_from_ac_no=='0')
+	        {
+	        		 if($client_number != '' && $client_name!='0' && $client_name!='')
+                        {
+            				$q = "INSERT INTO `".CLIENT_ACCOUNT."` SET `client_id`='".$client_name."',`account_no`='".$client_number."'".$this->insert_common_sql();
+            				$res = $this->re_db_query($q);
+                        }
+	        }
+
+            $ch_date =isset($data['ch_date']) && $data['ch_date']!=''?$this->re_db_input(date('Y-m-d',strtotime($data['ch_date']))):'0000-00-00';
+	        $ch_amount =isset($data['ch_amount'])?$this->re_db_input(str_replace(',', '', $data['ch_amount'])):0;
+	        $ch_no =isset($data['ch_no'])?$this->re_db_input($data['ch_no']):'';
+	        $ch_pay_to =isset($data['ch_pay_to'])?$this->re_db_input($data['ch_pay_to']):'';
+
             $broker_name = isset($data['broker_name'])?$this->re_db_input($data['broker_name']):'0';
             $product_cate = isset($data['product_cate'])?$this->re_db_input($data['product_cate']):'';
             $sponsor = isset($data['sponsor'])?$this->re_db_input($data['sponsor']):'';
@@ -92,7 +109,7 @@ class transaction extends db{
 						$q = "INSERT INTO ".$this->table." SET `client_name`='".$client_name."',`source`='MN',`client_number`='".$client_number."',`broker_name`='".$broker_name."',
                         `product_cate`='".$product_cate."',`sponsor`='".$sponsor."',`product`='".$product."',`batch`='".$batch."',
                         `invest_amount`='".$invest_amount."',`commission_received_date`='".$commission_received_date."',`posting_date`='".$posting_date."',`trade_date`='".$trade_date."',`settlement_date`='".$settlement_date."',`charge_amount`='".$charge_amount."',`commission_received`='".$commission_received."',`split`='".$split."',
-                        `another_level`='".$another_level."',`cancel`='".$cancel."',`buy_sell`='".$buy_sell."',
+                        `another_level`='".$another_level."',`cancel`='".$cancel."',`buy_sell`='".$buy_sell."',`ch_no`='".$ch_no."', `ch_pay_to`='".$ch_pay_to."', `ch_date`='".$ch_date."', `ch_amount`='".$ch_amount."',
                         `hold_resoan`='".$hold_resoan."',`hold_commission`='".$hold_commission."',`units`='".$units."',`shares`='".$shares."',`branch`='".$branch."',`company`='".$company."'".$this->insert_common_sql();
 						
                         $res = $this->re_db_query($q);
@@ -129,6 +146,7 @@ class transaction extends db{
                         `product_cate`='".$product_cate."',`sponsor`='".$sponsor."',`product`='".$product."',`batch`='".$batch."',
                         `invest_amount`='".$invest_amount."',`commission_received_date`='".$commission_received_date."',`posting_date`='".$posting_date."',`trade_date`='".$trade_date."',`settlement_date`='".$settlement_date."',`charge_amount`='".$charge_amount."',`commission_received`='".$commission_received."',`split`='".$split."',
                         `another_level`='".$another_level."',`cancel`='".$cancel."',`buy_sell`='".$buy_sell."',
+                        `ch_no`='".$ch_no."', `ch_pay_to`='".$ch_pay_to."', `ch_date`='".$ch_date."', `ch_amount`='".$ch_amount."',
                         `hold_resoan`='".$hold_resoan."',`hold_commission`='".$hold_commission."',`units`='".$units."',`shares`='".$shares."',`branch`='".$branch."',`company`='".$company."'".$this->update_common_sql()." WHERE `id`='".$id."'";
                         $res = $this->re_db_query($q);
                         
@@ -359,6 +377,25 @@ class transaction extends db{
             }
 			return $return;
 		}
+		public function select_all_client_account_no(){
+			$return = array();
+			
+			$q = "SELECT `at`.`account_no`
+					FROM `".CLIENT_ACCOUNT."` AS `at`
+                    WHERE `at`.`is_delete`='0' 
+                    ORDER BY `at`.`id` ";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    			     array_push($return,$row['account_no']);
+                     
+    			}
+
+            }
+            
+			return $return;
+		}
         public function select_client_account_no($client_id){
 			$return = '';
 			
@@ -376,6 +413,8 @@ class transaction extends db{
             }
 			return $return;
 		}
+
+
 		 public function select_client_id($client_number){
 			$return = '';
 			
@@ -511,9 +550,9 @@ class transaction extends db{
 			return $return;
 		}
         public function select_batch_date($batch_id){
-			$return = '';
+			$return = array();
 			
-			$q = "SELECT `at`.`batch_date`
+			$q = "SELECT `at`.`batch_date`,`at`.`pro_category`,`at`.`sponsor`
 					FROM `".BATCH_MASTER."` AS `at`
                     WHERE `at`.`is_delete`='0' AND `at`.`id`=".$batch_id."
                     ORDER BY `at`.`id` ASC";
@@ -521,8 +560,8 @@ class transaction extends db{
             if($this->re_db_num_rows($res)>0){
                 $a = 0;
     			while($row = $this->re_db_fetch_array($res)){
-    			     $return = $row['batch_date'];
-                     
+    			     array_push($return,$row);
+                                         
     			}
             }
 			return $return;

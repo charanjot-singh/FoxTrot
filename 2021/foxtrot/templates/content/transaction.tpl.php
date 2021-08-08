@@ -72,6 +72,145 @@ $(document).on('click','.remove-row_override',function(){
     $(this).closest('.tr').remove();
 });
 </script>
+<style type="text/css">
+    .autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+</style> 
+<script type="text/javascript">
+    function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+       // if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+         if (arr[i].includes(val)) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+                get_client_id(inp.value);
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+        
+      }
+
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}
+/*execute a function when someone clicks in the document:*/
+document.addEventListener("click", function (e) {
+
+    closeAllLists(e.target);
+});
+}
+</script>
 <div class="container">
 <h1 class="<?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'topfixedtitle';}*/?>">Transactions</h1> 
     <div class="col-lg-12 well <?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'fixedwell';}*/?>">
@@ -109,12 +248,25 @@ $(document).on('click','.remove-row_override',function(){
     		</div>
             <div class="panel-body">
             <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
+
+         
+                <div class="row"> 
+                     <div class="col-md-4">
+                    <div class="form-group">
+                        
+                        <!-- <span class="input-group-addon"> -->
+                        <input type="checkbox" disabled="true" name="is_pending_order" <?php if(isset($is_pending_order) && $is_pending_order==1){ echo'checked="true"'; }?> id="is_pending_order" style="display: inline;" value="1" />
+                        <!-- </span> -->
+                        <label>Pending Order </label>                     
+                    </div>
+                </div>                    
+                </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Trade Number </label><br />
                         <input type="text" name="trade_number" id="trade_number" value="<?php if(isset($trade_number)) {echo $trade_number;}else{echo 'Assigned after saving';}?>" disabled="true" class="form-control" />
-                    </div>
+                    </div>                
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
@@ -152,9 +304,17 @@ $(document).on('click','.remove-row_override',function(){
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Client Number <span class="text-red">*</span></label><br />
-                        <input type="text" maxlength="26" onchange="get_client_id(this.value);" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="client_number"  id="client_number" value="<?php if(isset($client_number)) {echo $client_number;}?>"/>
+                         <div class="autocomplete" style="width:100%">
+                        <input type="text" maxlength="26" onpropertychange ="get_client_id(this.value);"  class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="client_number"  id="client_number" value="<?php if(isset($client_number)) {echo $client_number;}?>"/></div>
                     </div>
                 </div>
+               <!--  <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="autocomplete" style="width:300px;">
+                                <input id="myInput" type="text" name="myCountry" placeholder="Country">
+                        </div>
+                    </div>
+                </div> -->
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -168,7 +328,21 @@ $(document).on('click','.remove-row_override',function(){
                         </select>
                     </div>
                 </div>
-                 <div class="col-md-6">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="batches.php?action=add_batches_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
+                        <select class="form-control" name="batch" onchange="get_commission_date(this.value);">            
+                            <option value="0">Select Batch</option>                
+                             <?php foreach($get_batch as $key=>$val){?>
+                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php }else if(isset($key) && $key==0){?> selected="true"<?php } ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
+                            <?php } ?>
+                            
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Product Category <span class="text-red">*</span></label><br />
                         <select class="form-control" name="product_cate" id="product_cate" onchange="get_product(this.value);">
@@ -179,10 +353,16 @@ $(document).on('click','.remove-row_override',function(){
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="product_cate.php?redirect=add_product_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
+                        <select class="form-control" name="product"  id="product">
+                            <option value="0">Select Product</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="div_sponsor">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>Sponsor </label><br />
                         <select class="form-control" name="sponsor" id="sponsor" onchange="get_product();">
@@ -194,14 +374,7 @@ $(document).on('click','.remove-row_override',function(){
                     </div>
                 </div>
             </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="product_cate.php?redirect=add_product_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
-                        <select class="form-control" name="product"  id="product">
-                            <option value="0">Select Product</option>
-                        </select>
-                    </div>
-                </div>
+                
             </div>
             <div class="row">
                 <div class="col-md-4">
@@ -226,10 +399,14 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
+                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Charge Amount </label><br />
-                        <input type="text" maxlength="9" onChange="setnumber_format(this)" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="charge_amount"  value="<?php if(isset($charge_amount) && $charge_amount != '') {echo $charge_amount;}else{echo '0';}?>"/>
+                        <label>Commission Received Date <span class="text-red">*</span></label><br />
+                        <div id="demo-dp-range">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" name="commission_received_date" id="commission_received_date" value="<?php if(isset($commission_received_date) && $commission_received_date!='0000-00-00 00:00:00') {echo date('m/d/Y',strtotime($commission_received_date));}else{ echo ''; }?>" class="form-control" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -240,30 +417,17 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Commission Received Date <span class="text-red">*</span></label><br />
-                        <div id="demo-dp-range">
-                            <div class="input-daterange input-group" id="datepicker">
-                                <input type="text" name="commission_received_date" id="commission_received_date" value="<?php if(isset($commission_received_date) && $commission_received_date!='0000-00-00 00:00:00') {echo date('m/d/Y',strtotime($commission_received_date));}else{ echo ''; }?>" class="form-control" />
-                            </div>
-                        </div>
+                        <label>Charge Amount </label><br />
+                        <input type="text" maxlength="9" onChange="setnumber_format(this)" class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 ' name="charge_amount"  value="<?php if(isset($charge_amount) && $charge_amount != '') {echo $charge_amount;}else{echo '0';}?>"/>
                     </div>
                 </div>
+                
+               
             </div>
             <div class="row">
+              
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="batches.php?action=add_batches_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
-                        <select class="form-control" name="batch" onchange="get_commission_date(this.value);">            
-                            <option value="0">Select Batch</option>                
-                             <?php foreach($get_batch as $key=>$val){?>
-                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php }else if(isset($key) && $key==0){?> selected="true"<?php } ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
-                            <?php } ?>
-                            
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
+                    <div class="form-group" id="posting_date" style="visibility: hidden;">
                         <label>Posting Date </label><br />
                         <div id="demo-dp-range">
                             <div class="input-daterange input-group" id="datepicker">
@@ -275,29 +439,35 @@ $(document).on('click','.remove-row_override',function(){
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Split Commission<span class="text-red">*</span></label><br />
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" onclick="open_other()" name="split" id="split_yes" <?php if(isset($split) && $split==1){ echo'checked="true"'; }?>   value="1"/>YES
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" onclick="close_other()" name="split" id="split_no" <?php if((isset($split) && $split==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?>  value="2" />NO
-                        </label>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">                              
+                            <a href="#" data-target="#add_cheque_info" data-toggle="modal">Client Cheque Received</a>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            <label>Split Commission<span class="text-red">*</span></label><br />
+                            <label class="radio-inline">
+                              <input type="radio" class="radio" onclick="open_other()" name="split" id="split_yes" <?php if(isset($split) && $split==1){ echo'checked="true"'; }?>   value="1"/>YES
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" class="radio" onclick="close_other()" name="split" id="split_no" <?php if((isset($split) && $split==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?>  value="2" />NO
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Hold Commission <span class="text-red">*</span></label><br />
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" id="hold_commission_1"  name="hold_commission" onclick="open_hold_reason();"<?php if(isset($hold_commission) && $hold_commission==1){ echo'checked="true"'; }?> value="1"/>YES
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" class="radio" id="hold_commission_2" name="hold_commission" onclick="hide_hold_reason();" <?php if((isset($hold_commission) && $hold_commission==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="2" />NO
-                        </label>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Hold Commission <span class="text-red">*</span></label><br />
+                            <label class="radio-inline">
+                              <input type="radio" class="radio" id="hold_commission_1"  name="hold_commission" onclick="open_hold_reason();"<?php if(isset($hold_commission) && $hold_commission==1){ echo'checked="true"'; }?> value="1"/>YES
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" class="radio" id="hold_commission_2" name="hold_commission" onclick="hide_hold_reason();" <?php if((isset($hold_commission) && $hold_commission==2) || (isset($_GET['action']) && $_GET['action']=='add')){ echo'checked="true"'; }?> value="2" />NO
+                            </label>
+                        </div>
                     </div>
-                </div>
-               
+               </div>
+           </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Buy/Sell </label><br />
@@ -544,6 +714,58 @@ $(document).on('click','.remove-row_override',function(){
             </div>
           </div>
           </div>
+          <!-- Modal for add client notes -->
+        <!-- Lightbox strart -->                            
+            <!--Modal for add joint account -->
+            <div id="add_cheque_info" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            
+                <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header" style="margin-bottom: 0px !important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                    <h4 class="modal-title">Add Cheque Information</h4>
+                </div>
+                <div class="modal-body">
+                
+                        <div class="inputpopup">
+            <label>Cheque No:</label>
+            <input type="text" name="ch_no" id="ch_no" value="<?php if(isset($ch_no)) {echo $ch_no;}?>"  class="form-control" />
+        </div>
+        <div class="inputpopup">
+            <label>Cheque Amount:</label>
+            <input type="text" name="ch_amount" onChange="setnumber_format(this)"  value="<?php if(isset($ch_amount)) {echo $ch_amount;}?>" id="ch_amount" class="form-control" />
+        </div>      
+        <div class="inputpopup">
+
+            <label>Date:</label>
+            <div id="demo-dp-range">
+                            <div class="input-daterange input-group" style="width:auto !important;" id="datepicker">
+                                <input type="text" name="ch_date" id="ch_date" value="<?php if(isset($ch_date) && $ch_date != '0000-00-00' && $ch_date!='') {echo date('m/d/Y',strtotime($ch_date));}?>" class="form-control" />
+                            </div>
+                        </div>
+        </div>
+        <div class="inputpopup">
+            <label>Payable to:</label>
+            <input type="text" name="ch_pay_to" maxlength="40"  value="<?php if(isset($ch_pay_to)) {echo $ch_pay_to;}?>" id="ch_pay_to" class="form-control" />
+        </div>
+        <div class="col-md-12">
+            <div id="msg">
+            </div>
+        </div>
+        <div class="inputpopup">
+        <label class="labelblank">&nbsp;</label>
+            <input type="hidden" name="id" value="0" />
+            <input type="hidden" name="submit_account" value="Ok"  />&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="submit" value="Ok" data-dismiss="modal" name="submit_account" />
+        </div>
+                    
+                             
+                
+                </div><!-- End of Modal body -->
+                </div><!-- End of Modal content -->
+            </div><!-- End of Modal dialog -->
+        </div><!-- End of Modal -->        
+        
         </form>
         <?php
             }if((isset($_GET['action']) && $_GET['action']=='view') || $action=='view'){?>
@@ -687,6 +909,62 @@ function hide_hold_reason()
     $("#hold_resoan").val("");
     $("#div_hold_reason").css('display','none');
 }
+$.fn.regexMask = function(mask) {
+    $(this).keypress(function (event) {
+        if (!event.charCode) return true;
+        var part1 = this.value.substring(0, this.selectionStart);
+        var part2 = this.value.substring(this.selectionEnd, this.value.length);
+        if (!mask.test(part1 + String.fromCharCode(event.charCode) + part2))
+            return false;
+    });
+};
+function get_cheque_info(detail_id){
+    
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) 
+            {
+                document.getElementById("add_new_account").innerHTML = this.responseText;
+                $('#ch_no').mask("999999");
+            }
+        };
+        xmlhttp.open("GET", "ajax_transaction_cheque_info.php?id="+detail_id, true);
+        xmlhttp.send();
+}
+
+function formsubmit_account()
+{
+   $('#msg').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>');
+
+   var url = "client_maintenance.php"; // the script where you handle the form input.
+   
+   $.ajax({
+      type: "POST",
+      url: url,
+      data: $("#add_new_account").serialize(), // serializes the form's elements.
+      success: function(data){
+          if(data=='1'){
+             $("#add_cheque_info").modal('hide');
+            addcheckinfo();
+            $('#msg_account').html('<div class="alert alert-success alert-dismissable" style="opacity: 500;"><a href="#" class="close" data-dismiss="alert" aria-label="close">x</a><strong>Success!</strong> Data Successfully Saved.</div>');
+            //window.location.href = "client_maintenance.php";//get_client_notes();   
+          }
+          else{
+               $('#msg_account').html('<div class="alert alert-danger">'+data+'</div>');
+          }
+          
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+           $('#msg_account').html('<div class="alert alert-danger">Something went wrong, Please try again.</div>')
+      }
+      
+   });
+
+   //e.preventDefault(); // avoid to execute the actual submit of the form.
+   return false;
+       
+}
+
 function open_hold_reason()
 {
     $("#div_hold_reason").css('display','block');
@@ -748,8 +1026,13 @@ $('.decimal').chargeFormat();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+        var client_ac_number =<?php echo json_encode($client_account_array); ?>;         
+        autocomplete(document.getElementById("client_number"), client_ac_number);
+
       $(".livesearch").chosen();
+      $('#ch_no').mask("999999");
       });
+
 </script>
 <script type="text/javascript">
 function get_product(category_id,selected=''){
@@ -775,6 +1058,7 @@ function get_product(category_id,selected=''){
         xmlhttp.open("GET", "ajax_get_product.php?product_category_id="+category_id+'&sponsor='+sponsor+'&selected='+selected, true);
         xmlhttp.send();
 }
+
 //get client account no on client select
 function get_client_account_no(client_id){
         
@@ -789,12 +1073,11 @@ function get_client_account_no(client_id){
         xmlhttp.send();
 }
 function get_client_id(client_number){
-        
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) 
-            {              
-
+            if (this.readyState == 4 && this.status == 200 && this.responseText!='0'  && this.responseText!='' ) 
+            {            
+                    
                 $('#client_name').val(this.responseText).trigger("chosen:updated");
              //   alert($('#client_name').val());
             }
@@ -806,15 +1089,26 @@ function get_client_id(client_number){
 function get_commission_date(batch_id)
 {
     var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
+        xmlhttp.onreadystatechange = function() 
+        {
             if (this.readyState == 4 && this.status == 200) 
             {
-                document.getElementById("commission_received_date").value = this.responseText;
+                var data=jQuery.parseJSON(this.responseText);
+                
+                $("#product_cate").val(data[0].pro_category);
+                $("#commission_received_date").val(data[0].batch_date);
+                $("#sponsor").val(data[0].sponsor);
+                if(data[0].pro_category!='' && data[0].pro_category!='0')
+                 {
+                    get_product(data[0].pro_category,data[0].sponsor);
+                //alert(this.responseText); 
+                 }
             }
         };
         xmlhttp.open("GET", "ajax_get_client_account.php?batch_id="+batch_id, true);
         xmlhttp.send();
 }
+
 function setnumber_format(inputtext)
 {
     var a = inputtext.value;
