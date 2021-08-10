@@ -812,7 +812,7 @@ document.addEventListener("click", function (e) {
                             <th>Client Name</th>
                             <th>Client Account Number</th>
                             <th>Broker Name</th>
-                            <th>Batch Number</th>
+                            <th>Batch</th>
                             <th>Investment Amount</th>
                             <th>Commission Received</th>
                             <th class="text-center" colspan="2">ACTION</th>
@@ -830,9 +830,9 @@ document.addEventListener("click", function (e) {
                                 <td><?php if(isset($val['client_lastname']) && $val['client_lastname'] != ''){ echo $val['client_lastname'].','.$val['client_firstname'];}?></td>
                                 <td><?php echo $val['client_number'];?></td>
                                 <td><?php echo $val['broker_firstname'];?></td>
-                                <td><?php echo $val['batch_number'];?></td>
-                                <td style="text-align: right;"><?php echo '$'.$val['invest_amount']; ?></td>
-                                <td style="text-align: right;"><?php echo '$'.$val['commission_received'];?></td>
+                                <td><?php echo $val['batch_desc'];?></td>
+                                <td style="text-align: right;"><?php echo '$'.number_format($val['invest_amount'],2); ?></td>
+                                <td style="text-align: right;"><?php echo '$'.number_format($val['commission_received'],2);?></td>
                                 <!--td class="text-center">
                                     <?php
                                         if($val['status']==1){
@@ -995,6 +995,7 @@ $('.decimal').chargeFormat();
         "pageLength": 25,
         "bLengthChange": false,
         "bFilter": true,
+        "order": [[ 1, "desc" ]],
         "bInfo": false,
         "bAutoWidth": false,
         "dom": '<"toolbar">frtip',

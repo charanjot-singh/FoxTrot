@@ -62,11 +62,7 @@
             if($lname=='')
             {
 				$this->errors = 'Please enter last name.';
-			}
-			else if($birth_date=='' || $birth_date=='1970-01-01')
-			{
-				$this->errors = 'Please select birth date.';
-			}
+			}			
 			else if($naf_date=='' || $naf_date=='1970-01-01')
 			{
 				$this->errors = 'Please select NAF date.';

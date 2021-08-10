@@ -569,18 +569,19 @@ class transaction extends db{
         public function select(){
 			$return = array();
 			
-			$q = "SELECT `at`.*,`bt`.id as batch_number,`cl`.first_name as client_firstname,`cl`.last_name as client_lastname,`bm`.first_name as broker_firstname
+			$q = "SELECT `at`.*,`bt`.id as batch_number,`bt`.batch_desc as batch_desc,`cl`.first_name as client_firstname,`cl`.last_name as client_lastname,`bm`.first_name as broker_firstname
 					FROM `".$this->table."` AS `at`
                     LEFT JOIN `".BATCH_MASTER."` as `bt` on `bt`.`id` = `at`.`batch`
                     LEFT JOIN `".CLIENT_MASTER."` as `cl` on `cl`.`id` = `at`.`client_name`
                     LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `at`.`broker_name`
                     WHERE `at`.`is_delete`='0' and `at`.`is_payroll`='0'
-                    ORDER BY `at`.`id` ASC";
+                    ORDER BY `at`.`trade_date` desc";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
                 $a = 0;
     			while($row = $this->re_db_fetch_array($res)){
     			     array_push($return,$row);
+    			     
     			}
             }
 			return $return;
