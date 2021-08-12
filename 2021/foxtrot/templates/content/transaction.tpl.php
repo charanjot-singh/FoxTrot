@@ -442,7 +442,7 @@ document.addEventListener("click", function (e) {
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-4">                              
-                            <a href="#" data-target="#add_cheque_info" data-toggle="modal">Client Cheque Received</a>
+                            <a href="#" data-target="#add_cheque_info" data-toggle="modal">Client Check Received</a>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -723,16 +723,16 @@ document.addEventListener("click", function (e) {
                 <div class="modal-content">
                 <div class="modal-header" style="margin-bottom: 0px !important;">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                    <h4 class="modal-title">Add Cheque Information</h4>
+                    <h4 class="modal-title">Add Check Information</h4>
                 </div>
                 <div class="modal-body">
                 
                         <div class="inputpopup">
-            <label>Cheque No:</label>
+            <label>Check No:</label>
             <input type="text" name="ch_no" id="ch_no" value="<?php if(isset($ch_no)) {echo $ch_no;}?>"  class="form-control" />
         </div>
         <div class="inputpopup">
-            <label>Cheque Amount:</label>
+            <label>Check Amount:</label>
             <input type="text" name="ch_amount" onChange="setnumber_format(this)"  value="<?php if(isset($ch_amount)) {echo $ch_amount;}?>" id="ch_amount" class="form-control" />
         </div>      
         <div class="inputpopup">
