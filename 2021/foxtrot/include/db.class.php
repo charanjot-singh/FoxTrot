@@ -206,13 +206,104 @@ class db
     
         return $this->re_db_query($query, $link);
     }
+    
+    public function insert_rows($table, $rows, $link = 'db_link')
+    {
+      global $$link;
+      $strColumns = '';
+      $strValues = '';
+      $insertRows =array();
+      
+      foreach ($rows as $values)
+      {
+        $strColumns = '';
+        $valuesArr = array();
+        foreach ($values as $column => $value)
+        {
+          $column = trim($column);
+          if(is_null($value) || !isset($value) || $value == '')
+            $value = 'NULL';
+          else
+            $value = $this->toSqlQuotedString($$link, $value);
+
+          $strColumns .= ("$strColumns" != '' ? ',' : '') . "`$column`";
+          $valuesArr[] = $value;
+        }
+        $strValues = '(' . implode(',', $valuesArr) . ')';
+        $insertRows[] = $strValues;
+      }
+      
+      $query = "INSERT IGNORE INTO `$table` ($strColumns) values " . implode(",", $insertRows);
+      return $this->re_db_query($query, $link);
+    }
+    
+    public function update_history($tableName, $oldInstance, $newInstance, $fieldsToWatch)
+    {
+      $mainColumnMap = array(
+        'ft_multicompany_history' => 'company_id',
+        'ft_branch_history' => 'branch_id',
+        BROKER_HISTORY => 'broker_id',
+        CLIENT_HISTORY => 'client_id',
+        SPONSOR_HISTORY => 'sponsor_id'
+      );
+      if ($oldInstance['id'] > 0)
+      {
+        $mainColumn = $mainColumnMap[$tableName];
+        $rows = array();
+        foreach ($fieldsToWatch as $column)
+        {
+          if ($oldInstance[$column] !== $newInstance[$column])
+          {
+            $row = array(
+              $mainColumn => $oldInstance['id'],
+              'field' => $column,
+              'old_value' => $oldInstance[$column],
+              'new_value' => $newInstance[$column],
+              'status' => 'new',
+              'is_delete' => '0',
+              'created_by' => $_SESSION['user_id'],
+              'created_time' => date("Y-m-d H:i:s",time()),
+              'created_ip' => $this->get_client_ip(),
+              'modified_by' => $_SESSION['user_id'],
+              'modified_time' => date("Y-m-d H:i:s",time()),
+              'modified_ip' => $this->get_client_ip(),
+            );
+            $rows[] = $row;
+          }
+        }
+        if (count($rows) > 0)
+          $this->insert_rows($tableName, $rows);
+      }
+    }
+    
+    public function update_routine_history($tableName, $mainColumnName, $mainColumnValue, $field, $oldValue, $newValue)
+    {
+      $values = array(
+        array(
+          $mainColumnName => $mainColumnValue,
+          'field' => $field,
+          'old_value' => $oldValue,
+          'new_value' => $newValue,
+          'status' => 'new',
+          'is_delete' => '0',
+          'created_by' => $_SESSION['user_id'],
+          'created_time' => date("Y-m-d H:i:s",time()),
+          'created_ip' => $this->get_client_ip(),
+          'modified_by' => $_SESSION['user_id'],
+          'modified_time' => date("Y-m-d H:i:s",time()),
+          'modified_ip' => $this->get_client_ip(),
+        )
+      );
+      $this->insert_rows($tableName, $values);
+    }
+    
     public function validemail($email)
     {
-        if(filter_var($email,FILTER_VALIDATE_EMAIL) === false){
-            return 0; 
-        }
-        else {
-    		return 1; 
+      if(filter_var($email,FILTER_VALIDATE_EMAIL) === false){
+          return 0; 
+      }
+      else {
+        return 1; 
     	}
     }  
     //public function to get ip address while forgot passowrd
@@ -1035,6 +1126,30 @@ class db
         }
         return $password;
     }
+    
+    public function toSqlQuotedString($link, $string)
+    {
+      return "'".mysqli_real_escape_string($link, $string)."'";
+    }
+    
+    public function getLastInsertId($link, $table)
+    {
+      $query = "SELECT LAST_INSERT_ID() as id FROM `$table` LIMIT 0,1";
+      $res = $this->re_db_query($query, $link);
+      
+      if($this->re_db_num_rows($res) > 0)
+      {
+        $res = $this->re_db_fetch_array($res);
+        return $res[0]['id'];
+      }
+      else
+        return null;
+    }
+    
+    public function formatSqlDatetime($timestamp)
+    {
+      return date('Y-m-d H:i:s', $timestamp);
+    }
 
 }
 class Excel extends db
@@ -1185,7 +1300,7 @@ class Excel extends db
                     )
                 );
                 
-                // Redirect output to a client’s web browser (Excel5)
+                // Redirect output to a clientâ€™s web browser (Excel5)
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="'.$properties['excel_name'].'.xls"');
                 header('Cache-Control: max-age=0');

@@ -1,6 +1,7 @@
 <?php
     define('SITE_OPTIONS','site_options');
     define('USER_MASTER','user_master');
+    define('USER_WIDGET_SETTINGS','user_widget_settings');
     define('MENU_MASTER','menu_master');
     define('USER_MENU_RIGHTS','ft_user_menu_rights');
     define('ADMIN_MASTER','admin_master');
@@ -43,7 +44,6 @@
     define('BROKER_LICENCES_RIA','ft_broker_licences_ria');
     define('BROKER_LICENCES_INSURANCE','ft_broker_licences_insurance');
     define('REGISTER_MASTER','ft_register_master');
-    define('series_wise_product_category','ft_series_wise_product_category_configuration');    
     define('BROKER_REGISTER_MASTER','ft_broker_register_master');
     define('BRANCH_MASTER','ft_branch_master');
     define('BROKER_REQ_DOC','ft_broker_req_doc_master');

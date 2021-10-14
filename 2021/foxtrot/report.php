@@ -19,8 +19,12 @@
     $report_for = '';
     
     $return_from_broker_client = array();
+
     
     if(isset($_POST['submit'])&& $_POST['submit']=='Proceed'){
+        $_POST['sort_by'] =  isset($_POST['payable_sort_by']) ? $_POST['payable_sort_by'] :  $_POST['sort_by'];
+        $_POST['output'] =  isset($_POST['payable_output']) ? $_POST['payable_output'] :  $_POST['output'];
+        $_POST['company'] =  isset($_POST['payable_company']) ? $_POST['payable_company'] :  $_POST['company'];
         $data_array = json_encode($_POST);
         $output = isset($_POST['output'])?$instance->re_db_input($_POST['output']):0;
         $product_category = isset($_POST['product_category'])?$instance->re_db_input($_POST['product_category']):0;
@@ -30,27 +34,13 @@
         $ending_date = isset($_POST['ending_date'])?$instance->re_db_input($_POST['ending_date']):'';
         $sort_by = isset($_POST['sort_by'])?$instance->re_db_input($_POST['sort_by']):0;
         $report_for = isset($_POST['report_for'])?$instance->re_db_input($_POST['report_for']):'';
+        $cuttoff_date = isset($_POST['cuttoff_date'])?$instance->re_db_input($_POST['cuttoff_date']):'';
+        $payable_type = isset($_POST['payable_type'])?$instance->re_db_input($_POST['payable_type']):'';
+
+
+        
         
         if($report_for == 1)
-        {
-            if($output == 1)
-            {
-                header('location:'.CURRENT_PAGE.'?filter='.$data_array);exit;
-            }
-            else if($output == 2)
-            {
-                header("location:".SITE_URL."report_batch.php?open=output_print&filter=".$data_array);exit;
-            }
-            else if($output == 3){
-                
-                header("location:".SITE_URL."report_batch_excel.php?filter=".$data_array);exit;
-            }
-            else if($output == 4){
-                
-                header("location:".SITE_URL."report_batch.php?filter=".$data_array);exit;
-            }
-        }
-        else if($report_for == 2)
         {
             if($output == 1)
             {
@@ -69,8 +59,63 @@
                 header("location:".SITE_URL."report_transaction_by_batch.php?filter=".$data_array);exit;
             }
         }
-        
- 
+        else if($report_for == 2)
+        {
+            if($output == 1)
+            {
+                header('location:'.CURRENT_PAGE.'?filter='.$data_array);exit;
+            }
+            else if($output == 2)
+            {
+                header("location:".SITE_URL."report_batch.php?open=output_print&filter=".$data_array);exit;
+            }
+            else if($output == 3){
+                
+                header("location:".SITE_URL."report_batch_excel.php?filter=".$data_array);exit;
+            }
+            else if($output == 4){
+                
+                header("location:".SITE_URL."report_batch.php?filter=".$data_array);exit;
+            }
+        }
+        else if($report_for == 3)
+        {
+            if($output == 1)
+            {
+                header('location:'.CURRENT_PAGE.'?filter='.$data_array);exit;
+            }
+            else if($output == 2)
+            {
+                header("location:".SITE_URL."report_transaction_by_hold.php?open=output_print&filter=".$data_array);exit;
+            }
+            else if($output == 3){
+                
+                header("location:".SITE_URL."report_transaction_by_hold_excel.php?filter=".$data_array);exit;
+            }
+            else if($output == 4){
+                
+                header("location:".SITE_URL."report_transaction_by_hold.php?filter=".$data_array);exit;
+            }
+        }
+        else if($report_for == 4)
+        {
+           if($output == 1)
+            {
+                header('location:'.CURRENT_PAGE.'?filter='.$data_array);exit;
+            }
+            else if($output == 2)
+            {
+                header("location:".SITE_URL."report_transaction_by_payable.php?open=output_print&filter=".$data_array);exit;
+            }
+            else if($output == 3){
+                
+                header("location:".SITE_URL."report_transaction_by_payable_excel.php?filter=".$data_array);exit;
+            }
+            else if($output == 4){
+                
+                header("location:".SITE_URL."report_transaction_by_payable.php?filter=".$data_array);exit;
+            }
+        }
     }
     if(isset($_GET['filter']) && $_GET['filter'] != '')
     {
@@ -83,6 +128,8 @@
         $ending_date = isset($filter_array['ending_date'])?$instance->re_db_input($filter_array['ending_date']):'';
         $sort_by = isset($filter_array['sort_by'])?$instance->re_db_input($filter_array['sort_by']):'';
         $report_for = isset($filter_array['report_for'])?$instance->re_db_input($filter_array['report_for']):'';
+        $payable_type = isset($filter_array['payable_type'])?$instance->re_db_input($filter_array['payable_type']):'';
+        $cuttoff_date = isset($filter_array['cuttoff_date'])?$instance->re_db_input($filter_array['cuttoff_date']):'';
     }
     
     $content = "report";

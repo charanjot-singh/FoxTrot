@@ -1098,7 +1098,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Account Number </label>
-                                                <input type="number" name="account_no_general" id="account_no_general" value="<?php if($action=='edit'){ echo $account_no; } ?>" class="form-control" />
+                                                <input type="text" name="account_no_general" id="account_no_general" value="<?php if($action=='edit'){ echo $account_no; } ?>" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -1631,7 +1631,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                         <option value="">Select Broker</option>
                                                                         <?php foreach($select_broker as $key => $val) {
                                                                             if($val['id'] != $id){?>
-                                                                        <option <?php if(isset($regval['rap']) && $regval['rap']==$val['id']) {?>selected="true"<?php } ?> value="<?php echo $val['id']?>"><?php echo $val['first_name'].' '.$val['last_name']?></option>
+                                                                        <option <?php if(isset($regval['rap']) && $regval['rap']==$val['id']) {?>selected="true"<?php } ?> value="<?php echo $val['id']?>"><?php echo $val['last_name'].', '.$val['first_name']?></option>
                                                                         <?php } } ?>
                                                                     </select>
                                                                 </td>
@@ -1774,7 +1774,7 @@ var waitingDialog = waitingDialog || (function ($) {
                                                                         <option value="0">Select Broker</option>
                                                                         <?php foreach($select_broker as $key => $val) {
                                                                             if($val['id'] != $id){?>
-                                                                        <option <?php if(isset($regval['rap']) && $regval['rap']==$val['id']){?>selected="true"<?php } ?> value="<?php echo $val['id']?>"><?php echo $val['first_name'].' '.$val['last_name']?></option>
+                                                                        <option <?php if(isset($regval['rap']) && $regval['rap']==$val['id']){?>selected="true"<?php } ?> value="<?php echo $val['id']?>"><?php echo $val['last_name'].', '.$val['first_name']?></option>
                                                                         <?php } } ?>
                                                                     </select>
                                                                 </td>
@@ -2534,7 +2534,7 @@ var waitingDialog = waitingDialog || (function ($) {
 
                                     <div class="row">                                           
                                         <div class="col-md-12">
-                                            <div class="table-responsive" id="table-scroll">
+                                            <div class="table-responsive" id="table-scroll" style="height:1075px;">
                                                 <table class="table table-bordered table-stripped table-hover">
                                                     <thead>
                                                         <th>Series</th>        

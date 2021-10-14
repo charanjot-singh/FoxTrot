@@ -75,6 +75,7 @@
         $posting_date = isset($_POST['posting_date'])?$instance->re_db_input($_POST['posting_date']):'';
         $units = isset($_POST['units'])?$instance->re_db_input($_POST['units']):'';
         $shares = isset($_POST['shares'])?$instance->re_db_input($_POST['shares']):'';
+        $is_1035_exchange = isset($_POST['is_1035_exchange']) ? $instance->re_db_input($_POST['is_1035_exchange']):0;
         
 
         $return = $instance->insert_update($_POST);
@@ -135,6 +136,7 @@
         $invest_amount = isset($return['invest_amount'])?$instance->re_db_output($return['invest_amount']):'';
         $charge_amount = isset($return['charge_amount'])?$instance->re_db_output($return['charge_amount']):'';
         $commission_received = isset($return['commission_received'])?$instance->re_db_output($return['commission_received']):'';
+        $is_1035_exchange = isset($return['is_1035_exchange']) ? $instance->re_db_input($return['is_1035_exchange']):0;
 
          $ch_date =isset($return['ch_date']) && $return['ch_date']!=''?$instance->re_db_output($return['ch_date']):'';
             $ch_amount =isset($return['ch_amount'])?$instance->re_db_output($return['ch_amount']):'';
@@ -185,6 +187,21 @@
         $return = $instance->select();//echo'<pre>';print_r($return);exit;
         
     }
+
+    if(isset($_GET['p_id']) && isset($_GET['cat_id'])){
+        $product_cate= $_GET['cat_id'];
+        $product= $_GET['p_id'];
+        $sponsor= $_GET['sponsor'];
+
+    }
+    if(isset($_GET['client_id']) && isset($_GET['client_id'])){
+        $client_name=$_GET['client_id'];
+    } 
+
+    $get_accounts_no= $instance->select_client_all_account_no($client_name);
+       
+
+    
     
     $content = "transaction";
 	require_once(DIR_WS_TEMPLATES."main_page.tpl.php");

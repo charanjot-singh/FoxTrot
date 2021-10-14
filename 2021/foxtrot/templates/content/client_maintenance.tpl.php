@@ -5,7 +5,7 @@ function addMoreDocs(){
                     '<div class="col-md-4">'+
                         '<div class="form-group">'+
                             '<label></label><br />'+
-                            '<input type="text" name="account_no[]" onkeypress="return isOnlyAlphaNumeric(this,event)"  maxlength="20" id="account_no" class="form-control" />'+
+                            '<input type="text" name="account_no[]" onkeypress="return event.charCode >= 48 && event.charCode <= 57" id="account_no" class="form-control" />'+
                         '</div>'+
                     '</div>'+
                     
@@ -60,8 +60,8 @@ $(document).on('change', '#is_reviewed', function(event) {
         <div class="tab-content col-md-12">
             <div class="tab-pane active" id="tab_a">
                     <?php
-                    if($action=='add_new' || $action=='add_client_from_trans'||($action=='edit' && $id>0)){
-                        if($action=='add_new' || $action='add_client_from_trans')
+                    if($action=='add_new'||($action=='edit' && $id>0)){
+                        if($action=='add_new')
                         {
                             $_SESSION['client_full_name']='';
                         }
@@ -115,8 +115,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                <div class="panel-heading">
                                                     <div class="row">
                                                         <div class="col-md-4">
-                                                            <h3 class="panel-title" style="font-size: 20px;"><input type="checkbox" class="checkbox" name="do_not_contact" value="1" id="do_not_contact" style="display: inline !important;" <?php if($do_not_contact>0){echo "checked='checked'";}?>/> Do Not Contact<br/>
-                                                                <input type="checkbox" value="1" name="active" id="active" class="checkbox" style="display: inline !important;" <?php if($active>0){echo "checked='checked'";}?>/> Active</h3>
+                                                            <h4 class="panel-title" style="font-size: 20px;"><input type="checkbox" class="checkbox" name="do_not_contact" value="1" id="do_not_contact" style="display: inline !important;" <?php if($do_not_contact>0){echo "checked='checked'";}?>/> Do Not Contact&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="1" name="active" id="active" class="checkbox" style="display: inline !important;" <?php if($active>0){echo "checked='checked'";}?>/> Active</h4>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
@@ -141,7 +140,6 @@ $(document).on('change', '#is_reviewed', function(event) {
 
 
                                                     </div>
-                                                    
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class="reviewed">
@@ -170,14 +168,14 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label>Middle Name</label><br />
+                                                        <label>MI </label><br />
                                                         <input type="text" name="mi" id="mi" value="<?php echo $mi; ?>" class="form-control" />
                                                     </div>
                                                 </div>
                                             	<div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>Last Name <span class="text-red">*</span></label><br />
-                                                        <input type="text" name="lname" id="lname" value="<?php echo $lname; ?>" class="form-control" />
+                                                        <input type="text" data-required="true" name="lname" id="lname" value="<?php echo $lname; ?>" class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,34 +188,26 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Client File Number <span class="text-red">*</span></label><br />
-                                                        <input type="text" name="client_file_number" id="client_file_number" maxlength="20" class="form-control" value="<?php echo $client_file_number; ?>" />
+                                                        <input type="text" data-required="true" name="client_file_number" id="client_file_number" maxlength="12" class="form-control" value="<?php echo $client_file_number; ?>" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Clearing Acct </label><br />
                                                         <input type="text" name="clearing_account" id="clearing_account" class="form-control" maxlength="20" value="<?php echo $clearing_account; ?>" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Client SSN </label><br />
-                                                        <input type="text" name="client_ssn" id="client_ssn" maxlength="9" class="form-control" value="<?php echo $client_ssn; ?>" />
+                                                        <input type="text" name="client_ssn" id="client_ssn" class="form-control" value="<?php echo $client_ssn; ?>" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Household / Link Code </label><br />
-                                                        <input type="text" name="household" id="household" class="form-control" maxlength="20" value="<?php echo $household; ?>"/>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                            
-                                            <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Account Type  </label>
@@ -230,29 +220,35 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </select>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Household / Link Code </label><br />
+                                                        <input type="text" name="household" id="household" class="form-control" maxlength="20" value="<?php echo $household; ?>"/>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Broker <span class="text-red">*</span>
                                                         </label>
-                                                        <select name="broker_name" id="broker_name" class="form-control">
+                                                        <select name="broker_name" data-required="true" id="broker_name" class="form-control">
                                                            <option value="">Select Broker</option>
                                                             <?php foreach($get_broker as $key=>$val){?>
-                                                            <option value="<?php echo $val['id'];?>" <?php if($broker_name != '' && $broker_name==$val['id']){echo "selected='selected'";} ?>><?php echo $val['last_name'].' '.$val['first_name'];?></option>
+                                                            <option value="<?php echo $val['id'];?>" <?php if($broker_name != '' && $broker_name==$val['id']){echo "selected='selected'";} ?>><?php echo $val['first_name'].' '.$val['last_name'];?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
                                                 </div>
-
-                                                
                                             </div>
                                            <div class="row">
-                                               <div class="col-md-6">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Split Broker </label>
                                                         <select name="split_broker" id="split_broker" class="form-control">
                                                             <option value="">Select Broker</option>
                                                             <?php foreach($get_broker as $key=>$val){?>
-                                                            <option value="<?php echo $val['id'];?>" <?php if($split_broker != '' && $split_broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['last_name'].','.$val['first_name'];?></option>
+                                                            <option value="<?php echo $val['id'];?>" <?php if($split_broker != '' && $split_broker==$val['id']){echo "selected='selected'";} ?>><?php echo $val['first_name'].' '.$val['last_name'];?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -260,11 +256,10 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Split Rate<span class="text-red"></span></label>
-                                                        <input type="text" onkeypress="return isFloatNumber(this,event)" onblur="round(this.value);" min="0" name="split_rate" id="split_rate" placeholder='00.0' class="currency1 form-control" value="<?php echo $split_rate; ?>" />
+                                                        <input type="text" onblur="round(this.value);" min="0" name="split_rate" id="split_rate" placeholder='00.0' class="currency1 form-control" value="<?php echo $split_rate; ?>" />
                                                     </div>
                                                 </div>
-                                            
-                                           </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -279,14 +274,14 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                     </div>
                                                 </div>
                                             </div>
-                                           <div class="row">
-                                                <div class="col-md-4">
+                                            <div class="row"> 
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>City </label>
                                                         <input type="text" name="city" id="city" class="form-control" value="<?php echo $city; ?>"/>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>State </label>
                                                         <select name="state" id="state" class="form-control">
@@ -297,29 +292,29 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                            
-                                                    <div class="col-md-4">
+                                            </div> 
+                                            <div class="row">
+                                            	<div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Zip Code </label>
                                                         <input type="text" name="zip_code" id="zip_code" class="form-control" value="<?php echo $zip_code; ?>"/>
                                                     </div>
                                                 </div>
-                                                 </div>
-                                           <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Telephone </label>
                                                         <input type="text" name="telephone" id="telephone" class="form-control" value="<?php echo $telephone; ?>"/>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-md-6">
+                                            </div> 
+                                            <div class="row">
+                                            	<div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Citizenship </label>
                                                         <input type="text" name="citizenship" id="citizenship" class="form-control" value="<?php echo $citizenship; ?>"/>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Contact Status </label>
                                                         <select name="contact_status" id="contact_status" class="form-control">
@@ -329,13 +324,11 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                             -->
-                                            </div> 
-                                            
+                                            </div>
                                             <div class="row">
                                             	<div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Birth Date </label><b><span class="text-red">*</span></b>
+                                                        <label>Birth Date </label>
                                                         <div id="demo-dp-range">
                                                             <div class="input-daterange input-group" id="datepicker">
                                                                 <input type="text" name="birth_date" onchange="getAge(this.value);" id="birth_date" class="form-control" value="<?php if($birth_date !=''){ echo date('m/d/Y',strtotime($birth_date));} ?>"/>
@@ -351,16 +344,15 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                     </div>
                                                 </div>
                                             </div> 
-                                            
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Date Established </label>
                                                         <input type="text" name="date_established1" id="date_established1" disabled="true" value="<?php if($date_established !=''){ echo date('m/d/Y',strtotime($date_established)); }else{ echo date("m/d/Y"); }?>" class="form-control" />
                                                         <input type="hidden" name="date_established" id="date_established" value="<?php if($date_established !=''){ echo $date_established; }else{ echo date("m/d/Y"); }?>" class="form-control" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Open Date </label>
                                                         <div id="demo-dp-range">
@@ -370,18 +362,19 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            
-                                                <div class="col-md-3">
+                                            </div> 
+                                            <div class="row">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>NAF Date </label> <span class="text-red">*</span>
+                                                        <label>NAF Date <span class="text-red">*</span></label>
                                                         <div id="demo-dp-range">
                                                             <div class="input-daterange input-group" id="datepicker">
-                                                                <input type="text" name="naf_date" id="naf_date" class="form-control" value="<?php if($naf_date !=''){ echo date('m/d/Y',strtotime($naf_date)); } ?>"/>
+                                                                <input type="text" data-required="true" name="naf_date" id="naf_date" class="form-control" value="<?php if($naf_date !=''){ echo date('m/d/Y',strtotime($naf_date)); } ?>"/>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Last Contacted </label>
                                                         <div id="demo-dp-range">
@@ -392,7 +385,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+                                            </div>
                                             <div class="panel-overlay">
                                                 <div class="panel-overlay-content pad-all unselectable"><span class="panel-overlay-icon text-dark"><i class="demo-psi-repeat-2 spin-anim icon-2x"></i></span><h4 class="panel-overlay-title"></h4><p></p></div>
                                             </div>
@@ -400,8 +393,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         </div>
                                     </div>
                                 </div>
-                                </div>
-
+                                
                                 <!-- Tab 1 is ends -->
                                 <div class="tab-pane <?php if(isset($_GET['tab'])&&$_GET['tab']=="employment"){ echo "active"; } ?>" id="tab_bb">
                                         <div class="panel-overlay-wrap">
@@ -413,20 +405,27 @@ $(document).on('change', '#is_reviewed', function(event) {
                                             <div class="panel-body">
                                             
                                             <div class="row">
-                                                
-                                            	<div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Employer </label><br />
-                                                        <input type="text" name="employer" id="employer" class="form-control" value="<?php echo $employer; ?>" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Occupation </label><br />
                                                         <input type="text" name="occupation" id="occupation" class="form-control" value="<?php echo $occupation; ?>" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                            	<div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Employer </label><br />
+                                                        <input type="text" name="employer" id="employer" class="form-control" value="<?php echo $employer; ?>" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Address </label><br />
+                                                        <input type="text" name="address_employement" id="address_employement" class="form-control" value="<?php echo $address_employement; ?>"/>
+                                                    </div>
+                                                </div>
+                                            	<div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Position </label><br />
                                                         <input type="text" name="position" id="position" class="form-control" value="<?php echo $position; ?>"/>
@@ -434,31 +433,22 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <label>Address </label><br />
-                                                        <input type="text" name="address_employement" id="address_employement" class="form-control" value="<?php echo $address_employement; ?>"/>
-                                                    </div>
-                                                </div>
-                                            	
-                                           
-                                                <div class="col-md-4">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Telephone  </label>
                                                         <input type="text" name="telephone_employment" id="telephone_employment" class="form-control" value="<?php echo $telephone_employment; ?>"/>
                                                     </div>
                                                 </div>
-                                                 </div>
-                                            <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="checkbox" name="security_related_firm" id="security_related_firm" class="checkbox" style="display: inline !important;" value="1" <?php if($security_related_firm>0){echo "checked='checked'";}?>/>
-                                                        <label>Securities-Related Firm</label>
+                                                        <label>Securities-Related Firm </label><br />
+                                                        <input type="checkbox" name="security_related_firm" id="security_related_firm" class="checkbox" value="1" <?php if($security_related_firm>0){echo "checked='checked'";}?>/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <div class="form-group">    
-                                                        <input type="checkbox" style="display: inline !important;" name="finra_affiliation" id="finra_affiliation" class="checkbox" value="1" <?php if($finra_affiliation>0){echo "checked='checked'";}?>/> <label>FINRA Affiliation</label>
+                                                    <div class="form-group">
+                                                        <label>FINRA Affiliation </label>
+                                                        <input type="checkbox" name="finra_affiliation" id="finra_affiliation" class="checkbox" value="1" <?php if($finra_affiliation>0){echo "checked='checked'";}?>/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -528,13 +518,13 @@ $(document).on('change', '#is_reviewed', function(event) {
                                             <div class="row">
                                             	<div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Number <span class="text-red">*</span> </label>
-                                                        <input type="number" maxlength="20" name="number" id="number" class="form-control" value="<?php echo $number; ?>"/>
+                                                        <label>Number </label>
+                                                        <input type="number" name="number" id="number" class="form-control" value="<?php echo $number; ?>"/>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Expiration <span class="text-red">*</span> </label>
+                                                        <label>Expiration </label>
                                                         <div id="demo-dp-range">
                                                             <div class="input-daterange input-group" id="datepicker">
                                                                <input type="text" name="expiration" id="expiration" class="form-control" value="<?php echo date('m/d/Y',strtotime($expiration)); ?>"/>
@@ -557,7 +547,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Date Verified <span class="text-red">*</span></label>
+                                                        <label>Date Verified </label>
                                                         <div id="demo-dp-range">
                                                             <div class="input-daterange input-group" id="datepicker">
                                                                 <input type="text" name="date_verified" id="date_verified" class="form-control" value="<?php echo date('m/d/Y',strtotime($date_verified)); ?>"/>
@@ -567,7 +557,6 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                             </div> 
                                             </div>
-
                                             <div class="panel-overlay">
                                                 <div class="panel-overlay-content pad-all unselectable"><span class="panel-overlay-icon text-dark"><i class="demo-psi-repeat-2 spin-anim icon-2x"></i></span><h4 class="panel-overlay-title"></h4><p></p></div>
                                             </div>
@@ -615,7 +604,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 <div class="col-md-6">
                                                     <div style="display: block; border: 1px solid #ddd;">
                                                         <div class="table-responsive" style="padding: 5px !important;">
-                                            			<table id="data-table2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            			<table id="data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             	            <tbody>
                                                                 <?php foreach($get_objectives as $key=>$val){
                                                                     ?>
@@ -635,19 +624,19 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                                 <?php }} ?>
                                                             </tbody>
                                                         </table>
-                                                         </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             	<div class="col-md-6">
                                                     <div style="display: block; border: 1px solid #ddd;">
                                                     <div class="table-responsive" style="padding: 5px !important;">
-                                            			<table id="data-table1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            			<table id="data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             	            <tbody>
                                                                  <?php foreach($get_current_objectives as $key=>$val){?>
                                                                    <tr>
                                                                         <td class="text-center"><a href="#" onclick="delete_objectives(<?php echo $val['id'];?>)" style="color: black !important;"><i class="fa fa-angle-left"></i>  <?php echo $val['oname'];?></a></td>
                                                                    </tr>
-                                                                 <?php } ?> 
+                                                                 <?php } ?>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -660,14 +649,13 @@ $(document).on('change', '#is_reviewed', function(event) {
                                             </div>
                                             <div class="panel-footer">
                                                 <div class="selectwrap">
-                                                    <a href="<?php echo CURRENT_PAGE;?>"><input type="button" name="complete" value="Complete" /></a>
+                                                    <a href="<?php echo CURRENT_PAGE;?>" onclick="return waitingDialog.show();"><input type="button" name="complete" value="Complete" /></a>
                                                 </div>
                                            </div>
                                         </div>
                                     </div>
                                 
                                 </div>
-
                                 <div class="tab-pane <?php if(isset($_GET['tab'])&&$_GET['tab']=="account_no"){ echo "active"; } ?>" id="tab_dd">
                                   
                                         <div class="panel-overlay-wrap">
@@ -683,12 +671,12 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         <?php if(isset($_GET['account_no']) && $_GET['account_no'] != '')
                                                         {
                                                         ?>
-                                                            <input type="text"  disabled="true" name="account_no_dis[]"  onkeypress="return isOnlyAlphaNumeric(this,event)"  maxlength="20"  id="account_no_dis" class="form-control" value="<?php echo $_GET['account_no'];?>" />
-                                                            <input type="hidden" name="account_no[]" id="account_no" class="form-control" value="<?php echo $_GET['account_no'];?>" />
+                                                            <input type="text" disabled="true" name="account_no_dis[]" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="account_no_dis" class="form-control" value="<?php echo $_GET['account_no'];?>" />
+                                                            <input type="hidden" name="account_no[]" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="account_no" class="form-control" value="<?php echo $_GET['account_no'];?>" />
                                                         <?php 
                                                         }else{
                                                         ?>
-                                                            <input type="text" name="account_no[]" onkeypress="return isOnlyAlphaNumeric(this,event)"  maxlength="20" id="account_no" class="form-control" value="<?php //echo //$valedit['account_no'];?>" />
+                                                            <input type="text" name="account_no[]" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="account_no" class="form-control" value="<?php //echo //$valedit['account_no'];?>" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -729,7 +717,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label></label><br />
-                                                        <input type="text" name="account_no[]" onkeypress="return isOnlyAlphaNumeric(this,event)"  maxlength="20" id="account_no" class="form-control" value="<?php echo $valedit['account_no'];?>" />
+                                                        <input type="text" name="account_no[]" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="account_no" class="form-control" value="<?php echo $valedit['account_no'];?>" />
                                                     </div>
                                                 </div>
                                             	<div class="col-md-4">
@@ -765,7 +753,6 @@ $(document).on('change', '#is_reviewed', function(event) {
                                     </div>
                                 
                                 </div>
-                            
                                 <!--<div class="tab-pane " id="tab_ee">
                                     
                                         <div class="panel-overlay-wrap">
@@ -820,7 +807,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Income <span class="text-red">*</span></label>
+                                                        <label>Income </label>
                                                         <select name="income" id="income" class="form-control">
                                                             <option value="">Select Income</option>
                                                             <?php foreach($get_income as $key=>$val){?>
@@ -831,7 +818,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                 </div>
                                             	<div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Goal Horizon <span class="text-red">*</span></label>
+                                                        <label>Goal Horizon </label>
                                                         <select name="goal_horizone" id="goal_horizone" class="form-control">
                                                             <option value="">Select Goal Horizon</option>
                                                             <?php foreach($get_horizon as $key=>$val){?>
@@ -844,7 +831,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                              <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Net Worth <span class="text-red">*</span></label>
+                                                        <label>Net Worth </label>
                                                         <select name="net_worth" id="net_worth" class="form-control">
                                                             <option value="">Select Net Worth</option>
                                                             <?php foreach($get_networth as $key=>$val){?>
@@ -949,18 +936,17 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                         </select>
                                                     </div>
                                                 </div>
-                                            	
-                                             </div>
-                                             <div class="row">
-                                                <div class="col-md-6">
+                                            	<div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Signed By </label>
                                                         <input type="text" name="signed_by" id="signed_by" class="form-control" value="<?php echo $signed_by;?>"/>
                                                     </div>
                                                 </div>
+                                             </div>
+                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Signed Date </label>
+                                                        <label>Sign Date </label>
                                                         <div id="demo-dp-range">
         					                                <div class="input-daterange input-group" id="datepicker">
                                                                 <input type="text" name="sign_date" id="sign_date" value="<?php echo date('m/d/Y',strtotime($sign_date));?>" class="form-control" />
@@ -968,15 +954,14 @@ $(document).on('change', '#is_reviewed', function(event) {
         				                                </div>
                                                     </div>
                                                 </div>
-                                            	
-                                             </div>
-                                             <div class="row">
-                                                <div class="col-md-6">
+                                            	<div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Tax Bracket </label>
-                                                        <input type="number" name="tax_bracket" onkeypress="return isFloatNumber(this,event)" onblur="round2digit(this.value);"  id="tax_bracket" class="form-control" value="<?php echo $tax_bracket;?>"/>
+                                                        <input type="number" name="tax_bracket" id="tax_bracket" class="form-control" value="<?php echo $tax_bracket;?>"/>
                                                     </div>
                                                 </div>
+                                             </div>
+                                             <div class="row">
                                                   <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Tax ID </label>
@@ -1006,13 +991,8 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         <input type="hidden" name="file_id" id="file_id" class="form-control" value="<?php echo $_GET['file_id']; ?>" />
                                         <input type="hidden" name="temp_data_id" id="temp_data_id" class="form-control" value="<?php echo $_GET['exception_data_id']; ?>" />
                                         <?php }?>
-                                        
-                                        <!-- <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
-                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?> -->
-
-                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && $_GET['id']){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="submit" name="submit" value="Previous" /></a><?php } ?>
-                         <?php if($action=='edit' && $id>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a" ><input type="submit" name="submit" value="Next" /></a><?php } ?>
-
+                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
+                                        <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?>
                                         <?php if($action=='edit' && $id>0){?>
                                         <a href="#view_changes" data-toggle="modal"><input type="button" name="view_changes" style="margin-left: 4% !important;" value="View Changes"/></a>
                                         <?php } ?>
@@ -1021,7 +1001,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         <a href="#joint_account" data-toggle="modal"><input type="button" onclick="get_client_account();" name="joint_account" value="Joint Account" /></a>
                                         <a href="#client_attach" data-toggle="modal"><input type="button"  onclick="get_client_attach();" name="attach" value="Attachments" style="margin-right: 4% !important;" /></a>
                                         <a href="<?php echo CURRENT_PAGE;?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
-                                        <input type="submit" name="submit" onclick="waitingDialog.show();" value="Save" style="float: right;"/>
+                                        <input type="submit" name="submit" onclick="return waitingDialog.show();" value="Save" style="float: right;"/>
                                     </div>
                                  </div>
                                  </form>
@@ -1047,12 +1027,11 @@ $(document).on('change', '#is_reviewed', function(event) {
                         </form>
                         </div><br /><br />-->
                         <div class="table-responsive">
-            			<table id="data-table" class="table table-striped1 table-bordered" cellspacing="0" width="100%">
+            			<table id="data-table-list" class="table table-striped1 table-bordered" cellspacing="0" width="100%">
             	            <thead>
             	                <tr>
                                     <th>NAME</th>
                                     <th>FILE</th>
-                                    <th>CLEARING ACCT</th>
                                     <th>ACCOUNT TYPE</th>
                                     <th>BROKER NAME</th>
                                     <th class="text-center">STATUS</th>
@@ -1065,9 +1044,8 @@ $(document).on('change', '#is_reviewed', function(event) {
                             foreach($return as $key=>$val){
                                 ?>
             	                   <tr>
-                                        <td><?php echo $val['last_name'].",".$val['first_name']; ?></td>
+                                        <td><?php echo $val['first_name']." ".$val['last_name']; ?></td>
                                         <td><?php echo $val['client_file_number']; ?></td>
-                                        <td><?php echo $val['clearing_account']; ?></td>
                                         <td><?php echo $val['account_type']; ?></td>
                                         <td><?php echo $val['broker_fname']." ".$val['broker_lname']; ?></td>
                                         <td class="text-center">
@@ -1177,9 +1155,9 @@ $(document).on('change', '#is_reviewed', function(event) {
 		  </div><!-- End of Modal -->
           <!-- Lightbox strart -->							
 	<!-- Modal for add client notes -->
-	<div id="joint_account" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;" >
+	<div id="joint_account" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
 		<div class="modal-dialog" style="margin-left: 19% !important;">
-		<div class="modal-content" >
+		<div class="modal-content" style="width: 150% !important;">
 		<div class="modal-header" style="margin-bottom: 0px !important;">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
 			<h4 class="modal-title">Client's Joint Account</h4>
@@ -1421,7 +1399,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                                     <?php }
                                     else if($feild_name == 'Income'){
                                     $income_name = $instance->get_income_name($val['old_value']);?>
-                                    <td><?php echo $income_name['income'];?></td>
+                                    <td><?php echo isset($income_name['income']) ? $income_name['income'] : '';?></td>
                                     <?php $income_name = $instance->get_income_name($val['new_value']);?>
                                     <td><?php echo $income_name['income'];?></td>
                                     <?php }
@@ -1504,7 +1482,7 @@ $(document).on('change', '#is_reviewed', function(event) {
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#data-table').DataTable({
+        $('#data-table-list').DataTable({
         "pageLength": 25,
         "bLengthChange": false,
         "bFilter": true,
@@ -1514,8 +1492,7 @@ $(document).on('change', '#is_reviewed', function(event) {
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 5 ] }, 
                         { "bSearchable": false, "aTargets": [ 5 ] }]
         });
-        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+
-            '<div class="panel-control" style="padding-left:5px;display:inline;">'+
+        $("div.toolbar").html('<div class="panel-control">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
@@ -1565,15 +1542,6 @@ function close_other()
 <script type="text/javascript">
 $(document).ready(function(){
     $('#telephone').mask("(999)-999-9999");
-    $('#tax_id').mask("99-9999999");
-    
-});
-$(document).ready(function(){
-    $('#zip_code').mask("99999-9999");
-});
-
-$(document).ready(function(){
-    $('#client_ssn').mask("999-99-9999");
 });
 $(document).ready(function(){
     $('#telephone_dis').mask("(999)-999-9999");
@@ -1604,6 +1572,37 @@ var waitingDialog = waitingDialog || (function ($) {
 		 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
 		 */
 		show: function (message, options) {
+                var isErrorFound=false;
+            $('[data-required="true"]').each(function(){
+           
+                
+                if($(this).prop("type") =="text" || $(this).prop("type") =="select-one"){
+                     if($.trim($(this).val()) == ''  || $.trim($(this).val()) == '0'){
+                         isErrorFound=true;
+                         if($(this).next("div").find("a.chosen-single").length){
+                              $(this).next("div").find("a.chosen-single").addClass("error");
+                         }
+                         else
+                         $(this).addClass("error");
+                    }
+                    else{
+
+                         if($(this).next("div").find("a.chosen-single").length){
+                              $(this).next("div").find("a.chosen-single").removeClass("error");
+                         }
+                         else
+                           $(this).removeClass("error");
+                    }
+                }
+                console.log("looping",isErrorFound)
+               
+                if($(this).prop("type") =="radio"){
+                }
+                    
+         });
+            console.log("waiting",isErrorFound)
+            if(isErrorFound)
+                return false;
 			// Assigning defaults
 			if (typeof options === 'undefined') {
 				options = {};
@@ -1644,7 +1643,7 @@ var waitingDialog = waitingDialog || (function ($) {
 </script>
 <script>
 $(document).ready(function(){
-    
+    $('#client_ssn').mask("999-99-9999");
     $('#spouse_ssn').mask("999-99-9999");
 });
 function checkLength(el) {
@@ -2035,6 +2034,37 @@ function delete_attach(attach_id){
 </script>
 
 <script>
+
+    jQuery(function($){
+     $('[data-required="true"]').each(function(){
+             $(this).on("change blur",function(){
+                
+                if($(this).prop("type") =="text" || $(this).prop("type") =="select-one"){
+                     if($.trim($(this).val()) == ''  || $.trim($(this).val()) == '0'){
+                         isErrorFound=true;
+                         if($(this).next("div").find("a.chosen-single").length){
+                              $(this).next("div").find("a.chosen-single").addClass("error");
+                         }
+                         else
+                         $(this).addClass("error");
+                    }
+                    else{
+
+                         if($(this).next("div").find("a.chosen-single").length){
+                              $(this).next("div").find("a.chosen-single").removeClass("error");
+                         }
+                         else
+                           $(this).removeClass("error");
+                    }
+                }
+               
+                if($(this).prop("type") =="radio"){
+                }
+                    
+         });
+              
+     });
+})
 //submit share form data
 function add_objectives(objectives_id)
 {
@@ -2094,15 +2124,6 @@ function round(feerate)
         var rounded = round.toFixed(1);
     }
     document.getElementById("split_rate").value = rounded;
-    
-}
-function round2digit(feerate)
-{
-    
-        var round = Math.round( feerate * 100 ) / 100;
-        var rounded = round.toFixed(2);
-    
-    document.getElementById("tax_bracket").value = rounded;
     
 }
 </script>

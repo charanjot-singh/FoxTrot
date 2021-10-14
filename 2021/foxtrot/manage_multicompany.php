@@ -3,24 +3,22 @@
     require_once(DIR_FS."islogin.php");
      
     $error = '';
-    $broker_trans=array();
     $type = '';
     $action = isset($_GET['action'])&&$_GET['action']!=''?$dbins->re_db_input($_GET['action']):'view';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
     
     $instance = new manage_company();
     $get_state  = $instance->select_state();
-    $broker_trans=$instance->select_broker_transaction($id);
     $get_manager  = $instance->select_manager();
     $get_product  = $instance->select_product_category();
-    
-if((isset($_POST['submit'])&& $_POST['submit']=='Save') 
-        || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
-        || (isset($_POST['submit'])&& $_POST['submit']=='Next') )
-    {
+    if(isset($_POST['submit'])&& $_POST['submit']=='Save'){
         
         //echo '<pre>';print_r($_POST);exit();
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
+        
+        if ($id > 0)
+          $originalInstance = $instance->select_company_by_id($id);
+        
         $company_name = isset($_POST['company_name'])?$instance->re_db_input($_POST['company_name']):'';
         $company_type = isset($_POST['company_type'])?$instance->re_db_input($_POST['company_type']):'';
         $manager_name = isset($_POST['manager_name'])?$instance->re_db_input($_POST['manager_name']):'';
@@ -62,38 +60,22 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         
         $return = $instance->insert_update($_POST);
         
-        
-        if($return==true && $_POST['submit']=='Save'){
-            
-            
-                header("location:".CURRENT_PAGE);exit;
-            
-        }
-        else if($return==true && $_POST['submit']=='Next')
+        if($return===true)
         {
-            $return = $instance->get_next_company($id);
-            
-            if($return!=false){
-                $id=$return['id'];
-                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
-            }
-            else{
-                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
-             }
-        }
-        else if($return==true && $_POST['submit']=='Previous')
-        {
-            $return = $instance->get_previous_company($id);
-            
-            if($return!=false){
-                $id=$return['id'];
-                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
-            }
-            else{
-                header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
-             }
-        }
+          if ($id > 0)
+          {
+            $newInstance = $instance->select_company_by_id($id);
+            $fieldsToWatch = array('company_name', 'company_type', 'manager_name', 'address1', 'address2', 'business_city', 'state_general', 'zip',
+              'mail_address1', 'mail_address2', 'm_city', 'm_state', 'm_zip', 'telephone', 'facsimile', 'e_date', 'i_date', 'payout_level', 'clearing_charge_calculation',
+              'sliding_scale_commision', 'product_category', 'p_rate', 'threshold1', 'l1_rate', 'threshold2', 'l2_rate', 'threshold3', 'l3_rate', 'threshold4', 'l4_rate', 
+              'threshold5', 'l5_rate', 'threshold6', 'l6_rate', 'state', 'forign', 'status', 'is_delete', 'created_by', 'created_time', 'created_ip', 'modified_by', 
+              'modified_ip');
 
+            $instance->update_history('ft_multicompany_history', $originalInstance, $newInstance, $fieldsToWatch);
+          }
+          
+          header("location:".CURRENT_PAGE);
+        }
         else{
             $error = !isset($_SESSION['warning'])?$return:'';
         }

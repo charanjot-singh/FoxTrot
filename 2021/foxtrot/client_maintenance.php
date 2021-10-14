@@ -119,6 +119,7 @@
     $user_instance=new user_master();
     $u_id=$_SESSION['user_id'];
     $logged_user=$user_instance->get_user($u_id);
+    $redirect = isset($_GET['redirect'])&&$_GET['redirect']!=''?$instance->re_db_input($_GET['redirect']):'';
 
 
     
@@ -214,6 +215,7 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         
                
         $return = $instance->insert_update($_POST);
+
         
         if($return==true)
         {
@@ -224,9 +226,9 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         
         if($return===true && $_POST['submit']=='Save')
         {
-            if($action=='add_client_from_trans')
+            if($redirect=='add_client_from_trans')
             {
-                header("location:".SITE_URL."transaction.php?action=add");exit;
+                header("location:".SITE_URL."transaction.php?action=add&client_id=".$_SESSION['client_id']);exit;
             }
             else
             {

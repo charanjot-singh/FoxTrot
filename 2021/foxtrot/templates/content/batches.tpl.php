@@ -108,10 +108,11 @@
                         <label>Product Category</label><br />
                         <select class="form-control" name="pro_category">
                             <option value="">Select Category</option>
+                            <option value="<?php echo '-1';?>" <?php if(isset($pro_category) && $pro_category=='-1'){ ?>selected="true"<?php } ?>><?php echo 'Multiple Categories';?></option>
                             <?php foreach($product_category as $key=>$val){?>
                             <option value="<?php echo $val['id'];?>" <?php if(isset($pro_category) && $pro_category==$val['id']){ ?>selected="true"<?php } ?>><?php echo $val['type'];?></option>
                             <?php } ?>
-                            <option value="<?php echo '-1';?>" <?php if(isset($pro_category) && $pro_category=='-1'){ ?>selected="true"<?php } ?>><?php echo 'Multiple Category';?></option>
+                            
                         </select>
                     </div>
                 </div>
@@ -120,6 +121,8 @@
                         <label>Sponsor <span class="text-red">*</span></label><br />
                         <select class="form-control" name="sponsor">
                             <option value="">Select Sponsor</option>
+                             <option value="-1"> Multiple Sponsors</option>
+                           
                              <?php foreach($get_sponsor as $key=>$val){?>
                             <option value="<?php echo $val['id'];?>" <?php if(isset($sponsor) && $sponsor==$val['id']){?> selected="true"<?php } ?>><?php echo $val['name'];?></option>
                             <?php } ?>
@@ -261,7 +264,16 @@
                                 <td class="td_space" style="text-align:center;"><?php echo $val['id'];;?></td>
                                 <td class="td_space"><?php echo date('m/d/Y',strtotime($val['batch_date']));?></td>
                                 <td class="td_space" style="width: 20%"><?php echo $val['batch_desc'];?></td>
-                                <td class="td_space" style="width: 20%"><?php foreach($get_sponsor as $ke=>$va){ if(isset($val['sponsor']) && $val['sponsor']==$va['id']){ echo $va['name']; } }?></td>
+                                <td class="td_space" style="width: 20%"><?php 
+                                if($val['sponsor'] == -1){
+                                       echo "Multiple Sponsors";
+                                }
+                                else{
+                                        foreach($get_sponsor as $ke=>$va){ 
+                                    if(isset($val['sponsor']) && $val['sponsor']==$va['id']){ echo $va['name']; } }
+                                }
+                                
+                                ?></td>
                                 <td class="td_space" style="text-align: right;"><?php echo '$'.number_format($val['check_amount'],2);?></td>
                                 <td class="td_space" style="text-align: right;"><?php echo '$'.number_format($posted_commission_amount,2);?></td>
                                 

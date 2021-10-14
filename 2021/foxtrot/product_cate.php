@@ -1,4 +1,6 @@
 <?php
+  /* error_reporting(E_ALL);
+   ini_set("display_errors", "On");*/
     require_once("include/config.php");
     require_once(DIR_FS."islogin.php");
     $error = '';
@@ -45,6 +47,10 @@
     $redirect = isset($_GET['redirect'])&&$_GET['redirect']!=''?$dbins->re_db_input($_GET['redirect']):'';
     $id = isset($_GET['id'])&&$_GET['id']!=''?$dbins->re_db_input($_GET['id']):0;
     $category = isset($_GET['category'])&&$_GET['category']!=''?$dbins->re_db_input($_GET['category']):'';
+
+    /*if($redirect=='add_product_from_trans'){
+        $_SESSION
+    }*/
     
     $instance = new product_maintenance();
     $product_category = $instance->select_category();
@@ -109,7 +115,7 @@
         $for_import = isset($_POST['for_import'])?$instance->re_db_input($_POST['for_import']):'false';
         $file_id = isset($_POST['file_id'])?$instance->re_db_input($_POST['file_id']):0;
         
-        $return = $instance->insert_update($_POST);
+        $return = $instance->insert_update($_POST,true);
         
         if($return===true)
         {
@@ -132,7 +138,8 @@
                 {
                     if($redirect=='add_product_from_trans')
                     {
-                        header("location:".SITE_URL."transaction.php?action=add");exit;  
+                        $args= http_build_query(array("action"=>"add","p_id"=>$_SESSION['new_product_id'],"cat_id"=>$category,"sponsor"=>$sponsor));
+                        header("location:".SITE_URL."transaction.php?".$args);exit;  
                     }
                     else
                     {

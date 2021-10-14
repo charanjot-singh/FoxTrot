@@ -1,28 +1,9 @@
 <script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js" integrity="sha256-H28SdxWrZ387Ldn0qogCzFiUDDxfPiNIyJX7BECQkDE=" crossorigin="anonymous"></script>
 
-    <script type="text/javascript">
-        $.fn.regexMask = function(mask) {
-    $(this).keypress(function (event) {
-        if (!event.charCode) return true;
-        var part1 = this.value.substring(0, this.selectionStart);
-        var part2 = this.value.substring(this.selectionEnd, this.value.length);
-        if (!mask.test(part1 + String.fromCharCode(event.charCode) + part2))
-            return false;
-    });
-};
-$(document).ready(function(){
     
-    $('#telephone').mask("(999)999-9999");
-    $('#facsimile').mask("(999)999-9999");    
-    $('#zip').mask("99999-9999");
-    $('#m_zip').mask("99999-9999");
-});
-
-   
-   </script>
 <div class="container">
-    <h1 class="<?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}*/?>">Multi-Company Maintenance</h1>
-    <div class="col-lg-12 well <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}*/?>">
+    <h1 class="<?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtitle';}?>">Multi-Company Maintenance</h1>
+    <div class="col-lg-12 well <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'fixedwell';}?>">
         <div class="tab-content col-md-12">
             <div class="tab-pane active" id="tab_a">
     <!-- Add table data and some process -->
@@ -31,7 +12,7 @@ $(document).ready(function(){
     if($action=='add_new'||($action=='edit' && $id>0)){
         ?>
         <form method="post">
-            <ul class="nav nav-tabs <?php /*if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}*/?>">
+            <ul class="nav nav-tabs <?php if($action=='add_new'||($action=='edit' && $id>0)){ echo 'topfixedtabs';}?>">
                 <li class="active"><a href="#tab_aa" data-toggle="tab">General</a></li>
                 <li><a href="#tab_bb" data-toggle="tab">Commissions</a></li>
                 <li><a href="#tab_cc" data-toggle="tab">Registrations</a></li>
@@ -44,14 +25,14 @@ $(document).ready(function(){
     			</div>
     		  
             </ul>
-            <div class="tab-content panel" style="padding-left:5px"> 
+            <div class="tab-content panel"> 
             
                  
                 <div class="tab-pane active" id="tab_aa">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>Company/ Entity Name <span class="text-red">*</span></label>
+                                <label>Company/Practice Name <span class="text-red">*</span></label>
                                 <input type="text" name="company_name" id="company_name" value="<?php if($action=='edit'){echo $company_name;} ?>"  class="form-control" />
                             </div>
                         </div>
@@ -59,7 +40,7 @@ $(document).ready(function(){
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Company/ Entity Type </label>
+                                <label>Company/Practice Type </label>
                                 <input type="text" name="company_type" id="company_type" value="<?php if($action=='edit'){echo $company_type;} ?>"  class="form-control" />
                             </div>
                         </div>
@@ -70,7 +51,7 @@ $(document).ready(function(){
                                 <select name="manager_name" id="manager_name" class="form-control">
                                     <option value="0">Select Manager</option>
                                     <?php foreach($get_manager as $statekey=>$stateval){?>
-                                    <option  <?php if($action=='edit'){if($manager_name == $stateval['id']){ ?>selected="true" <?php }} ?> value="<?php echo $stateval['id']; ?>"><?php echo $stateval['last_name'].' '.$stateval['first_name']; ?></option>
+                                    <option  <?php if($action=='edit'){if($manager_name == $stateval['id']){ ?>selected="true" <?php }} ?> value="<?php echo $stateval['id']; ?>"><?php echo $stateval['first_name'].' '.$stateval['middle_name'].' '.$stateval['last_name']; ?></option>
                                     <?php } ?>
                                 </select>
                                 </select>
@@ -80,7 +61,7 @@ $(document).ready(function(){
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Business Address 1 </label>
+                                <label>Business Address 1 <span class="text-red">*</span></label>
                                 <input type="text" name="address1" id="address1" value="<?php if($action=='edit'){echo $address1;} ?>" class="form-control" />
                             </div>
                         </div>
@@ -92,15 +73,15 @@ $(document).ready(function(){
                         </div>
                    </div>
                    <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label>Business City </label>
+                                <label>Business City <span class="text-red">*</span></label>
                                 <input type="text" name="business_city" id="business_city" value="<?php if($action=='edit'){echo $business_city;} ?>" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label>State </label>
+                                <label>State <span class="text-red">*</span></label>
                                 <select name="state_general" id="state_general" class="form-control">
                                     <option value="">Select State</option>
                                     <?php foreach($get_state as $statekey=>$stateval){?>
@@ -109,38 +90,37 @@ $(document).ready(function(){
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                   </div>
+                   <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Business Zipcode <span class="text-red">*</span></label>
                                 <input type="text" name="zip" id="zip" value="<?php if($action=='edit'){echo $zip;} ?>" class="form-control" />
                             </div>
                         </div>
-                   </div>
-                   <div class="row">
-                        
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing Address1 </label>
                                 <input type="text" name="mail_address1" id="mail_address1" value="<?php if($action=='edit'){echo $mail_address1;} ?>" class="form-control" />
                             </div>
                         </div>
-                         <div class="col-md-6">
+                   </div>
+                   <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing Address2 </label>
                                 <input type="text" name="mail_address2" id="mail_address2" value="<?php if($action=='edit'){echo $mail_address2;} ?>" class="form-control" />
                             </div>
                         </div>
-                   </div>
-                   <div class="row">
-                       
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing City </label>
                                 <input type="text" name="m_city" id="m_city" value="<?php if($action=='edit'){echo $m_city;} ?>" class="form-control" />
                             </div>
                         </div>
-
-                         <div class="col-md-4">
+                   </div>
+                   <div class="row">
+                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing State </label>
                                 <select name="state_mailing" id="state_mailing" class="form-control">
@@ -151,15 +131,13 @@ $(document).ready(function(){
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mailing Zipcode</label>
                                 <input type="text" name="m_zip" id="m_zip" value="<?php if($action=='edit'){echo $m_zip;} ?>" class="form-control" />
                             </div>
                         </div>
-                   
                    </div>
-                   
                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -177,10 +155,10 @@ $(document).ready(function(){
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Date Established </label><br />
+                                <label>Date Established <span class="text-red">*</span> </label><br />
                                 <div id="demo-dp-range">
 	                                <div class="input-daterange input-group" id="datepicker">
-                                        <input type="text" name="e_date" id="e_date" value="<?php if($action=='edit'){echo date('m/d/Y',strtotime($e_date));} ?>" class="form-control" />
+                                        <input type="text" name="e_date" id="e_date" value="<?php if($action=='edit'){echo date(DATE_FORMAT, strtotime($e_date));} ?>" class="form-control" />
 	                                </div>
 	                            </div>
                             </div>
@@ -190,64 +168,60 @@ $(document).ready(function(){
                                 <label>Inactive Date </label><br />
                                 <div id="demo-dp-range">
                                     <div class="input-daterange input-group" id="datepicker">
-                                        <input type="text" name="i_date" id="i_date" value="<?php if($action=='edit'){echo date('m/d/Y',strtotime($i_date));} ?>" class="form-control" />
+                                        <input type="text" name="i_date" id="i_date" value="<?php if($action=='edit'){echo date(DATE_FORMAT, strtotime($i_date));} ?>" class="form-control" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                    </div>
                 </div>
-                <div class="tab-pane" id="tab_bb"  >
+                <div class="tab-pane" id="tab_bb">
                 <br />
-                    <div class="row" >
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label>Payout Level  </label>
+                                <label>Payout Level </label><br />
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="1" <?php if($action=='edit'){if($payout_level==1){ ?>checked="true"<?php }}else{?>checked="true"<?php } ?>/> Company/Entity 
+                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="1" <?php if($action=='edit'){if($payout_level==1){ ?>checked="true"<?php }} ?>/>Company/Practice Level
                                 </label>
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="2" <?php if($action=='edit'){if($payout_level==2){ ?>checked="true"<?php }} ?>/> Broker 
+                                  <input type="radio" class="radio" name="payout_level" id="payout_level" value="2" <?php if($action=='edit'){if($payout_level==2){ ?>checked="true"<?php }} ?>/>Broker Level
                                 </label>
                             </div>
                         </div>
-                    </div>
-                        <div class="row" >
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label>Clearing Charge Calculation  </label>
+                                <label>Clearing Charge Calculation </label><br />
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="clearing_charge_calculation" id="clearing_charge_calculation" value="1" <?php if($action=='edit'){if($clearing_charge_calculation==1){ ?>checked="true"<?php }} ?>/> Gross Payout
+                                  <input type="radio" class="radio" name="clearing_charge_calculation" id="clearing_charge_calculation" value="1" <?php if($action=='edit'){if($clearing_charge_calculation==1){ ?>checked="true"<?php }} ?>/>Gross Payout
                                 </label>
                                 <label class="radio-inline">
-                                  <input type="radio" class="radio" name="clearing_charge_calculation" id="clearing_charge_calculation" value="2" <?php if($action=='edit'){if($clearing_charge_calculation==2){ ?>checked="true"<?php }} ?>/> Net Payout
+                                  <input type="radio" class="radio" name="clearing_charge_calculation" id="clearing_charge_calculation" value="2" <?php if($action=='edit'){if($clearing_charge_calculation==2){ ?>checked="true"<?php }} ?>/>Net Payout
                                 </label>
                             </div>
                         </div>
-                    </div> 
-                    <div class="row" >
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Sliding Scale Commission Basis  </label>
-                                <label class="radio-inline">
-                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="1" <?php if($action=='edit'){if($sliding_scale_commision==1){ ?>checked="true"<?php }} ?>/> Payroll-to-Date Concession
-                                </label>
-                                <label class="radio-inline">
-                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="2" <?php if($action=='edit'){if($sliding_scale_commision==2){ ?>checked="true"<?php }} ?>/ > Year to Date Concession
-                                </label>
-                                <label class="radio-inline">
-                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="3" <?php if($action=='edit'){if($sliding_scale_commision==3){ ?>checked="true"<?php }} ?>/> Year to Date Earnings
-                                </label>
-                            </div>
-                        </div>
-                    </div>
                     </div><br />
-                 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Sliding Scale Commission Basis </label><br />
+                                <label class="radio-inline">
+                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="1" <?php if($action=='edit'){if($sliding_scale_commision==1){ ?>checked="true"<?php }} ?>/>Payroll-to-Date Concession
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="2" <?php if($action=='edit'){if($sliding_scale_commision==2){ ?>checked="true"<?php }} ?>/>Year-to-Date Concession
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" class="radio" name="sliding_scale_commision" id="sliding_scale_commision" value="3" <?php if($action=='edit'){if($sliding_scale_commision==3){ ?>checked="true"<?php }} ?>/>Year-to-Date Earnings
+                                </label>
+                            </div>
+                        </div>
+                    </div><br />
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Product Category </label>
-                                <select name="product_category" id="product_category" onchange="clear_threshold();" class="form-control">
+                                <select name="product_category" id="product_category" class="form-control">
                                     <option value="">Select Product category</option>
                                     <?php foreach($get_product as $key=>$val){?>
                                     <option <?php if($product_category == $val['id']){ ?> selected="true" <?php } ?> value="<?php echo $val['id']; ?>"><?php echo $val['type']; ?></option>
@@ -256,7 +230,7 @@ $(document).ready(function(){
                             </div>
                         </div>
                          <!--<div class="col-md-6">
-                            <div class="form-group"0>
+                            <div class="form-group">
                                 <label>Rate </label>
                                 <!--input type="text" name="p_rate" id="p_rate" value="<?php if($action=='edit'){echo $p_rate;} ?>" class="form-control" /-->
                             <!--</div>
@@ -265,122 +239,84 @@ $(document).ready(function(){
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                
-                                <label>From $0 to Threshold</label>
-                                <div class="input-group">
-                                <input type="text" name="threshold1" name="threshold1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold1" value="<?php if($action=='edit'){ echo $threshold1;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
+                                <label>Threshold(in $ Price) </label>
+                                <input type="text" name="threshold1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold1" value="<?php if($action=='edit'){ echo $threshold1;} ?>" class="form-control" />
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
-                                <input type="text" name="l1_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l1_rate" value="<?php if($action=='edit'){echo $l1_rate;} ?>" class="form-control" /> 
-                                    <span class="input-group-addon">%</span>
-                                </div>
+                                <input type="text" name="l1_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l1_rate" value="<?php if($action=='edit'){echo $l1_rate;} ?>" class="form-control" />
                             </div>
                         </div>
                     </div><h3>Level 2:</h3>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Threshold</label>
-                                <div class="input-group">                               
-                                     <input type="text" name="threshold2" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold2" value="<?php if($action=='edit'){echo $threshold2;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
+                                <label>Threshold(in $ Price) </label>
+                                <input type="text" name="threshold2" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold2" value="<?php if($action=='edit'){echo $threshold2;} ?>" class="form-control" />
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
-                                
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
                                 <input type="text" name="l2_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l2_rate" value="<?php if($action=='edit'){echo $l2_rate;} ?>" class="form-control" />
-                                      <span class="input-group-addon">%</span>
-                                </div>
                             </div>
                         </div>
                     </div><h3>Level 3:</h3>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Threshold </label>
-                                <div class="input-group">
+                                <label>Threshold(in $ Price) </label>
                                 <input type="text" name="threshold3" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold3" value="<?php if($action=='edit'){echo $threshold3;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
                                 <input type="text" name="l3_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l3_rate" value="<?php if($action=='edit'){echo $l3_rate;} ?>" class="form-control" />
-                                      <span class="input-group-addon">%</span>
-                                </div>
                             </div>
                         </div>
                     </div><h3>Level 4:</h3>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Threshold </label>
-                                <div class="input-group">
+                                <label>Threshold(in $ Price) </label>
                                 <input type="text" name="threshold4" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold4" value="<?php if($action=='edit'){echo $threshold4;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
                                 <input type="text" name="l4_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l4_rate" value="<?php if($action=='edit'){echo $l4_rate;} ?>" class="form-control" />
-                                      <span class="input-group-addon">%</span>
-                                </div>
                             </div>
                         </div>
                     </div><h3>Level 5:</h3>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Threshold </label>
-                                <div class="input-group">
+                                <label>Threshold(in $ Price) </label>
                                 <input type="text" name="threshold5" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold5" value="<?php if($action=='edit'){echo $threshold5;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
                                 <input type="text" name="l5_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l5_rate" value="<?php if($action=='edit'){echo $l5_rate;} ?>" class="form-control" />
-                                      <span class="input-group-addon">%</span>
-                                </div>
                             </div>
                         </div>
                     </div><h3>Level 6:</h3>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Threshold </label>
-                                <div class="input-group">
+                                <label>Threshold(in $ Price) </label>
                                 <input type="text" name="threshold6" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="threshold6" value="<?php if($action=='edit'){echo $threshold6;} ?>" class="form-control" />
-                                    <span class="input-group-addon">$</span>
-                                </div>
                             </div>
                         </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Rate (in percentage) </label>
-                                <div class="input-group">
                                 <input type="text" name="l6_rate" onkeypress='return event.charCode >= 48 && event.charCode <= 57' id="l6_rate" value="<?php if($action=='edit'){echo $l6_rate;} ?>" class="form-control" />
-                                      <span class="input-group-addon">%</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -410,8 +346,6 @@ $(document).ready(function(){
                         <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous"style="float: left;" class="previous next_previous_a" style="float: left;"><input type="button" name="next" value="&laquo; Previous" /></a><?php } ?>
                         <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="previous" value="Next &raquo;" /></a><?php } ?>
                         
-                        
-
                         <?php if($action=='edit' && $id>0){?>
                         <a href="#view_changes" data-toggle="modal"><input type="button" name="view_changes" value="View Changes" style="margin-left: 10% !important;"/></a>
                         <?php } ?>
@@ -552,7 +486,7 @@ $(document).ready(function(){
                     
                         <td><?php echo ++$count; ?></td>
                         <td><?php echo $val['user_initial'];?></td>
-                        <td><?php echo date('m/d/Y',strtotime($val['modified_time']));?></td>
+                        <td><?php echo date('d/m/Y', strtotime($val['modified_time']));?></td>
                         <td><?php echo $feild_name;?></td>
                        <?php if($feild_name == 'Payout Level'){?>
                         <td>
@@ -719,33 +653,30 @@ $(document).ready(function(){
         <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
             <table class="table table-bordered table-stripped table-hover">
                 <thead>
+                    <th>#NO</th>
                     <th>Trade No</th>
-                                <th>Date</th>
-                                <th>Product</th>
-                                <th>Broker</th>
-                                <th>Client No</th>
-                                <th>Trade Amount</th>
-                                <th>Commision Amount</th>
-                        
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Client No</th>
+                    <th>Trade Amount</th>
                 </thead>
                 <tbody>
-                  <?php  if(isset($_GET['action']) && $_GET['action']=='edit'){
-                            foreach($broker_trans as $key=>$val)
-                            {
-                                $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
-                                ?>
-                                   <tr>
-                                        <td><?php echo $val['client_number']; ?></td>
-                                        <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
-                                        <td><?php echo $product_name; ?></td>
-                                        <td><?php echo $val['brk_name']; ?></td>
-                                        <td><?php echo $val['client_number']; ?></td>
-                                        <td><?php echo $val['invest_amount']; ?></td>
-                                        <td><?php echo $val['commission_received']; ?></td>
-                                        
-                                    </tr>
-                            <?php } }?>
-                          
+                    <tr>
+                        <td>1</td>
+                        <td>30</td>
+                        <td>28/11/2017</td>
+                        <td>Electronics</td>
+                        <td>20</td>
+                        <td>$200</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>30</td>
+                        <td>28/11/2017</td>
+                        <td>Mobile accessories</td>
+                        <td>20</td>
+                        <td>$200</td>
+                    </tr>
               </tbody>
             </table>
         </div>
@@ -829,7 +760,7 @@ $(document).ready(function(){
         "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 6 ] }, 
                         { "bSearchable": false, "aTargets": [ 6 ] }]
         });
-        $("div.toolbar").html('<a href="<?php echo CURRENT_PAGE; ?>?action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New</a>'+'<div class="panel-control" style="padding-left:5px;display:inline;">'+
+        $("div.toolbar").html('<div class="panel-control">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
     					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
@@ -1039,22 +970,6 @@ function attachsubmit(attach_id)
                
         
    return false;   
-}
-function clear_threshold()
-{
-   document.getElementById("threshold1").value = "";  
-   document.getElementById("threshold2").value = "";  
-   document.getElementById("threshold3").value = "";  
-   document.getElementById("threshold4").value = "";  
-   document.getElementById("threshold5").value = "";            
-   document.getElementById("threshold6").value = "";  
-   document.getElementById("l1_rate").value = "";  
-   document.getElementById("l2_rate").value = "";  
-   document.getElementById("l3_rate").value = "";  
-   document.getElementById("l4_rate").value = "";  
-   document.getElementById("l5_rate").value = "";            
-   document.getElementById("l6_rate").value = "";  
-   
 }
 function delete_attach(attach_id){
     

@@ -1460,6 +1460,9 @@ function set_Category(val){
     // alert(a);
 }
 
+
+
+
 function formsubmit_movecategory()
 {
    $('#msg').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>');
@@ -1619,6 +1622,9 @@ function open_newattach()
 }
 </script>
 <script>
+
+    var isRedirectToTransPage=<?php  echo isset($_GET['redirect']) && $_GET['redirect']== "add_product_from_trans" ? 1 : 0 ?>;
+
 function get_product_notes(){
     
         var xmlhttp = new XMLHttpRequest();
@@ -1683,11 +1689,11 @@ function hideshow_sponser_based_on_product_category(product_category)
 {
      if(product_category =='2' ||product_category =='3'|| product_category =='6'||product_category =='7'||product_category =='8')
         {
-            div_sponsor.style.visibility='hidden';
+            document.getElementById("div_sponsor").style.visibility='hidden';
         }
         else
         {
-            div_sponsor.style.visibility='visible';
+            document.getElementById("div_sponsor").style.visibility='visible';
         }
 }
 function openedit(note_id){
@@ -1701,8 +1707,11 @@ function openedit(note_id){
 function product_category_autoredirect(product_category){
     
     if(product_category!='0')
-    {
-        window.location="product_cate.php?action=view_product&category="+product_category;
+    {   
+        if(isRedirectToTransPage == 1)
+          window.location="product_cate.php?action=add_product&category="+product_category+"&redirect=add_product_from_trans";
+        else
+        window.location="product_cate.php?action=view_product&category="+product_category
     }
     
 }
@@ -1825,6 +1834,7 @@ function delete_attach(attach_id){
 }
 
 
+
 $('#demo-dp-range .input-daterange').datepicker({
         format: "mm/dd/yyyy",
         todayBtn: "linked",
@@ -1836,6 +1846,8 @@ function checkLength(el) {
     alert("length grater than 2 characters")
   }
 }
+
+
 
 
 var waitingDialog = waitingDialog || (function ($) {
