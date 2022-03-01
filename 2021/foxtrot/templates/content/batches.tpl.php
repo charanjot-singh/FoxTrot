@@ -75,7 +75,7 @@
                         <label>Check Amount </label><br />
                         <div class="input-group">
                         <span class="input-group-addon">$</span>
-                        <input type="text"  class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 '  maxlength="8" name="check_amount" id="check_amount" value="<?php if(isset($check_amount) && $check_amount!='') {echo number_format($check_amount,2);}else{echo '0';}?>" />
+                        <input type="text"  class="form-control" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 '  maxlength="12" name="check_amount" id="check_amount" value="<?php if(isset($check_amount) && $check_amount!='') {echo number_format($check_amount,2);}else{echo '0';}?>" />
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
     			<table id="data-table" class="table table-striped1 table-bordered" cellspacing="0" width="100%">
     	            <thead>
     	                <tr>
-                            <th>BATCH #</th>
+                            <th>BATCH NUMBER</th>
                             <th>BATCH DATE</th>
                             <th>DESCRIPTION</th>
                             <th>SPONSOR</th>

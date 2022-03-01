@@ -213,7 +213,7 @@ document.addEventListener("click", function (e) {
 });
 }
 </script>
-<div class="container">
+<div id="new_transcation_wrap" class="container">
 <h1 class="<?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'topfixedtitle';}*/?>">Transactions</h1> 
     <div class="col-lg-12 well <?php /*if($action=='add'||($action=='edit_transaction' && $id>0)){ echo 'fixedwell';}*/?>">
     <?php require_once(DIR_FS_INCLUDES."alerts.php"); ?>
@@ -285,17 +285,17 @@ document.addEventListener("click", function (e) {
             <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
 
          
-                <div class="row"> 
+              <!--   <div class="row"> 
                      <div class="col-md-4">
                     <div class="form-group">
                         
-                        <!-- <span class="input-group-addon"> -->
+                     
                         <input type="checkbox" disabled="true" name="is_pending_order" <?php if(isset($is_pending_order) && $is_pending_order==1){ echo'checked="true"'; }?> id="is_pending_order" style="display: inline;" value="1" />
-                        <!-- </span> -->
+                      
                         <label>Pending Order </label>                     
                     </div>
                 </div>                    
-                </div>
+                </div> -->
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -308,7 +308,7 @@ document.addEventListener("click", function (e) {
                         <label>Trade Date <span class="text-red">*</span></label><br />
                         <div id="demo-dp-range">
                             <div class="input-daterange input-group" id="datepicker">
-                                <input type="text" data-required="true" name="trade_date" id="trade_date" value="<?php if(isset($trade_date) && $trade_date != '0000-00-00') {echo date('m/d/Y',strtotime($trade_date));}?>" class="form-control" />
+                                <input type="text" autocomplete="off" data-required="true" name="trade_date" id="trade_date" value="<?php if(isset($trade_date) && $trade_date != '0000-00-00') {echo date('m/d/Y',strtotime($trade_date));}?>" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -318,40 +318,49 @@ document.addEventListener("click", function (e) {
                         <label>Settlement Date </label><br />
                         <div id="demo-dp-range">
                             <div class="input-daterange input-group" id="datepicker">
-                                <input type="text" name="settlement_date" id="settlement_date" value="<?php if(isset($settlement_date) && $settlement_date != '0000-00-00') {echo date('m/d/Y',strtotime($settlement_date));}?>" class="form-control" />
+                                <input type="text" autocomplete="off"  name="settlement_date" id="settlement_date" value="<?php if(isset($settlement_date) && $settlement_date != '0000-00-00') {echo date('m/d/Y',strtotime($settlement_date));}?>" class="form-control" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Client Name <span class="text-red">* </span> </label><a href="client_maintenance.php?redirect=add_client_from_trans&action=add_new" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
+                        <label>Search by Number </label><br />
+                         <div class="autocomplete" style="width:100%">
+                            <input type="text" autocomplete="off" class="form-control" data-required="true" name="search_client_number" id="search_client_number" />
+                          
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+
+                        <label>Client Name <span class="text-red">* </span> </label><a href="#" onclick="return redirect_url('client_maintenance.php?redirect=add_client_from_trans&action=add_new');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
                         <select class="livesearch form-control" data-required="true" id="client_name" name="client_name" onchange="get_client_account_no(this.value);">
                             <option value="0">Select Client</option>
+
                             <?php foreach($get_client as $key=>$val){?>
-                            <option value="<?php echo $val['id'];?>" <?php if(isset($client_name) && $client_name==$val['id']){ ?>selected="true"<?php } ?>><?php echo $val['first_name'].' '.$val['mi'].' '.$val['last_name'];?></option>
+                            <option data-brokername="<?php echo $val['broker_name'] ?>" value="<?php echo $val['id'];?>" <?php if(isset($client_name) && $client_name==$val['id']){ ?>selected="true"<?php } ?>><?php echo $val['first_name'].' '.$val['mi'].' '.$val['last_name'];?></option>
                             <?php } ?>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Client Number <span class="text-red">*</span></label><br />
-                         <div class="autocomplete" style="width:100%">
-                            <select class="form-control" data-required="true" name="client_number" id="client_number" onchange="add_new_client_no(this)">
+                        <label>Account No <span class="text-red">* </span> </label>
+                         <select class="form-control" data-required="true" name="client_number" id="client_number" onchange="add_new_client_no(this)">
                                  <option value=""> Please Select  </option>
-                                 <option value="-1"> None </option>
+                                 <option value="-1"> Add New </option>
                                  <?php foreach($get_accounts_no as $no): ?>
                                      <option value="<?php echo $no;?>" <?php echo $no == $client_number ? "selected='selected'" : "" ; ?> ><?php echo $no;?></option>
                                  <?php endforeach;  ?>
 
                             </select>
-                        <!-- <input type="text" maxlength="26" onpropertychange ="get_client_id(this.value);"  class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="client_number"  id="client_number" value="<?php if(isset($client_number)) {echo $client_number;}?>"/> -->
-                        </div>
                     </div>
                 </div>
+               
                <!--  <div class="col-md-2">
                     <div class="form-group">
                         <div class="autocomplete" style="width:300px;">
@@ -396,11 +405,11 @@ document.addEventListener("click", function (e) {
                 </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="batches.php?action=add_batches_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
+                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="#" onclick="return redirect_url('batches.php?action=add_batches_from_trans');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
                         <select class="form-control" data-required="true" name="batch" onchange="get_commission_date(this.value);">            
                             <option value="0">Select Batch</option>                
                              <?php foreach($get_batch as $key=>$val){?>
-                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php }else if(isset($key) && $key==0){?> selected="true"<?php } ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
+                            <option value="<?php echo $val['id'];?>" <?php if(isset($batch) && $batch==$val['id']){?> selected="true"<?php }  ?>><?php echo $val['id'].' '.$val['batch_desc'];?></option>
                             <?php } ?>
                             
                         </select>
@@ -421,7 +430,7 @@ document.addEventListener("click", function (e) {
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="product_cate.php?redirect=add_product_from_trans" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
+                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="#" onclick="return redirect_url('product_cate.php?action=add_product&redirect=add_product_from_trans');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
                         <select class="form-control" data-required="true" name="product"  id="product">
                             <option value="0">Select Product</option>
                         </select>
@@ -1012,6 +1021,7 @@ document.addEventListener("click", function (e) {
 .multi-checkbox-row{
    font-size: 12px;
 }
+
 </style>
 <script type="text/javascript">
 function hide_hold_reason()
@@ -1135,14 +1145,63 @@ $('.decimal').chargeFormat();
 .chosen-container-single .chosen-single {
     height: 34px !important;
 }
+#new_transcation_wrap label{
+    min-height: 30px;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="/CloudFox/assets/plugins/autocomplete/jquery-ui.js"></script>
+<script type="text/javascript" src="/CloudFox/assets/plugins/autocomplete/jquery.ui.autocomplete.scroll.min.js"></script>
+ <link rel="stylesheet" href="/CloudFox/assets/plugins/autocomplete/jquery-ui.css?1">
+
+
+
 <script type="text/javascript">
-    $(document).ready(function(){
+    var transcation_form_data = JSON.parse(localStorage.getItem('transcation_form_data'));
+    if(localStorage.getItem('transcation_form_data')){
+       
+         //$("")$("form[name='frm2']")
+           for(var key in transcation_form_data){
+              
+              if(transcation_form_data[key]["value"]!=''){
+                 document.querySelector("[name='"+transcation_form_data[key]["name"]+"']").value=transcation_form_data[key]["value"];
+              }
+             // console.log(transcation_form_data,"transcation_form_data")
+           }
+      }
+    $(document).ready(function(){ 
         var client_ac_number =<?php echo json_encode($client_account_array); ?>;         
        // autocomplete(document.getElementById("client_number"), client_ac_number);
+        if(localStorage.getItem('transcation_form_data')){
+        
+      
+           for(var key in transcation_form_data){
+                 if(transcation_form_data[key]["value"]!=''){
+                      $("[name='"+transcation_form_data[key]["name"]+"']").trigger("chosen:updated").trigger("change");
+                }
+              }
+          }
+
 
       $(".livesearch").chosen();
+      $("#search_client_number").autocomplete({
+          source: "ajax_get_client_account.php?_type=query",
+          minLength: 2,
+           maxShowItems: 3,
+          select: function( event, ui ) {
+            $('select[id="client_name"]').val(ui.item.id).trigger("chosen:updated").trigger("change");;;
+             $('select[name="broker_name"]').val(ui.item.broker_name).trigger("chosen:updated").trigger("change");;;
+            //log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+          }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+    return $("<li>")
+      .append('<div><span><strong>Client Name:</strong>'+item.name+'</span><br/><span><strong>Account No:</strong>'+item.account_no+'</span><br/> <span><strong>Client File No:</strong>'+item.client_file_number+'</span><br/><span><strong>Client SSN No:</strong>'+item.client_ssn+'</span></div>')
+      .appendTo(ul);
+};;
+        
+
+
+
       $('#ch_no').mask("999999");
       });
 
@@ -1157,6 +1216,8 @@ $('.decimal').chargeFormat();
                    return false;
             }
       });
+
+      
 
 
 })
@@ -1188,6 +1249,10 @@ function get_product(category_id,selected=''){
             if (this.readyState == 4 && this.status == 200) 
             {
                 document.getElementById("product").innerHTML = this.responseText;
+                 for(var key in transcation_form_data){
+                    if(transcation_form_data[key]['name']=='product')
+                    document.querySelector("[name='product']").value=transcation_form_data[key]["value"];
+                }
             }
         };
         xmlhttp.open("GET", "ajax_get_product.php?product_category_id="+category_id+'&sponsor='+sponsor+'&selected='+selected, true);
@@ -1196,21 +1261,29 @@ function get_product(category_id,selected=''){
 
 //get client account no on client select
 function get_client_account_no(client_id,selected){
+       
          document.getElementById("client_number").innerHTML="<option value=''>Please Wait...</option>";
+         var broker_name = $('select[name="client_name"]').find("option[value='"+client_id+"']").data("brokername");
+       
+           $('select[name="broker_name"]').val(broker_name).trigger("chosen:updated").trigger("change");;;
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) 
             {
                 var dropdown='';
                 var options = JSON.parse(this.responseText);
-                   console.log(options,"options")
                    
-                    dropdown+='<option value=""> Please Select  </option><option value="-1"> None </option>';
+                   
+                    dropdown+='<option value=""> Please Select  </option><option value="-1"> Add New </option>';
                     options.forEach(function(item){
                         $is_selected = selected == item ? "selected='selected'": "";
                         dropdown+="<option value='"+item+"' "+$is_selected+"  >"+item+"</option>";
                     })
                    document.getElementById("client_number").innerHTML = dropdown;
+                    for(var key in transcation_form_data){
+                    if(transcation_form_data[key]['name']=='client_number')
+                    document.querySelector("[name='client_number']").value=transcation_form_data[key]["value"];
+                }
             }
         };
         xmlhttp.open("GET", "ajax_get_client_account.php?action=all&client_id="+client_id, true);
@@ -1313,6 +1386,16 @@ function get_broker_override_rates(broker_id){
         xmlhttp.open("GET", "ajax_get_override_rates.php?broker_id="+broker_id, true);
         xmlhttp.send();
 }
+
+
+function redirect_url(url){
+       
+       localStorage.setItem("transcation_form_data",  JSON.stringify($("form[name='frm2']").serializeArray()));
+       setTimeout(function(){  window.location.href=url   },100);
+       return false;
+}
+
+
 //get broker hold commission on broker select
 function get_broker_hold_commission(broker_id){
          load_split_commission_content(broker_id);
@@ -1360,13 +1443,20 @@ function load_split_commission_content(broker_id){
                    
             }
         };
+        client_id= $("select[name='client_name']").val();
         transaction_id = $("#id").val();
-        xmlhttp.open("GET", "ajax_hold_commissions.php?action=split_commission&broker_id="+broker_id+"&transaction_id="+transaction_id, true);
+        xmlhttp.open("GET", "ajax_hold_commissions.php?action=split_commission&client_id="+client_id+"&broker_id="+broker_id+"&transaction_id="+transaction_id, true);
         xmlhttp.send();
 }
 function open_other()
 {
     $("#split_commission_modal").modal();
+    if($("select[name='broker_name']").val() == '' || $("select[name='broker_name']").val() == 0){
+        $("#split_commission_modal").find(".modal-body tbody").html("<tr><td colspan='6'>Please Select Broker First!</td> </td>")
+    }
+    else{
+            //$("#split_commission_modal").find(".modal-body tbody").html("<tr><td colspan='6'>Please Wait....</td> </td>") 
+    }
     //$('#split_div').css('display','block');
     //$('.split_edit_row').css('display','block');
 }
@@ -1540,6 +1630,8 @@ var waitingDialog = waitingDialog || (function ($) {
                    $("html,body").animate({scrollTop: $("#id").offset().top},200); 
                     return false;
                 }
+
+                 localStorage.setItem('transcation_form_data',"");
                 
                 
 			// Assigning defaults
@@ -1570,6 +1662,8 @@ var waitingDialog = waitingDialog || (function ($) {
 			}
 			// Opening dialog
 			$dialog.modal();
+
+
 		},
 		/**
 		 * Closes dialog
@@ -1674,6 +1768,7 @@ $(document).on('click','.remove-row',function(){
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
+                $("#product_cate").val(<?php echo $product_cate; ?>);
                 get_product(<?php echo $product_cate; ?>,'<?php echo $product; ?>');
             });
         </script>
@@ -1692,8 +1787,8 @@ $(document).on('click','.remove-row',function(){
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
-
-                get_client_account_no(<?php echo $client_name; ?>,<?php echo $client_number; ?>);
+                   $('#client_name').val(<?php echo $client_name; ?>).trigger("chosen:updated").trigger("change");
+                //get_client_account_no(<?php echo $client_name; ?>,<?php echo $client_number; ?>);
             });
         </script>
         <?php
@@ -1702,6 +1797,7 @@ $(document).on('click','.remove-row',function(){
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
+                 $('[name="batch"]').val(<?php echo $batch; ?>);
                 get_commission_date(<?php echo $batch; ?>);
             });
         </script>

@@ -19,6 +19,13 @@ if(isset($_GET['client_number']) && $_GET['client_number'] > 0)
     $get_client_id = $instance->select_client_id($client_number);    
     echo $get_client_id;
 }
+if(isset($_GET['_type']) && $_GET['_type'] =='query')
+{
+    $client_number = isset($_GET['term'])?$instance->re_db_input($_GET['term']):'';
+    $instance = new client_maintenance();
+    $get_client_id = $instance->search_client_record($client_number);    
+     echo json_encode($get_client_id);
+}
 if(isset($_GET['batch_id']) && $_GET['batch_id'] > 0)
 {
     $batch_id = isset($_GET['batch_id'])?$instance->re_db_input($_GET['batch_id']):'';

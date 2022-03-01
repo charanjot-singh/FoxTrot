@@ -13,7 +13,7 @@ if(isset($_GET['broker_id']) && $_GET['broker_id'] != '')
                 $doc_id2=0;
                 $transaction_id= !empty($_GET['transaction_id']) ? $_GET['transaction_id']: 0;
                 if(!$transaction_id)
-                    $edit_override = $broker_class->edit_override($_GET['broker_id']);
+                    $edit_override = $broker_class->transcation_edit_override($_GET['broker_id'],$_GET['client_id']);
                 else
                     $edit_override = $broker_class->load_split_commission($transaction_id);
 
