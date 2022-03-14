@@ -262,7 +262,7 @@ document.addEventListener("click", function (e) {
             <!--<div class="row">
                 <div class="col-md-12">
                     <div class="form-group"><br /><div class="selectwrap">
-                        <input type="submit" name="transaction" onclick="waitingDialog.show();" value="Save"/>	
+                        <input type="submit" name="transaction" onclick="waitingDialog.show();" value="Save"/>  
 
                         <a href="<?php echo CURRENT_PAGE.'?action=view';?>"><input type="button" name="cancel" value="Cancel" /></a>
                     </div>
@@ -272,15 +272,15 @@ document.addEventListener("click", function (e) {
         <div class="panel">            
             <div class="panel-heading">
                 <div class="panel-control" style="float: right;">
-    				<div class="btn-group dropdown">
-    					<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
-    					<ul class="dropdown-menu dropdown-menu-right" style="">
-    						<li><a href="<?php echo CURRENT_PAGE; ?>?action=view"><i class="fa fa-eye"></i> View List</a></li>
-    					</ul>
-    				</div>
-    			</div>
+                    <div class="btn-group dropdown">
+                        <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" style="">
+                            <li><a href="<?php echo CURRENT_PAGE; ?>?action=view"><i class="fa fa-eye"></i> View List</a></li>
+                        </ul>
+                    </div>
+                </div>
                 <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add'?'Add':'Edit'; ?> Transactions</h3>
-    		</div>
+            </div>
             <div class="panel-body">
             <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
 
@@ -329,7 +329,7 @@ document.addEventListener("click", function (e) {
                     <div class="form-group">
                         <label>Search by Number </label><br />
                          <div class="autocomplete" style="width:100%">
-                            <input type="text" autocomplete="off" class="form-control" data-required="true" name="search_client_number" id="search_client_number" />
+                            <input type="text" autocomplete="off" class="form-control"  name="search_client_number" id="search_client_number" />
                           
                         </div>
                     </div>
@@ -819,7 +819,7 @@ document.addEventListener("click", function (e) {
           <div class="panel-footer fixedbtmenu">
             <div class="selectwrap">
                 <a href="<?php echo CURRENT_PAGE.'?action=view';?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
-                <input type="submit" name="transaction" onclick="return waitingDialog.show();" value="Save" style="float: right;"/>	
+                <input type="submit" name="transaction" onclick="return waitingDialog.show();" value="Save" style="float: right;"/> 
                 <input type="submit" name="transaction" onclick="return waitingDialog.show();" value="Save & Copy" style="float: right;"/>    
             </div>
           </div>
@@ -885,18 +885,18 @@ document.addEventListener("click", function (e) {
         <?php
             }if((isset($_GET['action']) && $_GET['action']=='view') || $action=='view'){?>
         <div class="panel">
-    		<!--<div class="panel-heading">
+            <!--<div class="panel-heading">
                 <div class="panel-control">
                     <div class="btn-group dropdown" style="float: right;">
                         <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
-    					<ul class="dropdown-menu dropdown-menu-right" style="">
-    						<li><a href="<?php echo CURRENT_PAGE; ?>?action=add"><i class="fa fa-plus"></i> Add New</a></li>
+                        <ul class="dropdown-menu dropdown-menu-right" style="">
+                            <li><a href="<?php echo CURRENT_PAGE; ?>?action=add"><i class="fa fa-plus"></i> Add New</a></li>
                             <li><a href="<?php echo CURRENT_PAGE; ?>?action=view_report"><i class="fa fa-minus"></i> Report</a></li> 
-    					</ul>
-    				</div>
-    			</div>
+                        </ul>
+                    </div>
+                </div>
             </div><br />-->
-    		<div class="panel-body">
+            <div class="panel-body">
                 <!--<div class="panel-control">
                     <div class="row">
                         <div class="col-md-6" style="float: right;">
@@ -918,9 +918,9 @@ document.addEventListener("click", function (e) {
                     </div>
                 </div><br /><br />-->
                 <div class="table-responsive">
-    			<table id="data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-    	            <thead>
-    	                <tr>
+                <table id="data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
                             
                             <th>Trade Number</th>
                             <th>Trade Date</th>
@@ -932,14 +932,14 @@ document.addEventListener("click", function (e) {
                             <th>Commission Received</th>
                             <th class="text-center" colspan="2">ACTION</th>
                         </tr>
-    	            </thead>
-    	            <tbody>
+                    </thead>
+                    <tbody>
                     <?php 
                     $count = 0;
                     foreach($return as $key=>$val){
                         //print_r($val);
                         ?>
-    	                   <tr>
+                           <tr>
                                 
                                 <td><?php echo $val['id'];?></td>
                                 <td><?php echo date('m/d/Y',strtotime($val['trade_date']));?></td>
@@ -975,7 +975,7 @@ document.addEventListener("click", function (e) {
                 </table>
                 </div>
             </div>
-    	</div>
+        </div>
         <?php } ?> 
         <?php if(isset($_GET['action']) && $_GET['action']=='view_report'){?>
         <div id="view_report">
@@ -1129,12 +1129,12 @@ $('.decimal').chargeFormat();
             '<div class="panel-control" style="padding-left:5px;display:inline;">'+
                     '<div class="btn-group dropdown" style="float: right;">'+
                         '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
-    					'<ul class="dropdown-menu dropdown-menu-right" style="">'+
-    						/*'<li><a href="<?php echo CURRENT_PAGE; ?>?action=add"><i class="fa fa-plus"></i> Add New</a></li>'+*/
+                        '<ul class="dropdown-menu dropdown-menu-right" style="">'+
+                            /*'<li><a href="<?php echo CURRENT_PAGE; ?>?action=add"><i class="fa fa-plus"></i> Add New</a></li>'+*/
                             '<li><a href="<?php echo CURRENT_PAGE; ?>?action=view_report"><i class="fa fa-minus"></i> Report</a></li>'+
                         '</ul>'+
-    				'</div>'+
-    			'</div>');
+                    '</div>'+
+                '</div>');
 } );
 </script>
 <style type="text/css">
@@ -1235,7 +1235,7 @@ function get_product(category_id,selected=''){
         category_id = document.getElementById("product_cate").value;
         sponsor = document.getElementById("sponsor").value;
         $("#add_new_prod").attr("href","product_cate.php?action=add_product_from_trans&category="+category_id+"&redirect=add_product_from_trans");
-      
+        document.getElementById("product").innerHTML = "<option value=''> Please Wait...</option>";
      if(category_id =='2' ||category_id =='3'|| category_id =='6'||category_id =='7'||category_id =='8')
         {
             div_sponsor.style.visibility='hidden';
@@ -1250,8 +1250,8 @@ function get_product(category_id,selected=''){
             {
                 document.getElementById("product").innerHTML = this.responseText;
                  for(var key in transcation_form_data){
-                    if(transcation_form_data[key]['name']=='product')
-                    document.querySelector("[name='product']").value=transcation_form_data[key]["value"];
+                   /* if(transcation_form_data[key]['name']=='product')
+                    document.querySelector("[name='product']").value=transcation_form_data[key]["value"];*/
                 }
             }
         };
@@ -1502,26 +1502,26 @@ var waitingDialog = waitingDialog || (function ($) {
 
 
 
-	// Creating modal dialog's DOM
-	var $dialog = $(
-		'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
-		'<div class="modal-dialog modal-m">' +
-		'<div class="modal-content">' +
-			'<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
-			'<div class="modal-body">' +
-				'<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
-			'</div>' +
-		'</div></div></div>');
+    // Creating modal dialog's DOM
+    var $dialog = $(
+        '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+        '<div class="modal-dialog modal-m">' +
+        '<div class="modal-content">' +
+            '<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
+            '<div class="modal-body">' +
+                '<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
+            '</div>' +
+        '</div></div></div>');
 
-	return {
-		/**
-		 * Opens our dialog
-		 * @param message Custom message
-		 * @param options Custom options:
-		 * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
-		 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
-		 */
-		show: function (message, options) {
+    return {
+        /**
+         * Opens our dialog
+         * @param message Custom message
+         * @param options Custom options:
+         *                options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
+         *                options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
+         */
+        show: function (message, options) {
              var isErrorFound= false;
              var trade_date = $("#trade_date");
              var client_name = $("#client_name");
@@ -1634,42 +1634,42 @@ var waitingDialog = waitingDialog || (function ($) {
                  localStorage.setItem('transcation_form_data',"");
                 
                 
-			// Assigning defaults
-			if (typeof options === 'undefined') {
-				options = {};
-			}
-			if (typeof message === 'undefined') {
-				message = 'Saving...';
-			}
-			var settings = $.extend({
-				dialogSize: 'm',
-				progressType: '',
-				onHide: null // This callback runs after the dialog was hidden
-			}, options);
+            // Assigning defaults
+            if (typeof options === 'undefined') {
+                options = {};
+            }
+            if (typeof message === 'undefined') {
+                message = 'Saving...';
+            }
+            var settings = $.extend({
+                dialogSize: 'm',
+                progressType: '',
+                onHide: null // This callback runs after the dialog was hidden
+            }, options);
 
-			// Configuring dialog
-			$dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
-			$dialog.find('.progress-bar').attr('class', 'progress-bar');
-			if (settings.progressType) {
-				$dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
-			}
-			$dialog.find('h3').text(message);
-			// Adding callbacks
-			if (typeof settings.onHide === 'function') {
-				$dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
-					settings.onHide.call($dialog);
-				});
-			}
-			// Opening dialog
-			$dialog.modal();
+            // Configuring dialog
+            $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+            $dialog.find('.progress-bar').attr('class', 'progress-bar');
+            if (settings.progressType) {
+                $dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
+            }
+            $dialog.find('h3').text(message);
+            // Adding callbacks
+            if (typeof settings.onHide === 'function') {
+                $dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                    settings.onHide.call($dialog);
+                });
+            }
+            // Opening dialog
+            $dialog.modal();
 
 
-		},
-		/**
-		 * Closes dialog
-		 */
-	
-	};
+        },
+        /**
+         * Closes dialog
+         */
+    
+    };
 
 })(jQuery);
 

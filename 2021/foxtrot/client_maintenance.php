@@ -20,10 +20,6 @@
     $household = '';
     $broker_name = '';
     $split_broker = '';
-    $split_rate_category ="";
-    $split_rate_to = '';
-    $split_rate_from = '';
-
     $split_rate = '';
     $address1 = '';
     $address2 = '';
@@ -124,7 +120,6 @@
     $u_id=$_SESSION['user_id'];
     $logged_user=$user_instance->get_user($u_id);
     $redirect = isset($_GET['redirect'])&&$_GET['redirect']!=''?$instance->re_db_input($_GET['redirect']):'';
-    $product_category = $instance_broker->select_category();
 
 
 
@@ -150,10 +145,6 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         $broker_name = isset($_POST['broker_name'])?$instance->re_db_input($_POST['broker_name']):'';
         $split_broker = isset($_POST['split_broker'])?$instance->re_db_input($_POST['split_broker']):'';
         $split_rate = isset($_POST['split_rate'])?$instance->re_db_input($_POST['split_rate']):'';
-         $split_rate_category = isset($_POST['split_rate_category'])?$instance->re_db_input($_POST['split_rate_category']):'';
-        $split_rate_to = isset($_POST['split_rate_to'])?$instance->re_db_input($_POST['split_rate_to']):'';
-        $split_rate_from = isset($_POST['split_rate_from'])?$instance->re_db_input($_POST['split_rate_from']):'';
-
         $address1 = isset($_POST['address1'])?$instance->re_db_input($_POST['address1']):'';
         $address2 = isset($_POST['address2'])?$instance->re_db_input($_POST['address2']):'';
         $city = isset($_POST['city'])?$instance->re_db_input($_POST['city']):'';
@@ -399,7 +390,8 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
             $error = !isset($_SESSION['warning'])?$return:'';
         }
     }
-    else if(isset($_POST['add_allobjectives'])&& $_POST['add_allobjectives']=='Add_AllObjectives'){ echo '<pre>';print_r($_POST);exit;
+    else if(isset($_POST['add_allobjectives'])&& $_POST['add_allobjectives']=='Add_AllObjectives'){
+        // echo '<pre>';print_r($_POST);exit;
         $id = isset($_POST['allobjectives_id'])?$instance->re_db_input($_POST['allobjectives_id']):0;
         $allobjectives = isset($_POST['allobjectives'])?$_POST['allobjectives']:array();
 
@@ -501,10 +493,6 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         $household = isset($return['house_hold'])?$instance->re_db_output($return['house_hold']):'';
         $split_broker = isset($return['split_broker'])?$instance->re_db_output($return['split_broker']):'';
         $split_rate = isset($return['split_rate'])?$instance->re_db_output($return['split_rate']):'';
-        $split_rate_category = isset($return['split_rate_category'])?$instance->re_db_input($return['split_rate_category']):'';
-        $split_rate_to = isset($return['split_rate_to'])?$instance->re_db_input($return['split_rate_to']):'';
-        $split_rate_from = isset($return['split_rate_from'])?$instance->re_db_input($return['split_rate_from']):'';
-
         $address1 = isset($return['address1'])?$instance->re_db_output($return['address1']):'';
         $address2 = isset($return['address2'])?$instance->re_db_output($return['address2']):'';
         $city = isset($return['city'])?$instance->re_db_output($return['city']):'';
@@ -560,7 +548,6 @@ if((isset($_POST['submit'])&& $_POST['submit']=='Save')
         $sign_date = isset($return_suitability['sign_date'])?$instance->re_db_output($return_suitability['sign_date']):'';
         $tax_bracket = isset($return_suitability['tax_bracket'])?$instance->re_db_output($return_suitability['tax_bracket']):'';
         $tax_id = isset($return_suitability['tax_id'])?$instance->re_db_output($return_suitability['tax_id']):'';
-
 
     }
     else if(isset($_GET['action'])&&$_GET['action']=='status'&&isset($_GET['id'])&&$_GET['id']>0&&isset($_GET['status'])&&($_GET['status']==0 || $_GET['status']==1))

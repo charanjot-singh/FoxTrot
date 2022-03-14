@@ -81,6 +81,9 @@
    margin: 0;
    padding: 0
    }
+   .inputpopupwrap .modal-dialog{
+          width: 850px;
+   }
    .multiselect-container .input-group {
    margin: 5px
    }
@@ -2165,14 +2168,14 @@
                               <div class="panel-overlay-wrap">
                                  <div class="panel">
                                     <div class="panel-heading">
-                                       <h4 class="panel-title" style="font-size: 20px;">
+                                       <h4 class="panel-title" style="font-size: 16px;">
                                           <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?>
                                        </h4>
                                     </div>
                                     <?php if(isset($edit_licences_securities)){foreach($edit_licences_securities as $key=>$val)
                                        {   $row1 = $val['waive_home_state_fee']; $row2 = $val['product_category']; }}  ?>
                                     <div class="panel-heading">
-                                       <h4 class="panel-title" style="font-size: 20px;"><input type="checkbox" class="checkbox" <?php if(isset($_GET['action']) && $_GET['action'] == 'edit' && (isset($row1) && $row1 == '1'))    { ?>checked="true"<?php }?> name="pass_through" value="1" style="display: inline !important;"/> Waive Home State Fee</h4>
+                                       <h4 class="panel-title" style="font-size: 16px;"><input type="checkbox" class="checkbox" <?php if(isset($_GET['action']) && $_GET['action'] == 'edit' && (isset($row1) && $row1 == '1'))    { ?>checked="true"<?php }?> name="pass_through" value="1" style="display: inline !important;"/> Waive Home State Fee</h4>
                                     </div>
                                     <div class="panel-body">
                                        <div class="row">
@@ -2201,19 +2204,22 @@
                                        <div class="row">
                                           <div class="col-md-2">
                                              <div class="form-group">
-                                                <h4>Active</h4>
+                                                <h4>Active </h4>
+                                                 <span style="font-size: 13px;">Select All</span> 
+                                                <input type="checkbox"  style=" display: inline;height: 12px;" name="check_all" class="check_all checkbox" value=""/>
                                              </div>
                                           </div>
+                                          
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>State</h4>
                                              </div>
                                           </div>
-                                          <div class="col-md-2">
+                                        <!--   <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Fee</h4>
                                              </div>
-                                          </div>
+                                          </div> -->
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Received</h4>
@@ -2230,27 +2236,29 @@
                                              </div>
                                           </div>
                                        </div>
+                                      
                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_securities )){
                                           foreach($edit_licences_securities as $key=>$val){ //echo '<pre>'; print_r($row);
                                           foreach($get_state_new as $statekey=>$stateval) { if($val['state_id']== $stateval['id']) {?>
-                                       <div class="panel" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
+                                       <div class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
                                           <div class="row">
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <input type="checkbox" name="data1[<?php echo $stateval['id'] ?>][active_check]"  value="1" <?php if($val['active_check']==1){ ?>checked="true"<?php }?> id="data1[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
                                                 </div>
                                              </div>
+                                             
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <label><?php echo $stateval['name']; ?></label>
                                                 </div>
                                              </div>
-                                             <div class="col-md-2">
+                                           <!--   <div class="col-md-2">
                                                 <div class="input-group">
                                                    <span class="input-group-addon">$</span>
                                                    <input class="form-control charge" onkeypress="return isFloatNumber(this,event)"  value="<?php echo $val['fee']; ?>" name="data1[<?php echo $stateval['id'] ?>][fee]" type="text" maxlength="4" placeholder="$0-$9,999" />
                                                 </div>
-                                             </div>
+                                             </div> -->
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <div id="demo-dp-range">
@@ -2338,33 +2346,36 @@
                               <div class="panel-overlay-wrap">
                                  <div class="panel">
                                     <div class="panel-heading">
-                                       <h4 class="panel-title" style="font-size: 20px;">
+                                       <h4 class="panel-title" style="font-size: 16px;">
                                           <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?>
                                        </h4>
                                     </div>
                                     <div class="panel-heading">
                                        <?php if(isset($edit_licences_insurance) && !empty($edit_licences_insurance)){ foreach($edit_licences_insurance as $key=>$val)
                                           {   $row1 = $val['waive_home_state_fee'];  } }  ?>
-                                       <h4 class="panel-title" style="font-size: 20px;"><input type="checkbox" <?php if(isset($_GET['action'])&&$_GET['action']=='edit' && (isset($row1) && $row1==1 )){ ?>checked="true"<?php } ?> value="1 "  class="checkbox" name="pass_through" style="display: inline !important;"/> Waive Home State Fee</h4>
+                                       <h4 class="panel-title" style="font-size: 16px;"><input type="checkbox" <?php if(isset($_GET['action'])&&$_GET['action']=='edit' && (isset($row1) && $row1==1 )){ ?>checked="true"<?php } ?> value="1 "  class="checkbox" name="pass_through" style="display: inline !important;"/> Waive Home State Fee</h4>
                                     </div>
                                     <input type="hidden" name="type" value="2"/>
                                     <div class="panel-body">
                                        <div class="row">
                                           <div class="col-md-2">
                                              <div class="form-group">
-                                                <h4>Active</h4>
+                                                <h4>Active </h4>
+                                                 <span style="font-size: 13px;">Select All</span> 
+                                                <input type="checkbox"  style=" display: inline;height: 12px;" name="check_all" class="check_all checkbox" value=""/>
                                              </div>
                                           </div>
+                                          
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>State</h4>
                                              </div>
                                           </div>
-                                          <div class="col-md-2">
+                                          <!-- <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Fee</h4>
                                              </div>
-                                          </div>
+                                          </div> -->
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Received</h4>
@@ -2384,24 +2395,25 @@
                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_insurance)){
                                           foreach($edit_licences_insurance as $key=>$val){ 
                                           foreach($get_state_new as $statekey=>$stateval) { if($val['state_id']== $stateval['id']) {?>
-                                       <div class="panel" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
+                                       <div class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
                                           <div class="row">
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <input type="checkbox" name="data2[<?php echo $stateval['id'] ?>][active_check]" <?php if($val['active_check']==1){ ?>checked="true"<?php }?> value="1" id="data2[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
                                                 </div>
                                              </div>
+                                            
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <label><?php echo $stateval['name']; ?></label>
                                                 </div>
                                              </div>
-                                             <div class="col-md-2">
+                                            <!--  <div class="col-md-2">
                                                 <div class="input-group">
                                                    <span class="input-group-addon">$</span>
                                                    <input class="form-control charge" onkeypress="return isFloatNumber(this,event)" value="<?php echo $val['fee']; ?>" name="data2[<?php echo $stateval['id'] ?>][fee]"  type="text" maxlength="4" placeholder="$0-$9,999" />
                                                 </div>
-                                             </div>
+                                             </div> -->
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <div id="demo-dp-range">
@@ -2436,6 +2448,7 @@
                                                    <input type="checkbox" name="data2[<?php echo $stateval['id'] ?>][active_check]" value="1" id="data2[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
                                                 </div>
                                              </div>
+                                            
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <label><?php echo $stateval['name']; ?></label>
@@ -2489,33 +2502,36 @@
                               <div class="panel-overlay-wrap">
                                  <div class="panel">
                                     <div class="panel-heading">
-                                       <h4 class="panel-title" style="font-size: 20px;">
+                                       <h4 class="panel-title" style="font-size: 16px;">
                                           <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?>
                                        </h4>
                                     </div>
                                     <div class="panel-heading">
                                        <?php if(isset($edit_licences_ria) && !empty($edit_licences_ria)) {foreach($edit_licences_ria as $key=>$val)
                                           {   $row1 = $val['waive_home_state_fee'];  }  } ?>
-                                       <h4 class="panel-title" style="font-size: 20px;"><input type="checkbox" value="1" <?php if(isset($_GET['action'])&&$_GET['action']=='edit'&& (isset($row1) && $row1==1 )){ ?>checked="true"<?php } ?>  class="checkbox" name="pass_through"  style="display: inline !important;"/> Waive Home State Fee</h4>
+                                       <h4 class="panel-title" style="font-size: 16px;"><input type="checkbox" value="1" <?php if(isset($_GET['action'])&&$_GET['action']=='edit'&& (isset($row1) && $row1==1 )){ ?>checked="true"<?php } ?>  class="checkbox" name="pass_through"  style="display: inline !important;"/> Waive Home State Fee</h4>
                                     </div>
                                     <input type="hidden" name="type" value="3"/>
                                     <div class="panel-body">
                                        <div class="row">
                                           <div class="col-md-2">
                                              <div class="form-group">
-                                                <h4>Active</h4>
+                                                <h4>Active </h4>
+                                                 <span style="font-size: 13px;">Select All</span> 
+                                                <input type="checkbox"  style=" display: inline;height: 12px;" name="check_all" class="check_all checkbox" value=""/>
                                              </div>
                                           </div>
+                                          
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>State</h4>
                                              </div>
                                           </div>
-                                          <div class="col-md-2">
+                                        <!--   <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Fee</h4>
                                              </div>
-                                          </div>
+                                          </div> -->
                                           <div class="col-md-2">
                                              <div class="form-group">
                                                 <h4>Received</h4>
@@ -2535,24 +2551,25 @@
                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_ria)){ 
                                           foreach($edit_licences_ria as $key=>$val){ 
                                           foreach($get_state_new as $statekey=>$stateval) { if($val['state_id']== $stateval['id']) {?>
-                                       <div class="panel" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
+                                       <div class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
                                           <div class="row">
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <input type="checkbox" name="data3[<?php echo $stateval['id'] ?>][active_check]" <?php if($val['active_check']==1){ ?>checked="true"<?php }?> value="1" id="data3[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
                                                 </div>
                                              </div>
+                                            
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <label><?php echo $stateval['name']; ?></label>
                                                 </div>
                                              </div>
-                                             <div class="col-md-2">
+                                            <!--  <div class="col-md-2">
                                                 <div class="input-group">
                                                    <span class="input-group-addon">$</span>
                                                    <input class="form-control charge" onkeypress="return isFloatNumber(this,event)" value="<?php echo $val['fee'] ?>" name="data3[<?php echo $stateval['id'] ?>][fee]" type="text" maxlength="4" placeholder="$0-$9,999" />
                                                 </div>
-                                             </div>
+                                             </div> -->
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <div id="demo-dp-range">
@@ -2587,6 +2604,7 @@
                                                    <input type="checkbox" name="data3[<?php echo $stateval['id'] ?>][active_check]" value="1" id="data3[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
                                                 </div>
                                              </div>
+                                            
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <label><?php echo $stateval['name']; ?></label>
@@ -3211,7 +3229,7 @@
                   </div>
                   <div class="modal-body">
                      <div class="inputpopup">
-                        <a class="btn btn-sm btn-success" style="float: right !important; margin-right: 5px !important;" onclick="open_newnotes();"><i class="fa fa-plus"></i> Add New</a></li>
+                        <a class="btn btn-sm btn-success" style="float: right !important; margin-right: 5px !important;" onclick="open_newnotes();"><i class="fa fa-plus"></i> Add New</a>
                      </div>
                      <div class="col-md-12">
                         <div id="msg_notes">
@@ -3232,7 +3250,7 @@
          <!-- Lightbox strart -->                           
          <!-- Modal for add broker notes -->
          <!-- End of Modal dialog -->
-      </div>
+     
       <!-- End of Modal -->
       <!-- Lightbox strart -->  
       <!-- Lightbox strart -->                          
@@ -3348,9 +3366,9 @@
                                     $lable_array = array();
                                     $lable_array = array('first_name' => 'First Name','last_name' => 'Last Name','middle_name' => 'Middle Name','suffix' => 'Suffix','fund' => 'Fund/Clear','internal' => 'Internal','ssn' => 'SSN','tax_id' => 'Tax Id','crd' => 'CRD','active_status' => 'Active status','branch_manager' => 'Branch Manager','pay_method' => 'Pay Method',
                                     
-                                    'home' => 'Home/Business','address1' => 'Address 1','address2' => 'Address 2','city' => 'City','state_id' => 'State','zip_code' => 'Zip code','telephone' => 'Telephone','cell' => 'Cell','fax' => 'Fax','gender' => 'Gender','marital_status' => 'Status','spouse' => 'Spouse','children' => 'Children','email1' => 'Email 1','email2' => 'Email 2','web_id' => 'Web ID','web_password' => 'Web Password','dob' => 'DOB','prospect_date' => 'Prospect Date','reassign_broker' => 'Reassign Broker','u4' => 'U4','u5' => 'U5/Termination Date','dba_name' => 'DBA Name','eft_information' => 'EFT Information','start_date' => 'Start Date','transaction_type' => 'Transaction Type','routing' => 'Routing','account_no' => 'Account No','cfp' => 'CFP','chfp' => 'ChFP','cpa' => 'CPA','clu' => 'CLU','cfa' => 'CFA','ria' => 'RIA','insurance' => 'Insurance'
+                                    'home' => 'Home/Business','home_address1_general' => 'Home Address 1','home_address2_general' => 'Home Address 2','city' => 'Home Address City','state_id' => 'Home Address State','zip_code' => 'Home address Zip code','telephone' => 'Telephone','cell' => 'Cell','fax' => 'Fax','gender' => 'Gender','marital_status' => 'Status','spouse' => 'Spouse','children' => 'Children','email1' => 'Primary Email','email2' => 'Secondary Email','web_id' => 'Web ID','web_password' => 'Web Password','dob' => 'DOB','prospect_date' => 'Prospect Date','reassign_broker' => 'Reassign Broker','u4' => 'U4','u5' => 'U5/Termination Date','dba_name' => 'DBA Name','eft_information' => 'EFT Information','start_date' => 'Start Date','transaction_type' => 'Transaction Type','routing' => 'Routing','account_no' => 'Account No','cfp' => 'CFP','chfp' => 'ChFP','cpa' => 'CPA','clu' => 'CLU','cfa' => 'CFA','ria' => 'RIA','insurance' => 'Insurance',"broker_name"=>"Broker Name"
                                     
-                                    ,'waive_home_state_fee' => 'Waive Home State Fee','product_category' => 'Product Category','state_id' => 'State','active_check' => 'Active','fee' => 'Fee','received' => 'Received','terminated' => 'Terminated','reson' => 'Reason','  license_name' => 'License Name / Description','approval_date' => 'Approval Date','expiration_date' => 'Expiration Date','reason' => 'Reason');
+                                    ,'waive_home_state_fee' => 'Waive Home State Fee','product_category' => 'Product Category','state_id' => 'State','active_check' => 'Active','fee' => 'Fee','received' => 'Received','terminated' => 'Terminated','reson' => 'Reason','  license_name' => 'License Name / Description','approval_date' => 'Approval Date','expiration_date' => 'Expiration Date','reason' => 'Reason','business_city'=>"Business Address City",'business_zipcode'=>"Business Address Zipcode",'business_state'=>"Business Address State",'business_address1_general'=>"Business Address 1","business_address2_general"=>"Business Address 2");
                                     
                                     foreach($broker_data as $key=>$val){
                                         
@@ -3726,6 +3744,11 @@
                <div class="modal-body">
                   <form method="post">
                      <div class="inputpopup">
+                         <?php if(isset($_GET['role']) && $_GET['role'] =='open_t_popup') :
+                                   $msg= $_GET['msg']=="delete" ? "Transaction has been deleted successfully": " Transcation has been updated successfully";
+                           ?>
+                                <div class="alert alert-success"> <?php echo  $msg; ?></div>
+                         <?php  endif ;?>
                         <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
                            <table  class="table table-bordered table-stripped table-hover">
                               <thead>
@@ -3737,23 +3760,39 @@
                                  <th>Trade Amount</th>
                                  <th>Commision Received</th>
                                  <th>Account#</th>
+                                 <th colspan="2">Action</th>
+
                               </thead>
                               <tbody>
-                                 <?php $doc_id=0; //echo '<pre>';print_r($edit_required_docs);
-                                    if(isset($_GET['action']) && $_GET['action']=='edit' && isset($edit_required_docs) ){
+                                 <?php $doc_id=0; $date_now = new DateTime();
+                                    if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($broker_trans) ){
                                     foreach($broker_trans as $key=>$val){
                                     $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
                                     ?>
                                  <tr>
-                                    <td><?php echo $val['broker_name']; ?></td>
+                                    <td><?php echo $val['id']; ?></td>
                                     <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
                                     <td><?php echo $product_name; ?></td>
                                     <td><?php echo $val['client_number']; ?></td>
                                     <td><?php echo $val['invest_amount']; ?></td>
                                     <td><?php echo $val['commission_received']; ?></td>
                                     <td><?php echo $val['account_no']; ?></td>
-                                 </tr>
-                                 <?php } }?>
+                                    <td>  
+                                        <?php   $settle_date= new DateTime($val['settlement_date']);
+                                                $isExpired= $settle_date < $date_now;
+
+                                                if(!$isExpired): 
+                                         ?>
+                                        <a href="http://foxtrotsoftware.com/CloudFox/transaction.php?action=edit_transaction&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>" class="btn btn-md btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a onclick="return ask_confirmation('http://foxtrotsoftware.com/CloudFox/transaction.php?action=transaction_delete&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>');" class="btn btn-md btn-danger confirm" ><i class="fa fa-trash"></i> Delete</a>
+                                     </tr>
+                                 <?php   endif; } }
+                                 else {
+                                              echo '<tr><td colspan="7">Recors not found </td>';
+
+                                 }?>
                               </tbody>
                            </table>
                         </div>
@@ -4075,8 +4114,10 @@
        var frm_element = document.getElementById("add_client_notes_"+note_id);
        //var ele = frm_element.getElementById("client_note");
        name = frm_element.elements["client_note"].removeAttribute("style"); 
+       frm_element.elements["add_notes_btn"].removeAttribute("style"); 
+        frm_element.querySelector('.edit-btn').style.display="none";
        //$(name).css('pointer-events','');
-       console.log(name);
+       console.log(name,frm_element.elements);
    }
 </script>
 <script type="text/javascript">
@@ -4380,8 +4421,30 @@
    width: 100% !important;
    }
 </style>
-<script type="text/javascript">         
+<script type="text/javascript">     
+
+  function ask_confirmation(url){
+
+        var answer = confirm(" are you sure want to delete transcation?");
+            if(answer){
+                       window.location.href=url;
+                       return;
+            } 
+            return false;
+  }    
    $(document).ready(function(e){
+         <?php if(isset($_GET['role']) && $_GET['role'] =='open_t_popup') : ?>
+            $('a[href="#client_transactions"]').trigger('click');
+         <?php endif; ?>
+       $('.check_all').click(function(){
+             console.log(   $(this).parents('.panel-body').find('.panel-row-wrap  [type="checkbox"]'));
+              if($(this).is(":checked")){
+                   $(this).parents('.panel-body').find('.panel-row-wrap [type="checkbox"]').prop("checked",true);
+              }
+              else{
+                 $(this).parents('.panel-body').find('.panel-row-wrap  [type="checkbox"]').prop("checked",false);
+              }
+       })
        $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li', function( event ) {
         var $target = $( event.currentTarget );
         $target.closest('.bs-dropdown-to-select-group')

@@ -470,7 +470,7 @@
               $fieldsToWatch = array('home', 'home_address1_general', 'home_address2_general', 'business_address1_general', 'business_address2_general', 'city',
               'state_id', 'zip_code', 'telephone', 'cell', 'fax', 'gender', 'marital_status', 'spouse', 'children', 'email1', 'email2', 'web_id', 'web_password',
               'dob', 'prospect_date', 'reassign_broker', 'u4', 'u5', 'day_after_u5', 'dba_name', 'eft_information', 'start_date', 'transaction_type', 'routing',
-              'account_no', 'cfp', 'chfp', 'cpa', 'clu', 'cfa', 'ria', 'insurance' );
+              'account_no', 'cfp', 'chfp', 'cpa', 'clu', 'cfa', 'ria', 'insurance','business_city','business_zipcode','business_state' );
               $this->update_history(BROKER_HISTORY, $originalInstance, $newInstance, $fieldsToWatch);
 
               $_SESSION['success'] = UPDATE_MESSAGE;
@@ -1895,8 +1895,8 @@
 
 					$q = "SELECT `at`.*
 							FROM `".TRANSACTION_MASTER."` AS `at`
-		                    WHERE `at`.`is_delete`='0' AND `at`.`broker_name`='".$id."'
-		                    ORDER BY `at`.`id` ASC";
+		                    WHERE `at`.`is_delete`='0' AND `at`.`broker_name`='".$id."' and `at`.`is_payroll`='0'
+		                    ORDER BY `at`.`id` desc";
 					$res = $this->re_db_query($q);
 		            if($this->re_db_num_rows($res)>0){
 		                $a = 0;
@@ -2020,7 +2020,7 @@
 			$q = "SELECT `at`.*,u.first_name as user_initial
 					FROM `".BROKER_HISTORY."` AS `at`
                     LEFT JOIN `".USER_MASTER."` as `u` on `u`.`id`=`at`.`modified_by`
-                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."'";
+                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."' order by id desc";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
     			while($row = $this->re_db_fetch_array($res)){
@@ -2691,6 +2691,18 @@
 
 
 			return $return;
+		}
+
+		function get_product_from_cat_id_and_id($product_id,$cat){
+         $query="select name from `ft_products` as at where  `at`.`id`='".$product_id."' and category='".$cat."' limit 1";
+            	$res = $this->re_db_query($query);
+            	
+            	if($this->re_db_num_rows($res)>0){
+                      $product_data = $this->re_db_fetch_array($res);
+                     return isset($product_data['name']) ? $product_data['name']: '';
+            	}
+
+            	return "";
 		}
 
     }

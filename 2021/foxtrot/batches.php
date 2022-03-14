@@ -36,7 +36,7 @@
         {
             if($action=='add_batches_from_trans')
             {
-                header("location:".SITE_URL."transaction.php?action=add");exit;
+                header("location:".SITE_URL."transaction.php?action=add&batch_id=".$_SESSION['last_inserted_batch_id']);exit;
             }
             else
             {
