@@ -231,9 +231,9 @@
               if($res){
                   //--- IMPORT File call ---//
                   if($for_import == 'true'){
-                      //--- 1/28/22 Called from "Resolve Exceptions" in import.tpl.php. Reprocess will update all the Import Tables (IMPORT_EXCEPTIONS, IMPORT_???_DETAIL_DATA)
+                      //--- 3/17/22 Flag the exception as "add_new", process the record again to resolve the exception
                       $instance_import = new import();
-                      $instance_import->reprocess_current_files($file_id);
+                      $instance_import->resolve_exception_5AddNew('broker_id', $_SESSION['last_insert_id'], $_GET['exception_record_id']);
 
                       $_SESSION['success'] = INSERT_MESSAGE;
                       return true;
@@ -276,11 +276,6 @@
 			$city_general = isset($data['city_general'])?$this->re_db_input($data['city_general']):'';
 			$state_general = isset($data['state_general'])?$this->re_db_input($data['state_general']):'';
 			$zip_code_general = isset($data['zip_code_general'])?$this->re_db_input($data['zip_code_general']):'';
-
-			$business_city = isset($data['business_city'])?$this->re_db_input($data['business_city']):'';
-			$business_state = isset($data['business_state'])?$this->re_db_input($data['business_state']):'';
-			$business_zipcode = isset($data['business_zipcode'])?$this->re_db_input($data['business_zipcode']):'';
-
       $telephone_mask = isset($data['telephone_general'])?$this->re_db_input($data['telephone_general']):'';
       $telephone_no = str_replace("-", '', $telephone_mask);
       $telephone_brack1 = str_replace("(", '', $telephone_no);
@@ -448,7 +443,7 @@
         {
 					if($id==0)
           {
-						$q = "INSERT INTO `".BROKER_GENERAL."` SET `broker_id`='".$_SESSION['last_insert_id']."',`home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."',`business_state`='".$business_state."',`business_city`='".$business_city."',`business_zipcode`='".$business_zipcode."'".$this->insert_common_sql();
+						$q = "INSERT INTO `".BROKER_GENERAL."` SET `broker_id`='".$_SESSION['last_insert_id']."',`home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."'".$this->insert_common_sql();
 						$res = $this->re_db_query($q);
                         if($res){
 
@@ -462,7 +457,7 @@
           }
           else
           {
-            $q = "UPDATE `".BROKER_GENERAL."`  SET `home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."',`business_city`='".$business_city."',`business_state`='".$business_state."',`business_zipcode`='".$business_zipcode."'".$this->update_common_sql()." WHERE `broker_id`='".$id."'";
+            $q = "UPDATE `".BROKER_GENERAL."`  SET `home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."'".$this->update_common_sql()." WHERE `broker_id`='".$id."'";
 						$res = $this->re_db_query($q);
 						if($res)
             {
@@ -470,7 +465,7 @@
               $fieldsToWatch = array('home', 'home_address1_general', 'home_address2_general', 'business_address1_general', 'business_address2_general', 'city',
               'state_id', 'zip_code', 'telephone', 'cell', 'fax', 'gender', 'marital_status', 'spouse', 'children', 'email1', 'email2', 'web_id', 'web_password',
               'dob', 'prospect_date', 'reassign_broker', 'u4', 'u5', 'day_after_u5', 'dba_name', 'eft_information', 'start_date', 'transaction_type', 'routing',
-              'account_no', 'cfp', 'chfp', 'cpa', 'clu', 'cfa', 'ria', 'insurance','business_city','business_zipcode','business_state' );
+              'account_no', 'cfp', 'chfp', 'cpa', 'clu', 'cfa', 'ria', 'insurance' );
               $this->update_history(BROKER_HISTORY, $originalInstance, $newInstance, $fieldsToWatch);
 
               $_SESSION['success'] = UPDATE_MESSAGE;
@@ -1895,8 +1890,8 @@
 
 					$q = "SELECT `at`.*
 							FROM `".TRANSACTION_MASTER."` AS `at`
-		                    WHERE `at`.`is_delete`='0' AND `at`.`broker_name`='".$id."' and `at`.`is_payroll`='0'
-		                    ORDER BY `at`.`id` desc";
+		                    WHERE `at`.`is_delete`='0' AND `at`.`broker_name`='".$id."'
+		                    ORDER BY `at`.`id` ASC";
 					$res = $this->re_db_query($q);
 		            if($this->re_db_num_rows($res)>0){
 		                $a = 0;
@@ -2020,7 +2015,7 @@
 			$q = "SELECT `at`.*,u.first_name as user_initial
 					FROM `".BROKER_HISTORY."` AS `at`
                     LEFT JOIN `".USER_MASTER."` as `u` on `u`.`id`=`at`.`modified_by`
-                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."' order by id desc";
+                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."'";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
     			while($row = $this->re_db_fetch_array($res)){
@@ -2662,47 +2657,6 @@
     			}
             }//echo "<pre>"; print_r($return);exit;
 			return $return;
-		}
-
-		public function transcation_edit_override($id,$client_id){
-			$return = array();
-
-			 $q = "SELECT `at`.*
-					FROM `".BROKER_PAYOUT_OVERRIDE."` AS `at`
-                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."'";
-			$res = $this->re_db_query($q);
-            if($this->re_db_num_rows($res)>0){
-                $a = 0;
-    			while($row = $this->re_db_fetch_array($res)){
-    			     array_push($return,$row);
-
-    			}
-            }
-
-      
-         $client = new client_maintenance();
-         $client_row= $client->select_client_master($client_id);
-
-         if(!empty($client_row['split_broker'])) {
-         	  
-             $return[]=array("id"=>"","rap"=>$client_row['split_broker'],"per"=>$client_row['split_rate'],"from"=>$client_row['split_rate_from'],"to"=>$client_row['split_rate_to'],"product_category"=>$client_row['split_rate_category']);
-         }
- 
-
-
-			return $return;
-		}
-
-		function get_product_from_cat_id_and_id($product_id,$cat){
-         $query="select name from `ft_products` as at where  `at`.`id`='".$product_id."' and category='".$cat."' limit 1";
-            	$res = $this->re_db_query($query);
-            	
-            	if($this->re_db_num_rows($res)>0){
-                      $product_data = $this->re_db_fetch_array($res);
-                     return isset($product_data['name']) ? $product_data['name']: '';
-            	}
-
-            	return "";
 		}
 
     }

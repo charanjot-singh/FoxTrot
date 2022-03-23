@@ -1140,7 +1140,7 @@
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label>Days after U5/Termination </label><br />
-                                    <input type="text" name="day_after_u5" id="day_after_u5"  pattern="([0-9]|[0-9]|[0-9])" value="<?php if($action=='edit'){ echo $day_after_u5; } ?>" placeholder="999" class="form-control" maxlength="3"/>
+                                    <input type="text" name="day_after_u5" id="day_after_u5"   value="<?php if($action=='edit'){ echo $day_after_u5; } ?>" placeholder="999" class="form-control" maxlength="3"/>
                                  </div>
                               </div>
                               <div class="col-md-4">

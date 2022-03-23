@@ -91,7 +91,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                               <!--<li><a href="#tab_ee" data-toggle="tab">Documents</a></li>-->
                                 <div class="btn-group dropdown" style="float: right;">
     								<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
-    								<ul class="dropdown-menu dropdown-menu-right" style="">
+    								<ul class="dropdown-menu dropdown-menu-right" > <!-- style="" -->
     									<li><a href="<?php echo CURRENT_PAGE; ?>"><i class="fa fa-eye"></i> View List</a></li>
     								</ul>
     							</div>
@@ -272,33 +272,6 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                     <div class="form-group">
                                                         <label>Split Rate<span class="text-red"></span></label>
                                                         <input type="text" onblur="round(this.value);" min="0" name="split_rate" id="split_rate" placeholder='00.0' class="currency1 form-control" value="<?php echo $split_rate; ?>" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                 <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Split  From<span class="text-red"></span></label>
-                                                        <input type="text"  name="split_rate_from" id="split_rate_from"  class="form-control" value="<?php echo $split_rate_from; ?>" />
-                                                    </div>
-                                                   </div>  
-                                                <div class="col-md-3">
-                                                    <div class="form-group ">
-                                                        <label>Split To<span class="text-red"></span></label>
-                                                        <input type="text"   name="split_rate_to" id="split_rate_to" class=" form-control" value="<?php echo $split_rate_to; ?>" />
-                                                    </div>
-                                                </div>
-                                               
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Split Category<span class="text-red"></span></label>
-                                                       <select name="split_rate_category"  class="form-control">
-                                                            <option value="">Select Product Category</option>
-                                                            <option <?php if(isset($split_rate_category) && $split_rate_category=='0'){?> selected="true"<?php } ?> value="0">All Product Categories</option>
-                                                            <?php foreach($product_category as $key=>$val){?>
-                                                            <option value="<?php echo $val['id'];?>" <?php if(isset($split_rate_category) && $split_rate_category==$val['id']){?> selected="true"<?php } ?>><?php echo $val['type'];?></option>
-                                                            <?php } ?>
-                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -735,15 +708,9 @@ $(document).on('change', '#is_reviewed', function(event) {
                                                     <div class="form-group">
                                                         <label>Sponsor Company </label><br />
                                                         <?php if(isset($_GET['account_no']) && $_GET['account_no'] != ''){
-                                                              $file_id = isset($_GET['file_id'])?$_GET['file_id']:0;
-                                                              $data_id = isset($_GET['exception_data_id'])?$_GET['exception_data_id']:0;
-                                                              $get_idc_sponsor = $instance_import->get_idc_record_details($file_id,$data_id);
-                                                              $management_code = $get_idc_sponsor['management_code'];
-                                                              $system_id = $get_idc_sponsor['system_id'];
-                                                              $sponsor_on_system = $instance_sponsor->get_sponsor_on_system_management_code($system_id,$management_code);
-                                                              $sponsor_company = isset($sponsor_on_system['id'])?$sponsor_on_system['id']:'';
-                                                        }
-                                                        ?>
+                                                            $file_id = isset($_GET['file_id'])?$_GET['file_id']:0;
+                                                            $sponsor_company = $instance_import->get_current_file_type($file_id, 'sponsor_id');
+                                                        } ?>
                                                         <select class="form-control" name="sponsor[]">
                                                             <option value="">Select Sponsor</option>
                                                              <?php foreach($get_sponsor as $key=>$val){?>
@@ -1040,7 +1007,9 @@ $(document).on('change', '#is_reviewed', function(event) {
                                         <?php if(isset($_GET['account_no']) && ($_GET['account_no'] != '' || $_GET['account_no'] == '')){?>
                                         <input type="hidden" name="for_import" id="for_import" class="form-control" value="true" />
                                         <input type="hidden" name="file_id" id="file_id" class="form-control" value="<?php echo $_GET['file_id']; ?>" />
+                                        <input type="hidden" name="file_type" id="file_type" class="form-control" value="<?php echo $_GET['file_type']; ?>" />
                                         <input type="hidden" name="temp_data_id" id="temp_data_id" class="form-control" value="<?php echo $_GET['exception_data_id']; ?>" />
+                                        <input type="hidden" name="exception_record_id" id="exception_record_id" class="form-control" value="<?php echo $_GET['exception_record_id']; ?>" />
                                         <?php }?>
                                         <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=previous" class="previous next_previous_a" style="float: left;"><input type="button" name="previos" value="&laquo; Previous" /></a><?php } ?>
                                         <?php if($_GET['action']=='edit' && $_GET['id']>0){?><a href="<?php echo CURRENT_PAGE; ?>?id=<?php echo $id;?>&send=next" class="next next_previous_a"><input type="button" name="next" value="Next &raquo;" /></a><?php } ?>
@@ -1095,7 +1064,7 @@ $(document).on('change', '#is_reviewed', function(event) {
                             foreach($return as $key=>$val){
                                 ?>
             	                   <tr>
-                                        <td><?php echo $val['first_name']." ".$val['last_name']; ?></td>
+                                        <td><?php echo $val['last_name'].", ".$val['first_name']; ?></td>
                                         <td><?php echo $val['client_file_number']; ?></td>
                                         <td><?php echo $val['account_type']; ?></td>
                                         <td><?php echo $val['broker_fname']." ".$val['broker_lname']; ?></td>
@@ -1575,14 +1544,12 @@ function open_newaccount()
 }
 </script>
 <script>
-    $(document).ready(function(){
-$('#demo-dp-range .input-daterange,#split_rate_from,#split_rate_to').datepicker({
+$('#demo-dp-range .input-daterange').datepicker({
         format: "mm/dd/yyyy",
         todayBtn: "linked",
         autoclose: true,
         todayHighlight: true
     });
-});
 function open_other()
 {
     $('#other_div').css('display','block');

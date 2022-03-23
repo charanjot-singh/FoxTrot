@@ -82,13 +82,13 @@
         $return = $instance->insert_update($_POST);
         
         if($return===true){
-            if(isset($_SESSION['batch_id']) && $_SESSION['batch_id'] >0)
+           /* if(isset($_SESSION['batch_id']) && $_SESSION['batch_id'] >0)
             {
                 header("location:".SITE_URL."batches.php?action=edit_batches&id=".$_SESSION['batch_id']);
                 unset($_SESSION['batch_id']);
                 exit;
             }
-            else{
+            else{*/
                 if($_POST['transaction']=='Save & Copy')
                 {
                     $is_pending_order=1;
@@ -103,7 +103,7 @@
                 {
                     header("location:".CURRENT_PAGE."?action=view");exit;
                 }
-            }
+          /*  }*/
         }
         else{
             $error = !isset($_SESSION['warning'])?$return:'';

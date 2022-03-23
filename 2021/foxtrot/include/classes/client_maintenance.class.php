@@ -310,9 +310,18 @@
 
                         if($for_import == 'true')
                         {
-							//--- 01/29/22.14:00 Let Reprocess() populate the EXCEPTION table
+							//--- 3/18/22 New function to flag the exception as a 'add_new' or 'reassign' so reprocess
+							// can process the new client correctly - recognize new client, skip acct# validation/error, remove from exception grid
+							// $importClass->reprocess_current_files($file_id);
 							$importClass = new import();
-							$importClass->reprocess_current_files($file_id);
+							$otherFieldUpdates = [];
+							$file_type = (isset($_SESSION['client_maintenance_for_import']['file_type']) ? (int)$_SESSION['client_maintenance_for_import']['file_type'] : 0); 
+							
+							if ($file_type == 1){
+								$otherFieldUpdates = ['account_no_id'=>$id];
+							}
+							
+							$importClass->resolve_exception_5AddNew('client_id', $_SESSION['client_id'], $_GET['exception_record_id'], $otherFieldUpdates);
                         }
 
     				    $_SESSION['success'] = INSERT_MESSAGE;
@@ -1049,7 +1058,7 @@
 				." FROM `".CLIENT_ACCOUNT."` AS `at`"
 				." INNER JOIN `".CLIENT_MASTER."` `cm` ON `at`.`client_id`=`cm`.`id` AND `cm`.`is_delete`=0"
 				." WHERE `at`.`is_delete`='0'"
-				." AND `at`.`account_no`='".$this->re_db_input($account_no)."'"
+				." AND TRIM(LEADING '0' FROM `at`.`account_no`)='".LTRIM($this->re_db_input($account_no), '0')."'"
 				.$sponsorQuery
 				." ORDER BY `at`.`id`"
 			;
@@ -1243,23 +1252,6 @@
 				return false;
 			}
 		}
-
-		function search_client_record($value){
-		 	   $return=array();
-		 	     $q = "SELECT cm.id as id ,CONCAT(`cm`.last_name,', ',`cm`.first_name) as name,ca.account_no,client_file_number,client_ssn,broker_name
-					FROM `" . $this->table . "` AS `cm` left join `".CLIENT_ACCOUNT."` as ca on (ca.client_id=cm.id)
-                    WHERE `cm`.`is_delete`='0' and `ca`.`is_delete`='0' and (ca.account_no like '".$value."%' or client_file_number like '".$value."%' or client_ssn like '".$value."%' )
-                    ORDER BY `cm`.`id` ASC limit 10";
-					$res = $this->re_db_query($q);
-					  if($this->re_db_num_rows($res)>0){
-					  	while($row = $this->re_db_fetch_array($res)){
-					  			$row['value']=$row['name'];
-					  	              
-    								$return[] = $row;
-    						}
-            }
-				return $return;
-		 }
 
     }
 ?>

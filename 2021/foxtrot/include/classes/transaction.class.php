@@ -779,6 +779,85 @@ class transaction extends db{
             }
 			return $return;
 		}
+		public function select_data_commission_posting_log($product_category='',$company='',$batch='',$beginning_date='',$ending_date='',$sort_by='',$is_historical=0,$is_hold=false){
+			$return = array();
+            $con='';
+            if($is_historical==0)
+            {
+                $con.=" AND `at`.`is_payroll`='0'";
+            }
+            if($product_category>0)
+            {
+                $con.=" AND `at`.`product_cate` = ".$product_category."";
+            }
+            if($company>0)
+            {
+                $con.=" AND `at`.`company` = ".$company."";
+            }
+            if($batch>0)
+            {
+                $con.=" AND `at`.`batch` = ".$batch."";
+            }
+            if($beginning_date != '' && $ending_date != '')
+            {
+                $con.=" AND `at`.`commission_received_date` between '".date('Y-m-d',strtotime($beginning_date))."' and '".date('Y-m-d',strtotime($ending_date))."'";
+            }
+            if($is_hold){
+            	 $con.=" AND hold_commission=1 ";
+            }
+            if($sort_by == 1)
+            {
+                $con .= " ORDER BY `at`.`sponsor` ASC";
+            }
+            else if($sort_by == 2)
+            {
+                $con .= " ORDER BY `at`.`batch` ASC";
+            }
+            else if($sort_by == 3)
+            {
+                $con .= " ORDER BY `bt`.`batch_date` ASC";
+            }
+            else
+            {
+                $con .= " ORDER BY `at`.`product_cate` ASC";
+            }
+
+           
+
+			
+			 $q = "SELECT `at`.*,bm.first_name as broker_name,bm.last_name as broker_last_name,bm.id as broker_id,cm.first_name as client_name,cm.last_name as client_last_name,bt.batch_desc
+					FROM `".$this->table."` AS `at`
+                    LEFT JOIN `".BATCH_MASTER."` as `bt` on `bt`.`id` = `at`.`batch`
+                    LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `at`.`broker_name`
+                    LEFT JOIN `".CLIENT_MASTER."` as `cm` on `cm`.`id` = `at`.`client_name`
+                    WHERE `at`.`is_delete`='0' ".$con." ";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    				$brokder_id=$row['broker_id'];
+    				$row['product_name'] = $this->get_product_name_from($row['product_cate'],$row['product']);
+    				$row['client_name'] = $row['client_last_name'].', '.$row['client_name'];
+
+    				if(!isset($return[$row['batch']]))
+    					$return[$row['batch']]=array("id"=>$row['batch'],"batch_desc"=>$row['batch_desc'],"child"=>array());
+    				if(!isset($return[$row['batch']]['child'][$row['broker_id']]))
+    				   $return[$row['batch']]['child'][$row['broker_id']]=array();
+
+    				$return[$row['batch']]['child'][$row['broker_id']][]=$row;
+
+    				/*if(isset($return[$row['broker_id']])){
+    			     //array_push($return,$row);
+    					 $return[$row['broker_id']][]=$row;
+    				}
+    				else{
+    					  $return[$row['broker_id']]=array();
+    					 $return[$row['broker_id']][]=$row;
+    				}*/
+    			}
+            }
+			return $return;
+		}
 
 		function get_product_name_from($to_category,$product_id){
             

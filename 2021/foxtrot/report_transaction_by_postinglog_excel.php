@@ -30,9 +30,12 @@
         $ending_date = isset($filter_array['ending_date'])?$filter_array['ending_date']:'';
         $sort_by = isset($filter_array['sort_by'])?$filter_array['sort_by']:'';
         
-        $return = $instance->select_data_report($product_category,$company,$batch,$beginning_date,$ending_date,$sort_by,1);
+        
         
     }
+    $return = $instance->select_data_commission_posting_log($product_category,$company,$batch,$beginning_date,$ending_date,$sort_by,1);
+    $index= array_key_first($get_trans_data);
+    $batch_desc = isset($get_trans_data[$index][0]['batch_desc'])? $instance->re_db_input($get_trans_data[$index][0]['batch_desc']):'';
     if($batch>0)
     {
         
@@ -97,52 +100,57 @@
             
         if(is_array($return) && count($return)>0)
         {
-            foreach($return as $trans_main_key=>$trans_main_data)
+             foreach($return as $trans_main_key=>$trans_main)
             {
-                $sub_total_records=0;
-                $sub_total_amount_invested = 0;
-                $sub_total_commission_received = 0;
-                $sub_total_charges = 0;
-                $c = $i;
-                
-                $i++;
-                $broker_name = $trans_main_data[0]['broker_last_name'].', '.$trans_main_data[0]['broker_name'].' (#'.$trans_main_key.')';
-                $sheet_data[0]['A'.$i] = array('BROKER: '.($broker_name),array('bold','right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'H'.$i)));
-                foreach($trans_main_data as $key=>$val){
-                    $i++;
-                    $total_records = $total_records+1;
-                    $sub_total_records = $sub_total_records+1;
-                    $c = $i;
-                    $trade_date='';
-                    $commission_received_date='';
-                    $total_amount_invested = ($total_amount_invested+$val['invest_amount']);
-                    $total_commission_received = ($total_commission_received+$val['commission_received']);
-                    $total_charges = ($total_charges+$val['charge_amount']);
-                    
-                    $sub_total_amount_invested = ($sub_total_amount_invested+$val['invest_amount']);
-                    $sub_total_commission_received = ($sub_total_commission_received+$val['commission_received']);
-                    $sub_total_charges = ($sub_total_charges+$val['charge_amount']);
-                    if($val['trade_date'] != '0000-00-00'){ $trade_date = date('m/d/Y',strtotime($val['trade_date'])); }
-                    if($val['commission_received_date'] != '0000-00-00'){ $commission_received_date = date('m/d/Y',strtotime($val['commission_received_date'])); }
-                    
+                   $i++;
+                 /*$html.='<tr><td style="font-size:8px;font-weight:bold;text-align:left;" colspan="9">BATCH : '.$trans_main["batch_desc"].'</td></tr>';*/
+                 $sheet_data[0]['A'.$i] = array('Batch: '.$trans_main["batch_desc"],array('bold','left','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'H'.$i)));
+                 foreach($trans_main["child"] as $trans_main_key=>$trans_main_data) {     
+                        $sub_total_records=0;
+                        $sub_total_amount_invested = 0;
+                        $sub_total_commission_received = 0;
+                        $sub_total_charges = 0;
+                        $c = $i;
                         
-                        $sheet_data[0]['A'.$i] = array($instance->re_db_output($val['id']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['B'.$i] = array($instance->re_db_output($val['batch']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['C'.$i] = array($instance->re_db_output($val['client_number']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['D'.$i] = array($instance->re_db_output($val['client_name']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['E'.$i] = array($instance->re_db_output($trade_date),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['F'.$i] = array($instance->re_db_output($commission_received_date),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['G'.$i] = array($instance->re_db_output('$'.number_format($val['invest_amount'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['H'.$i] = array($instance->re_db_output('$'.number_format($val['charge_amount'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
-                        $sheet_data[0]['I'.$i] = array($instance->re_db_output('$'.number_format($val['commission_received'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                        $i++;
+                        $broker_name = $trans_main_data[0]['broker_last_name'].', '.$trans_main_data[0]['broker_name'].' (#'.$trans_main_key.')';
+                        $sheet_data[0]['A'.$i] = array('BROKER: '.($broker_name),array('bold','left','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'H'.$i)));
+                        foreach($trans_main_data as $key=>$val){
+                            $i++;
+                            $total_records = $total_records+1;
+                            $sub_total_records = $sub_total_records+1;
+                            $c = $i;
+                            $trade_date='';
+                            $commission_received_date='';
+                            $total_amount_invested = ($total_amount_invested+$val['invest_amount']);
+                            $total_commission_received = ($total_commission_received+$val['commission_received']);
+                            $total_charges = ($total_charges+$val['charge_amount']);
+                            
+                            $sub_total_amount_invested = ($sub_total_amount_invested+$val['invest_amount']);
+                            $sub_total_commission_received = ($sub_total_commission_received+$val['commission_received']);
+                            $sub_total_charges = ($sub_total_charges+$val['charge_amount']);
+                            if($val['trade_date'] != '0000-00-00'){ $trade_date = date('m/d/Y',strtotime($val['trade_date'])); }
+                            if($val['commission_received_date'] != '0000-00-00'){ $commission_received_date = date('m/d/Y',strtotime($val['commission_received_date'])); }
+                            
+                                
+                                $sheet_data[0]['A'.$i] = array($instance->re_db_output($val['id']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['B'.$i] = array($instance->re_db_output($val['batch']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['C'.$i] = array($instance->re_db_output($val['client_number']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['D'.$i] = array($instance->re_db_output($val['client_name']),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['E'.$i] = array($instance->re_db_output($trade_date),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['F'.$i] = array($instance->re_db_output($commission_received_date),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['G'.$i] = array($instance->re_db_output('$'.number_format($val['invest_amount'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['H'.$i] = array($instance->re_db_output('$'.number_format($val['charge_amount'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                                $sheet_data[0]['I'.$i] = array($instance->re_db_output('$'.number_format($val['commission_received'],2)),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                        }
+                        $i++;
+                        $sheet_data[0]['A'.$i] = array('',array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'B'.$i,'C'.$i)));
+                        $sheet_data[0]['D'.$i] = array($broker_name.' TOTAL: ',array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('D'.$i,'F'.$i)));
+                        $sheet_data[0]['G'.$i] = array($instance->re_db_output('$'.number_format($sub_total_amount_invested,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
+                        $sheet_data[0]['H'.$i] = array($instance->re_db_output('$'.number_format($sub_total_charges,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
+                        $sheet_data[0]['I'.$i] = array($instance->re_db_output('$'.number_format($sub_total_commission_received,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
+                    }
                 }
-                $i++;
-                $sheet_data[0]['A'.$i] = array('',array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'B'.$i,'C'.$i)));
-                $sheet_data[0]['D'.$i] = array($broker_name.' TOTAL: ',array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('D'.$i,'F'.$i)));
-                $sheet_data[0]['G'.$i] = array($instance->re_db_output('$'.number_format($sub_total_amount_invested,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
-                $sheet_data[0]['H'.$i] = array($instance->re_db_output('$'.number_format($sub_total_charges,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
-                $sheet_data[0]['I'.$i] = array($instance->re_db_output('$'.number_format($sub_total_commission_received,2)),array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri')));
-            }
             $i++;
             $sheet_data[0]['A'.$i] = array('Total Records: '.$total_records,array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A'.$i,'B'.$i,'C'.$i,'C'.$i)));
             $sheet_data[0]['D'.$i] = array('*** REPORT TOTALS ***',array('bold','right','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('D'.$i,'F'.$i)));

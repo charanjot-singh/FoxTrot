@@ -337,7 +337,7 @@ document.addEventListener("click", function (e) {
                 <div class="col-md-4">
                     <div class="form-group">
 
-                        <label>Client Name <span class="text-red">* </span> </label><a href="#" onclick="return redirect_url('client_maintenance.php?redirect=add_client_from_trans&action=add_new');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
+                        <label>Client Name <span class="text-red">* </span> </label><a href="#" onclick="return redirect_url('client_maintenance.php?redirect=add_client_from_trans&action=add_new','client');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New client</a><br />
                         <select class="livesearch form-control" data-required="true" id="client_name" name="client_name" onchange="get_client_account_no(this.value);">
                             <option value="0">Select Client</option>
 
@@ -405,7 +405,7 @@ document.addEventListener("click", function (e) {
                 </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="#" onclick="return redirect_url('batches.php?action=add_batches_from_trans');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
+                        <label>Batch <span class="text-red">*</span><a id="add_new_batch" href="#" onclick="return redirect_url('batches.php?action=add_batches_from_trans','batch');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Batch</a></label><br />
                         <select class="form-control" data-required="true" name="batch" onchange="get_commission_date(this.value);">            
                             <option value="0">Select Batch</option>                
                              <?php foreach($get_batch as $key=>$val){?>
@@ -430,7 +430,7 @@ document.addEventListener("click", function (e) {
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="#" onclick="return redirect_url('product_cate.php?action=add_product&redirect=add_product_from_trans');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
+                        <label>Product <span class="text-red">*</span><a id="add_new_prod" href="#" onclick="return redirect_url('product_cate.php?action=add_product&redirect=add_product_from_trans','product');" class="btn btn-sm btn-default"><i class="fa fa-plus"></i> Add New Product</a></label><br />
                         <select class="form-control" data-required="true" name="product"  id="product">
                             <option value="0">Select Product</option>
                         </select>
@@ -1159,11 +1159,12 @@ $('.decimal').chargeFormat();
 <script type="text/javascript">
     var transcation_form_data = JSON.parse(localStorage.getItem('transcation_form_data'));
     if(localStorage.getItem('transcation_form_data')){
-       
+          console.log(transcation_form_data,"transcation_form_data")
          //$("")$("form[name='frm2']")
            for(var key in transcation_form_data){
               
-              if(transcation_form_data[key]["value"]!=''){
+              if(transcation_form_data[key]["value"]!='' && transcation_form_data[key]['name']!='product' || transcation_form_data[key]['name']=='product_cate'){
+                
                  document.querySelector("[name='"+transcation_form_data[key]["name"]+"']").value=transcation_form_data[key]["value"];
               }
              // console.log(transcation_form_data,"transcation_form_data")
@@ -1175,9 +1176,9 @@ $('.decimal').chargeFormat();
         if(localStorage.getItem('transcation_form_data')){
         
       
-           for(var key in transcation_form_data){
-                 if(transcation_form_data[key]["value"]!=''){
-                      $("[name='"+transcation_form_data[key]["name"]+"']").trigger("chosen:updated").trigger("change");
+        for(var key in transcation_form_data){
+                 if(transcation_form_data[key]["value"]!='' && transcation_form_data[key]['name']!='product_cate' &&  transcation_form_data[key]['name']!='product'){
+                      $("[name='"+transcation_form_data[key]["name"]+"']").trigger("chosen:updated")
                 }
               }
           }
@@ -1210,7 +1211,7 @@ $('.decimal').chargeFormat();
 
     jQuery(function($){
       $("#add_new_prod").click(function(ev){
-            if($("#product_cate").val() == 0){
+            if($("#product_cate").val() == 0 || $("#product_cate").val() == "0"){
                    ev.preventDefault();
                    alert("Please select Product Category First");
                    return false;
@@ -1232,7 +1233,8 @@ $('.decimal').chargeFormat();
         }
     }
 function get_product(category_id,selected=''){
-        category_id = document.getElementById("product_cate").value;
+      //console.log(category_id,"category_id");
+        category_id = category_id || document.getElementById("product_cate").value;
         sponsor = document.getElementById("sponsor").value;
         $("#add_new_prod").attr("href","product_cate.php?action=add_product_from_trans&category="+category_id+"&redirect=add_product_from_trans");
         document.getElementById("product").innerHTML = "<option value=''> Please Wait...</option>";
@@ -1314,14 +1316,14 @@ function get_commission_date(batch_id)
             {
                 var data=jQuery.parseJSON(this.responseText);
                 
-                $("#product_cate").val(data[0].pro_category);
+               // $("#product_cate").val(data[0].pro_category);
                 $("#commission_received_date").val(data[0].batch_date);
                 $("#sponsor").val(data[0].sponsor);
-                if(data[0].pro_category!='' && data[0].pro_category!='0')
+               /* if(data[0].pro_category!='' && data[0].pro_category!='0')
                  {
                     get_product(data[0].pro_category,data[0].sponsor);
                 //alert(this.responseText); 
-                 }
+                 }*/
             }
         };
         xmlhttp.open("GET", "ajax_get_client_account.php?batch_id="+batch_id, true);
@@ -1388,8 +1390,18 @@ function get_broker_override_rates(broker_id){
 }
 
 
-function redirect_url(url){
-       
+function redirect_url(url,selector){
+        if(selector == "product" ){
+            if($("#product_cate").val() == 0 || $("#product_cate").val() == "0"){
+
+              ev.preventDefault();
+                   alert("Please select Product Category First");
+                   return false;
+            }
+            else{
+                 url = url+"&category="+$("#product_cate").val();
+            }
+        }
        localStorage.setItem("transcation_form_data",  JSON.stringify($("form[name='frm2']").serializeArray()));
        setTimeout(function(){  window.location.href=url   },100);
        return false;
@@ -1769,6 +1781,7 @@ $(document).on('click','.remove-row',function(){
         <script type="text/javascript">
             $(document).ready(function(){
                 $("#product_cate").val(<?php echo $product_cate; ?>);
+                console.log("testtetests");
                 get_product(<?php echo $product_cate; ?>,'<?php echo $product; ?>');
             });
         </script>

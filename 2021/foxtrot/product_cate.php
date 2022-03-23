@@ -145,7 +145,11 @@
 
                 forImport($file_id);
             } else {
-                if($redirect=='add_product_from_trans') {
+
+                if($return!=true){
+
+                }
+                else if($redirect=='add_product_from_trans') {
                     $args = '';
 
                     if ($return){
