@@ -860,18 +860,45 @@ class transaction extends db{
 		}
 
 		function get_product_name_from($to_category,$product_id){
-            
+             static $product_list=array();
+             $index=$to_category.'-'.$product_id;
+                    if(isset($product_list[$index]))
+                    	return $product_list[$index];
              $query="select name from `ft_products` as at where  `at`.`id`='".$product_id."' limit 1";
             	$res = $this->re_db_query($query);
             	
             	if($this->re_db_num_rows($res)>0){
                       $product_data = $this->re_db_fetch_array($res);
+                      $product_list[$index]=isset($product_data['name']) ? $product_data['name']: '';
                      return isset($product_data['name']) ? $product_data['name']: '';
             	}
 
             	return "";
 			
 		}
+		function get_sponser_name($id){
+             static $sponser_list=array();
+             $index=$id;
+                    if(isset($product_list[$index]))
+                    	return $product_list[$index];
+            $q = "SELECT `sm`.name"
+					." FROM `".SPONSOR_MASTER."` AS `sm`"
+					." WHERE 
+					    `sm`.`id`='$id'  limit 1"
+			;
+			$res = $this->re_db_query($q);
+
+			if($this->re_db_num_rows($res)>0) {
+				$product_data = $this->re_db_fetch_array($res);
+				$sponser_list[$index]=isset($product_data['name']) ? $product_data['name']: '';
+                     return isset($product_data['name']) ? $product_data['name']: '';
+			}	
+
+			return "";
+			
+		}
+
+		
 
 		public function get_payable_report($product_category='',$company='',$batch='',$cutoffdate='',$sort_by='',$payable_type){
 			$return = array();
@@ -1031,29 +1058,41 @@ class transaction extends db{
             return $rates;	
         }
 
-        public function select_transcation_history_report($branch=0,$broker='',$rep='',$client='',$product='',$beginning_date='',$ending_date='',$batch=0,$date_by="1",$filter_by="1",$is_trail=0){
+        public function select_transcation_history_report($branch=0,$broker='',$rep='',$client='',$product='',$beginning_date='',$ending_date='',$batch=0,$date_by="1",$filter_by="1",$is_trail=0,$sponsor=0,$index_column)
+        {
+
 			$return = array();
             $con='';
             
             if($branch>0)
             {
                 $con.=" AND `at`.`branch` = ".$branch." ";
+                //$index_column='branch';
             }
             if($broker>0)
             {
                 $con.=" AND `at`.`broker_name` = ".$broker." ";
+               // $index_column='broker_name';
             }
             if($client>0)
             {
                 $con.=" AND `at`.`client_name` = ".$client." ";
+                //$index_column='client_name';
             }
             if($product>0)
             {
                 $con.=" AND `at`.`product` = ".$product." ";
+               // $index_column='product';
             }
             if($batch>0)
             {
                 $con.=" AND `at`.`batch` = '".$batch."' ";
+               // $index_column='batch';
+            }
+            if($sponsor>0)
+            {
+                $con.=" AND `at`.`sponsor` = '".$sponsor."' ";
+               // $index_column='sponsor';
             }
             if($is_trail>0)
             {
@@ -1071,7 +1110,7 @@ class transaction extends db{
               $con .= " ORDER BY `at`.`trade_date` ASC ";
 
 			
-		       $q = "SELECT `at`.*,bm.first_name as broker_name,bm.last_name as broker_last_name,bm.id as broker_id,cm.first_name as client_name,cm.last_name as client_last_name,bt.batch_desc,br.name as branch_name,pt.type as product_category_name
+		       $q = "SELECT `at`.*,br.name as branch_name,bm.first_name as broker_name,bm.last_name as broker_last_name,bm.id as broker_id,cm.first_name as client_name,cm.last_name as client_last_name,bt.batch_desc,br.name as branch_name,pt.type as product_category_name
 					FROM `".$this->table."` AS `at`
                     LEFT JOIN `".BATCH_MASTER."` as `bt` on `bt`.`id` = `at`.`batch`
                     LEFT JOIN `".PRODUCT_TYPE."` as `pt` on `pt`.`id` = `at`.`product_cate`
@@ -1079,26 +1118,50 @@ class transaction extends db{
                     LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `at`.`broker_name`
                     LEFT JOIN `".CLIENT_MASTER."` as `cm` on `cm`.`id` = `at`.`client_name`
                     WHERE `at`.`is_delete`='0' ".$con." ";
-			$res = $this->re_db_query($q);
+				$res = $this->re_db_query($q);
 
 
-            if($this->re_db_num_rows($res)>0){
-                $a = 0;
-    			while($row = $this->re_db_fetch_array($res)){
-    				$brokder_id=$row['broker_id'];
-    				$row['product_name'] = $this->get_product_name_from($row['product_cate'],$row['product']);
-    				$row['client_name'] = $row['client_last_name'].', '.$row['client_name'];
-    				$return[]=$row;
-    				/*if(isset($return[$row['broker_id']])){
-    			     //array_push($return,$row);
-    					 $return[$row['broker_id']][]=$row;
-    				}
-    				else{
-    					  $return[$row['broker_id']]=array();
-    					 $return[$row['broker_id']][]=$row;
-    				}*/
-    			}
-            }
+	            if($this->re_db_num_rows($res)>0){
+	                $a = 0;
+	    			while($row = $this->re_db_fetch_array($res)){
+
+	    				$brokder_id=$row['broker_id'];
+	    				$row['product_name'] = $this->get_product_name_from($row['product_cate'],$row['product']);
+	    				$row['client_name'] = $row['client_last_name'].', '.$row['client_name'];
+	    				if(!isset($return[$row[$index_column]])) {
+	    					$heading_title="BROKER: ".$row['broker_last_name'].', '.$row['broker_name'];
+	    					if($index_column =="batch")
+	                            $heading_title="BATCH: ".$row['batch_desc'];
+	                        if($index_column =="product")
+	                            $heading_title="PRODUCT: ".$row['product_name'];
+	                        if($index_column =="client_name")
+	                            $heading_title="CLIENT: ".$row['client_name'];
+	                         if($index_column =="branch")
+	                            $heading_title="BRANCH: ".$row['branch_name'];
+	                         if($index_column =="sponsor")
+	                            $heading_title="SPONSOR: ".$this->get_sponser_name($row['sponsor']);
+
+	    					 $return[$row[$index_column]]=array("broker"=>$heading_title,"products"=>array());
+	    				}
+	    				
+	    				
+	    				$return[$row[$index_column]]["products"][]=$row;
+
+
+	    				/*$brokder_id=$row['broker_id'];
+	    				$row['product_name'] = $this->get_product_name_from($row['product_cate'],$row['product']);
+	    				$row['client_name'] = $row['client_last_name'].', '.$row['client_name'];
+	    				$return[]=$row;*/
+	    				/*if(isset($return[$row['broker_id']])){
+	    			     //array_push($return,$row);
+	    					 $return[$row['broker_id']][]=$row;
+	    				}
+	    				else{
+	    					  $return[$row['broker_id']]=array();
+	    					 $return[$row['broker_id']][]=$row;
+	    				}*/
+	    			}
+	            }
             
 			return $return;
 		}
