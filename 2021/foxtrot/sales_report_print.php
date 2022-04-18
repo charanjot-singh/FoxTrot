@@ -302,11 +302,13 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             exit;
     }
     else if($report_for == 'broker_ranking') {
-
+                 //print_r($prod_cat);
             
                 $prod_cat =array_filter($prod_cat,function($value) {
                     return $value > 0;
                 });
+                // print_r($prod_cat);
+
                 $is_all_category = empty($prod_cat);
 
                 $ranks = ['Total Earnings','Gross Concessions','Total Sales','Profitability'];

@@ -325,6 +325,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             $prod_cat =array_filter($prod_cat,function($value) {
                 return $value > 0;
             });
+          //  print_r($prod_cat);
             $is_all_category = empty($prod_cat);
 
             $ranks = ['Total Earnings','Gross Concessions','Total Sales','Profitability'];

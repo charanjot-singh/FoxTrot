@@ -42,6 +42,9 @@ $return_from_broker_client = array();
         $date_by= isset($_POST['date_by'])?$instance->re_db_input($_POST['date_by']):1;
         $earning_by= isset($_POST['earning_by'])?$instance->re_db_input($_POST['earning_by']):1;
         $prod_cat = isset($_POST['prod_cat'])?$_POST['prod_cat']:array();
+        $prod_cat =array_filter($prod_cat,function($value) {
+                    return $value > 0;
+                });
             if($output == 1)
             {
                 header('location:'.CURRENT_PAGE.'?filter='.$data_array);exit;
@@ -99,6 +102,11 @@ $return_from_broker_client = array();
         $date_by= isset($filter_array['date_by'])?$instance->re_db_input($filter_array['date_by']):1;
         $without_earning= isset($filter_array['without_earning'])?$instance->re_db_input($filter_array['without_earning']):1;
         $earning_by= isset($filter_array['earning_by'])?$instance->re_db_input($filter_array['earning_by']):1;
+
+        $prod_cat = isset($filter_array['prod_cat'])?$filter_array['prod_cat']:array();
+        $prod_cat =array_filter($prod_cat,function($value) {
+                    return $value > 0;
+                });
     }
 
    

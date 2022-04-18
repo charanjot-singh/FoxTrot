@@ -39,6 +39,8 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
     
     $date_by= isset($filter_array['date_by'])?$instance->re_db_input($filter_array['date_by']):1;
    
+
+   
 }   
     $earning_by= isset($filter_array['earning_by'])?$instance->re_db_input($filter_array['earning_by']):1;
 
@@ -55,7 +57,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
 
     $report_year = isset($filter_array['report_year'])?trim($filter_array['report_year']):date("Y");
 
-   
+    $prod_cat = isset($filter_array['prod_cat'])?$filter_array['prod_cat']:array();
     if($filter_by == "1"){
         $subheading2=$beginning_date." thru ".$ending_date;
 
@@ -310,6 +312,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
          $prod_cat =array_filter($prod_cat,function($value) {
                 return $value > 0;
             });
+
             $is_all_category = empty($prod_cat);
 
             $ranks = ['Total Earnings','Gross Concessions','Total Sales','Profitability'];

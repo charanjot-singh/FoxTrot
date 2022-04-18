@@ -174,10 +174,15 @@
                      <div class="row product-categories" id="div_PROD_CAT">
                         <div class="col-md-12">                                   
                             <label id="CAT_label">Product Category</label> 
+                            
+
                             <div class="form-group">
                                 <select name="prod_cat[]" data-placeholder="Select one or more categories" id="prod_cat" class="form-control chosen-select" multiple="true">
-                                    <option value="-1" selected="selected">  All Categories</option>
-                                    <?php foreach($product_category as $key => $val) {?>
+                                    <option value="-1" <?php echo empty($prod_cat) ? 'selected="selected"' : ''; ?>>  All Categories</option>
+                                    <?php 
+
+
+                                    foreach($product_category as $key => $val) {?>
                                             <option data-options="" <?php echo in_array($val['id'],$prod_cat)?'selected="selected"':''; ?> value="<?php echo $val['id'];?>"><?php echo $val['type']?></a></option>
                                     <?php } ?>
                                 </select>
@@ -433,6 +438,24 @@ function get_product(cat){
       }
      
 }
+ $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            this.name = this.name.replace(/[\[\]']+/g,'');
+
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
 
  $(function() {
 
@@ -512,35 +535,30 @@ function get_product(cat){
                    //$('.broker_ranking_filter_wrap .earning_by').trigger("click");
             }).trigger('change');
 
-              $("#report_form").submit(function(ev){
-  
-                    var output_type = $("input[name='output']:checked").val();
-                 if(output_type == 4 || output_type == 2){
-                    ev.preventDefault();
-                    const data = new FormData(ev.target);
-                       value = Object.fromEntries(data.entries());
-                       report_for = $("select[name='report_for']").val() ;
-                      // console.log(report_for )
-                      
-                        if( $("#report_for").val() == "broker"){
-
-                            url = "http://foxtrotsoftware.com/CloudFox/sales_broker_report_print.php?filter="+JSON.stringify(value);
-                        }
-                        else{
-                              url = "http://foxtrotsoftware.com/CloudFox/sales_report_print.php?filter="+JSON.stringify(value);
-                        }
-                        if(output_type == 2) url+='&open=output_print'
-                       
-
-
-                       
-                   
-                    var win= window.open(url,"blank");
-                    win.focus();
-                    return false;
-                 }
-         });
-        });       
+        $("#report_form").submit(function(ev){
+            var report_for = $("select[name='report_for']").val() ;
+            var output_type = $("input[name='output']:checked").val();
+            
+            if(output_type == 4 || output_type == 2) {
+                ev.preventDefault();
+                var formData_obj = $(this).serializeObject();
+                const data = new FormData(ev.target);
+                    value = Object.fromEntries(data.entries());
+                 
+                if( $("#report_for").val() == "broker"){
+                    url = "http://foxtrotsoftware.com/CloudFox/sales_broker_report_print.php?filter="+JSON.stringify(formData_obj);
+                }
+                else{
+                    url = "http://foxtrotsoftware.com/CloudFox/sales_report_print.php?filter="+JSON.stringify(formData_obj);
+                }
+                if(output_type == 2) url+='&open=output_print';
+               
+                var win= window.open(url,"blank");
+                win.focus();
+                return false;
+            }
+        });
+    });       
 </script>
 <link href="<?php echo SITE_PLUGINS; ?>chosen/chosen.min.css" rel="stylesheet" />
 <script src="<?php echo SITE_PLUGINS; ?>chosen/chosen.jquery.min.js"></script>
@@ -567,7 +585,7 @@ function get_product(cat){
 
         $("#prod_cat").change(function(){
             var selected = $(this).find(":selected").map((_, e) => e.value).get();
-                console.log(selected,$(this).find("option[value=-1]"),selected.includes("-1"), );
+               // console.log(selected,$(this).find("option[value=-1]"),selected.includes("-1"), );
                 if(selected.includes("-1")){
                     $(this).find("option[value=-1]").siblings().attr('disabled',true).end().removeAttr('disabled');
                 }
