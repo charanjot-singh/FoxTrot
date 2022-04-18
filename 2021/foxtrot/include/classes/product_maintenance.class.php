@@ -95,18 +95,19 @@
 			            	 }
 
 			            }
-									if($res){
-										//$_SESSION['tran']
-										if($isReturn){
-				                        	$_SESSION['new_product_id']=$id;
-				                        }
-									    $_SESSION['success'] = UPDATE_MESSAGE;
-										return true;
-									}
-									else{
-										$_SESSION['warning'] = UNKWON_ERROR;
-										return false;
-									}
+
+						if($res){
+							//$_SESSION['tran']
+							if($isReturn){
+								$_SESSION['new_product_id']=$id;
+							}
+							$_SESSION['success'] = UPDATE_MESSAGE;
+							return true;
+						}
+						else{
+							$_SESSION['warning'] = UNKWON_ERROR;
+							return false;
+						}
 
 				}
 				else{ // insert
@@ -133,7 +134,6 @@
 
 						$res = $this->re_db_query($q);
                         $last_inserted_id = $this->re_db_insert_id();
-
 
                         foreach($min_threshold as $key_thres=>$val_thres)
                         {
@@ -597,19 +597,21 @@
             }
 			return $return;
 		}
-        public function select_category(){
+        public function select_category($id=0){
 			$return = array();
+			$con = (empty((int)$id) ? '' : " AND `id` = ".(int)$this->re_db_input($id));
 
-			$q = "SELECT `at`.*
-					FROM `".PRODUCT_TYPE."` AS `at`
-                    WHERE `at`.`is_delete`='0'
-                    ORDER BY `at`.`id` ASC";
+			$q = "SELECT `at`.*"
+					." FROM `".PRODUCT_TYPE."` AS `at`"
+                    ." WHERE `at`.`is_delete`='0'"
+                    	.$con
+                    ." ORDER BY `at`.`id` ASC"
+			;
 			$res = $this->re_db_query($q);
+			
             if($this->re_db_num_rows($res)>0){
-                $a = 0;
     			while($row = $this->re_db_fetch_array($res)){
     			     array_push($return,$row);
-
     			}
             }
 			return $return;
@@ -661,9 +663,19 @@
 		 * */
 		public function edit_product($id,$category=''){
 			$return = array();
-			$q = "SELECT `at`.*
-					FROM `".PRODUCT_LIST."` AS `at`
-                    WHERE `at`.`is_delete`='0' AND `at`.`id`='".$id."'";
+			$con = '';
+			$id = (int)$this->re_db_input($id);
+			
+			if (!empty($category)){
+				$con = " AND `at`.`category` = ".(int)$this->re_db_input($category);
+			}
+			
+			$q = "SELECT `at`.*"
+					." FROM `".PRODUCT_LIST."` AS `at`"
+                    ." WHERE `at`.`is_delete`='0'"
+					." AND `at`.`id`='".$id."'"
+					.$con
+			;
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
     			$return = $this->re_db_fetch_array($res);

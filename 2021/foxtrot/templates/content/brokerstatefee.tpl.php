@@ -34,7 +34,7 @@
                              foreach($get_states as $state): ?>
                                 <div class="col-md-3">
                                    <div class="form-group">
-                                         <input style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="form-control" name="state_fee[<?php echo $state['id']; ?>]" value="<?php echo isset($feeData[$state['id']]) ? $feeData[$state['id']]:"0.00" ?>"> 
+                                         <input maxlength="8"  style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="currency-input form-control" name="state_fee[<?php echo $state['id']; ?>]" value="<?php echo isset($feeData[$state['id']]) ? $feeData[$state['id']]:"0.00" ?>"> 
                                           <label><?php  echo $state['name']; ?></label>
                                     </div>
                                 </div>    
@@ -59,7 +59,11 @@
         </form>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" integrity="sha512-Rdk63VC+1UYzGSgd3u2iadi0joUrcwX0IWp2rTh6KXFoAmgOjRS99Vynz1lJPT8dLjvo6JZOqpAHJyfCEZ5KoA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
+    jQuery(function($){
+         $('.currency-input').maskMoney();
+    })
     function loadStateFee(broker){
           $.ajax({
                      url:"ajax_broker_state_fee.php",
@@ -75,6 +79,7 @@
                             data = res.data;
                           
                             $("#state-dynamic-content").html(data);
+                             $('.currency-input').maskMoney();
                         }
                         else{
                               alert(res.message);

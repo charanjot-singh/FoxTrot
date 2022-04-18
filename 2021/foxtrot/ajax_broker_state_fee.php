@@ -14,7 +14,7 @@ if(isset($_POST['broker_id']) && $_POST['broker_id'] != '')
 
      foreach($get_states as $state): 
         $feevalue  = isset($feeData[$state['id']]) ? $feeData[$state['id']]:"0.00";
-        $html.='<div class="col-md-3"><div class="form-group"><input style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="form-control" name="state_fee['.$state['id'].']" value="'.$feevalue.'"><label>'.$state['name'].'</label>  </div> </div> ';   
+        $html.='<div class="col-md-3"><div class="form-group"><input maxlength="8"  style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="currency-input form-control" name="state_fee['.$state['id'].']" value="'.$feevalue.'"><label>'.$state['name'].'</label>  </div> </div> ';   
         endforeach;                   
       echo json_encode(array("status"=>true,"message"=>"done","data"=>$html));
 }    

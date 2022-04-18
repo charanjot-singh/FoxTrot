@@ -198,8 +198,9 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
     $html='<table border="0" cellpadding="1" width="100%">
                 <tr style="background-color: #f1f1f1;">
                    <td style="text-align:left;font-weight:bold;"><h5>DATE</h5></td>';
-     if($report_for == "client") : 
-        $html.=' <td style="text-align:left;font-weight:bold;"><h5>CLIENT </h5></td>
+     if($report_for == "client" || $report_for == 'product') :
+        $column= $report_for == "client" ? "PRODUCT": "CLIENT";
+        $html.=' <td style="text-align:left;font-weight:bold;"><h5>'.$column.' </h5></td>
                 <td style="text-align:left;font-weight:bold;"><h5>BROKER #</h5></td>';
        else : 
           $html.='<td style="text-align:left;font-weight:bold;"><h5>PRODUCT </h5></td>
@@ -234,8 +235,9 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                             $date = ($date_by == "1") ? $trans_data['trade_date'] : $trans_data['commission_received_date'];
                             $html.='<tr>
                                   <td style="font-size:10px;font-weight:normal;text-align:left;">'.date('m/d/Y',strtotime($date)).'</td>';
-                            if($report_for == "client") : 
-                                 $html.='<td style="font-size:10px;font-weight:normal;text-align:left;">'.$trans_data['client_name'].'</td>
+                            if($report_for == "client" || $report_for == 'product') : 
+                                $col_value = $report_for == "client" ?  $trans_data['product_name']:$trans_data['client_name'];
+                                 $html.='<td style="font-size:10px;font-weight:normal;text-align:left;">'.$col_value.'</td>
                                                  <td style="font-size:10px;font-weight:normal;text-align:left;">'.$trans_data['broker_last_name'].', '.$trans_data['broker_name'].'</td>';
                             else:                     
 

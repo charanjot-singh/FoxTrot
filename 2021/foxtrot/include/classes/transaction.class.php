@@ -4,7 +4,8 @@ class transaction extends db{
     
     public $errors = '';
     public $table = TRANSACTION_MASTER;
-    
+    public $broker_master = BROKER_MASTER;
+    public $product_type = PRODUCT_TYPE;
     public function insert_update($data){//echo '<pre>';print_r($data);exit;
           
 			$id = isset($data['id'])?$this->re_db_input($data['id']):0;
@@ -413,12 +414,14 @@ class transaction extends db{
             }
 			return $return;
 		}
-        public function select_category(){
+        public function select_category($ids = [] ){
 			$return = array();
-			
+			$where_and = '';
+
+			if(!empty($ids)) $where_and = 'and at.id IN ('.implode(',',$ids).')';
 			$q = "SELECT `at`.*
 					FROM `".PRODUCT_TYPE."` AS `at`
-                    WHERE `at`.`is_delete`='0'
+                    WHERE `at`.`is_delete`='0' ".$where_and."
                     ORDER BY `at`.`id` ASC";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
@@ -430,6 +433,7 @@ class transaction extends db{
             }
 			return $return;
 		}
+
         public function select_client(){
 			$return = array();
 			
@@ -680,7 +684,7 @@ class transaction extends db{
                     LEFT JOIN `".BATCH_MASTER."` as `bt` on `bt`.`id` = `at`.`batch`
                     LEFT JOIN `".CLIENT_MASTER."` as `cl` on `cl`.`id` = `at`.`client_name`
                     LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `at`.`broker_name`
-                    WHERE `at`.`is_delete`='0' and `at`.`is_payroll`='0'
+                    WHERE `at`.`is_delete`='0' 
                     ORDER BY `at`.`trade_date` desc";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
@@ -1435,5 +1439,290 @@ class transaction extends db{
 			return $return;
 		}
 
-}
+		function select_year_to_date_sale_report($beginning_date,$ending_date,$company,$without_earning,$earning_by){
+			
+		        // 11/1/21 li - phase out field "rep_name", and rename "rep_number" to "broker_id" to normalize database
+		    	$return = array();
+		        $con='';
+		        
+		        $con.=" and payroll_date between '".$beginning_date."' and '".$ending_date."' ";
+		        if($without_earning!=1){
+		        	$con.=" and net_earnings <> '' ";
+		        }
+		        if($earning_by == 2){
+		        	$con.=" and branch > 0 ";
+		        }
+		        else{
+		        		$con.=" and broker_id > 0 ";
+		        }
+		        
+		    	  $q = "SELECT `pr`.`id`,
+		                     `pr`.`payroll_date`,
+		                     `pr`.`broker_id` AS `rep_number`,
+		                     `pr`.`broker_id` AS `rep_name`,
+		                     `pr`.`clearing_number`,
+		                     `pr`.`gross_production`,
+		                     `pr`.`check_amount`,
+		                     `pr`.`minimum_check_amount`,
+		                     `pr`.`finra`,
+		                     `pr`.`sipc`,
+		                     `pr`.`sipc_gross`,
+		                     `pr`.`net_production`,
+		                     `pr`.`adjustments`,
+		                     `pr`.`taxable_adjustments`,
+		                     `pr`.`non-taxable_adjustments`,
+		                     `pr`.`net_earnings`,
+		                     `pr`.`status`,
+		                     `pr`.`is_delete`,
+		                     pr.branch,`pr`.`broker_id`,
+		                     concat(bm.last_name,', ',bm.first_name) as broker_fullname,
+		                     `bm`.first_name as broker_firstname,`bm`.last_name as broker_lastname,
+		                     br.name as branch_name
+		    			FROM `".PRIOR_PAYROLL_MASTER."` AS `pr`
+		                LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `pr`.`broker_id`
+		                LEFT JOIN ft_branch_master as   br on br.id = pr.branch
+		                WHERE `pr`.`is_delete`='0' ".$con."
+		                ORDER BY `bm`.`last_name` desc";
+		            // echo $q;
+		        $all_transactions = [];
+		    	$res = $this->re_db_query($q);
+		        if($this->re_db_num_rows($res)>0){
+		            $a = 0;
+		    		while($row = $this->re_db_fetch_array($res)){
+		    			
+		    				$branch_id = !empty($row['branch']) ? $row['branch'] : '-1';
+
+		    				if(!isset($return[$branch_id])) {
+		    					$return[$branch_id] = ['branch_name'=>$row['branch_name'],'transactions'=>[]];
+		    				}
+		    				$return[$branch_id]['transactions'][] = $row; 
+
+		    		     	array_push($all_transactions,$row);
+		    		}
+		        }
+
+		    	return ($earning_by == 2) ? $return : $all_transactions;
+		  
+		}
+
+		function select_broker_ranking_sale_report($cat_ids = [],$company='',$rank_order_by=0,$limit=0,$earning_by=[]) {
+			
+		        // 11/1/21 li - phase out field "rep_name", and rename "rep_number" to "broker_id" to normalize database
+		    	$return = array();
+		       
+		        /*$ranks = ['Rank on Total sales','Rank on Gross concessions','Rank on Total Earnings',
+                                    'Rank on Profitability'];*/
+
+		   		$ranks = ['Rank on Total Earnings','Rank on Gross Concessions','Rank on Total Sales',
+                                    'Rank on Profitability'];
+		        $where = '';
+		        $order_by = 'order by  bm.last_name desc';
+
+		        if(!empty($cat_ids)) {
+		        	$where.= ' AND tm.product_cate IN  ('.implode(',',$cat_ids).')';
+		        }
+		        if($company > 0) {
+		        	$where.= ' AND tm.company='.$company;
+		        }
+
+		        if(!empty($rank_order_by)) {
+		        	$order_by = 'order by '.(int) $rank_order_by.' desc';
+		        }
+		       
+		        if(!empty($earning_by)&&is_array($earning_by)) {
+		        	
+		        	list('earning_by'=>$earning_type,'beginning_date'=>$start_date,'ending_date'=>$end_date) = $earning_by;
+		        	if($earning_type == 2) $where.=" and tm.trade_date between '".date('Y-m-d',strtotime($start_date))."' and '".date('Y-m-d',strtotime($end_date))."' ";
+		        }
+		        
+		        $limit_query = '';
+		        if(!empty($limit)) $limit_query = 'LIMIT '.$limit;
+		        
+		        $q = "SELECT 
+		       		SUM(tm.commission_received) as total_earnings, 
+		       		SUM(tm.invest_amount) as total_investment,
+		        	SUM(tm.charge_amount) as total_concessions, 
+		        	SUM(tm.commission_received-tm.charge_amount) AS total_profit ,
+		        	tm.broker_name,
+		        	bm.internal as internal_id,
+		        	concat(bm.last_name,', ',bm.first_name) as broker_fullname
+		        	FROM $this->table tm   
+		        	LEFT JOIN $this->broker_master as bm on bm.id = tm.broker_name 
+		         	where 1=1 $where  group by broker_name $order_by  $limit_query ";
+		    
+		    	$res = $this->re_db_query($q);
+		        if($this->re_db_num_rows($res)>0){
+		           
+		    		while($row = $this->re_db_fetch_array($res)){
+		    		     array_push($return,$row);
+		    		}
+		        }
+		    return $return;
+		}
+		public function select_annual_broker_report($year=0,$is_trail=0,$broker=0,$company=0,$date_type = 1) {
+			$return = array();
+            $con='';
+           
+            $date_column_name = ($date_type == 1) ? 'trade_date' : 'settlement_date';
+
+            if($year > 0) $con.=' AND YEAR(at.'.$date_column_name.') = '.$year;
+
+            if($broker>0) $con.=" AND `at`.`broker_name` = ".$broker." ";
+            
+            if($company > 0) $con.= ' AND at.company='.$company;
+		    
+            if($is_trail>0) $con.=" AND `at`.`trail_trade` = '0' ";
+            
+      
+            $q="SELECT  COUNT(*) as no_of_trades, at.$date_column_name as main_date,
+                	EXTRACT(month FROM at.$date_column_name) as month_name,
+                	`at`.product_cate,`at`.sponsor,`at`.product_cate,`at`.product,sum(`at`.invest_amount) as invest_amount,sum(`at`.charge_amount) as gross_conession,sum(`at`.commission_received) as commission_received,bm.first_name as broker_name,bm.last_name as broker_last_name,bm.id as broker_id,bm.internal as internal_id,cm.first_name as client_name,cm.last_name as client_last_name,bt.batch_desc,br.name as branch_name,pt.type as product_category_name,sm.name as sponsor_name FROM `".$this->table."` AS `at`
+                    LEFT JOIN `".BATCH_MASTER."` as `bt` on `bt`.`id` = `at`.`batch`
+                    LEFT JOIN `".PRODUCT_TYPE."` as `pt` on `pt`.`id` = `at`.`product_cate`
+                    LEFT JOIN `ft_branch_master` as `br` on `br`.`id` = `at`.`branch`
+                    LEFT JOIN `".BROKER_MASTER."` as `bm` on `bm`.`id` = `at`.`broker_name`
+                    LEFT JOIN `".CLIENT_MASTER."` as `cm` on `cm`.`id` = `at`.`client_name`
+                    LEFT JOIN `".SPONSOR_MASTER."` as `sm` on `sm`.`id` = `at`.`sponsor`
+                    WHERE `at`.`is_delete`='0' ".$con." group by EXTRACT(month FROM at.$date_column_name)";
+         
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+    			while($row = $this->re_db_fetch_array($res)){
+    				$return[$row['month_name']]=$row;
+    			}
+            }            
+			return $return;
+		}
+		function select_monthly_broker_production_report($company='',$earning_by=[]) {
+			
+		        // 11/1/21 li - phase out field "rep_name", and rename "rep_number" to "broker_id" to normalize database
+		    	$return = array();
+		       
+		        $ranks = ['Rank on Total sales','Rank on Gross concessions','Rank on Total Earnings',
+                                    'Rank on Profitability'];
+		    
+		        $where = '';
+		        $order_by = 'order by  bm.last_name desc';
+
+		       
+		        if($company > 0) {
+		        	$where.= ' AND tm.company='.$company;
+		        }
+
+		        if(!empty($earning_by)&&is_array($earning_by)) {
+		        	
+		        	list('earning_by'=>$earning_type,'beginning_date'=>$start_date,'ending_date'=>$end_date) = $earning_by;
+		        	if($earning_type == 2) $where.=" and tm.trade_date between '".date('Y-m-d',strtotime($start_date))."' and '".date('Y-m-d',strtotime($end_date))."' ";
+		        }
+		        
+		      
+		        
+		        $q = "SELECT 
+		        	SUM(tm.invest_amount) as total_investment,
+		        	SUM(tm.charge_amount) as total_concessions, 
+		        	SUM(tm.commission_received) as total_earnings, 
+		        	SUM(tm.commission_received-tm.charge_amount) AS total_profit ,
+		        	SUM(tm.commission_received-tm.charge_amount) AS net_commission,
+		        	SUM(tm.commission_received) as total_commission_received, 
+		        	tm.broker_name,tm.product_cate,
+		        	concat(bm.last_name,', ',bm.first_name) as broker_fullname,
+		        	bm.internal as internal_id,
+		        	pt.type as product_cat_name
+		        	FROM $this->table tm   
+		        	LEFT JOIN $this->broker_master as bm on bm.id = tm.broker_name 
+		         	LEFT JOIN $this->product_type as pt on pt.id = tm.product_cate
+		         	where 1=1 $where  group by broker_name,product_cate $order_by  $limit_query ";
+		    	//echo $q;
+		    	$res = $this->re_db_query($q);
+		        if($this->re_db_num_rows($res)>0){
+		           
+		    		while($row = $this->re_db_fetch_array($res)){
+		    			//	$brokder_id=$row['broker_id'];
+		    				if(!isset($return[$row['broker_name']])) {
+		    					$return[$row['broker_name']] = [
+		    							'broker_full_name'=>$row['broker_fullname'],
+		    							'broker_id'=>$row['broker_name'],
+		    							'internal_id'=>$row['internal_id'],
+		    							'transactions'=>[]
+		    						];
+		    				}
+		    		     	$return[$row['broker_name']]['transactions'][]= $row;
+		    		}
+		        }
+		    return $return;
+		}
+		function select_monthly_branch_office_report($company=0,$branch=0,$end_date = '' ) {
+			
+		        // 11/1/21 li - phase out field "rep_name", and rename "rep_number" to "broker_id" to normalize database
+		    	$return = array();
+		       
+		       
+		    
+		        $where = '';
+		        $order_by = 'order by  bm.last_name desc';
+		        if($company > 0) {
+		        	$where.= ' AND tm.company='.$company;
+		        }
+		        if($branch > 0) {
+		        	$where.= ' AND tm.branch='.$branch;
+		        }
+
+		        if(!empty($end_date)) {
+		        	$where.= ' AND tm.trade_date <="'.date('Y-m-d',strtotime($end_date)).'"  ';
+		        }
+		        /*if(!empty($earning_by)&&is_array($earning_by)) {
+		        	
+		        	list('earning_by'=>$earning_type,'beginning_date'=>$start_date,'ending_date'=>$end_date) = $earning_by;
+		        	if($earning_type == 2) $where.=" and tm.trade_date between '".date('Y-m-d',strtotime($start_date))."' and '".date('Y-m-d',strtotime($end_date))."' ";
+		        }*/
+		        
+		      
+		        
+		        $q = "SELECT 
+		        	SUM(tm.invest_amount) as total_investment,
+		        	SUM(tm.charge_amount) as total_concessions, 
+		        	SUM(tm.commission_received) as total_earnings, 
+		        	SUM(tm.commission_received-tm.charge_amount) AS total_profit,
+		        	SUM(tm.commission_received-tm.charge_amount) AS net_commission,
+		        	SUM(tm.commission_received) as total_commission_received, 
+		        	tm.broker_name,tm.product_cate,br.name as branch_name,
+		        	concat(bm.last_name,', ',bm.first_name) as broker_fullname,
+		        	bm.internal as internal_id,
+		        	pt.type as product_cat_name,tm.branch
+		        	FROM $this->table tm   
+		        	LEFT JOIN $this->broker_master as bm on bm.id = tm.broker_name 
+		         	LEFT JOIN $this->product_type as pt on pt.id = tm.product_cate
+		         	LEFT JOIN ft_branch_master as br on br.id = tm.branch
+		         	where 1=1 $where  group by tm.branch,tm.broker_name,tm.product_cate $order_by  $limit_query ";
+		    	//echo $q;
+		    	$res = $this->re_db_query($q);
+		        if($this->re_db_num_rows($res)>0){
+		           
+		    		while($row = $this->re_db_fetch_array($res)){
+		    			//	$brokder_id=$row['broker_id'];
+		    				$branch_id = !empty($row['branch']) ? $row['branch'] : '-1';
+
+		    				if(!isset($return[$branch_id])) {
+		    					$return[$branch_id] = ['branch_name'=>$row['branch_name'],'brokers'=>[]];
+		    				}
+		    				if(!isset($return[$branch_id]['brokers'][$row['broker_name']])) {
+		    					$return[$branch_id]['brokers'][$row['broker_name']] = ['broker_full_name'=>$row['broker_fullname'],'internal_id'=>$row['internal_id'],'transactions'=>[]]; 
+		    				}
+		    				$return[$branch_id]['brokers'][$row['broker_name']]['transactions'][] = $row; 
+		    				
+		    				/*if(!isset($return[$branch_id][$row['broker_name']])) {
+		    					$return[$branch_id][$row['broker_name']] = [
+		    							'branch_name'=>$row['branch_name'],
+		    							'branch_id'=>$row['branch'],
+		    							'transactions'=>[]
+		    						];
+		    				}
+		    		     	$return[$branch_id][$row['broker_name']]['transactions'][]= $row;*/
+		    		}
+		        }
+		    return $return;
+		}
+
+}		
+
 ?>
