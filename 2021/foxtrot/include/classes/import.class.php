@@ -106,7 +106,6 @@
          * @return mixed
          */
         public function resolve_exceptions($data){
-            $instance_manage_sponsor = new manage_sponsor();
             $result = $resolveAction = 0;
             $resultMessage = '';
 			$exception_file_id = isset($data['exception_file_id']) ? (int)$this->re_db_input($data['exception_file_id']) : 0;
@@ -348,7 +347,6 @@
                                 //--- Broker Licence Error - Activate Licence ---//
                                 $instance_client = new client_maintenance();
                                 $instance_product = new product_maintenance();
-                                $instance_broker = new broker_master();
                                 
                                 switch ($commDetailTable){
                                     case IMPORT_IDC_DETAIL_DATA:
@@ -466,14 +464,14 @@
                                 
                                 switch ($commDetailTable){
                                     case IMPORT_IDC_DETAIL_DATA:
-                                        $idcDetail = $this->select_existing_idc_data($exception_data_id);
+                                        $detailData = $this->select_existing_idc_data($exception_data_id);
                                         break;
                                     case IMPORT_GEN_DETAIL_DATA:
-                                        $idcDetail = $this->select_existing_gen_data($exception_data_id);
+                                        $detailData = $this->select_existing_gen_data($exception_data_id);
                                         break;
                                 }
 
-                                $res = $instance_client->insert_update_objectives(['client_id'=>$idcDetail['client_id'], 'objectives'=>$data['objectives']], 1);
+                                $res = $instance_client->insert_update_objectives(['client_id'=>$detailData['client_id'], 'objectives'=>$data['objectives']], 1);
 
                                 if($res){
                                     // Update "resolve_exceptions" field to flag detail as "special handling" record
@@ -481,7 +479,7 @@
 
                                     $q = "UPDATE `".IMPORT_EXCEPTION."`"
                                             ." SET `resolve_action`=2"
-                                                .",`resolve_assign_to`='Client:".$idcDetail['client_id'].", Objective:".$data['objectives']."'"
+                                                .",`resolve_assign_to`='Client:".$detailData['client_id'].", Objective:".$data['objectives']."'"
                                                     .$this->update_common_sql()
                                             ." WHERE `id`=".$exception_record_id
                                     ;
@@ -499,7 +497,7 @@
                                                 ." AND `ex`.`file_type`=$exception_file_type"
                                                 ." AND `ex`.`error_code_id`=$error_code_id"
                                                 ." AND `ex`.`is_delete`=0"
-                                                ." AND `det`.`client_id`=".$idcDetail['client_id']
+                                                ." AND `det`.`client_id`=".$detailData['client_id']
                                         ;
                                         $res = $this->re_db_query($q);
 
@@ -512,7 +510,6 @@
                                         }
                                     }
                                 }
-
                             }
                         }
                         else if($resolveAction == 3)
@@ -569,7 +566,7 @@
                                     $sponsorId = isset($sponsor_detail['id']) ? (int)$sponsor_detail['id'] : 0;
                             }
                             
-                            if ($exception_file_type == 9){
+                            if ($exception_file_type == $this->GENERIC_file_type){
                                 $commDetailData = $this->select_existing_gen_data($exception_data_id);
                                 // Sponsor found
                                 $sponsorId = ($sponsorId==0 ? $commDetailData['sponsor_id'] : $sponsorId);
@@ -1757,6 +1754,7 @@
          * 12/13/21 Change to process all records coming into CloudFox
          *      - don't delete Client_Master & Transactions_Master that match the file $file_id
          * 02/15/22 Parameters to pull individual records. Called from this>resolve exception($data) function
+         * 05/02/22 Store Broker Branch->Company for Reporting & Payroll Processing purposes later
          * @param int $file_id
          * @return string|bool
          ***************************************************************/
@@ -2461,16 +2459,11 @@
                         // Flag the record as processed for "Import" file grid to get an accurate count of the processed vs exception records
                         $this->re_db_perform($commDetailTable, ["process_result"=>0], 'update', "`id`=".$check_data_val['id']." AND `is_delete`=0");
 
-                        $batch_id = 0;
-                        $broker_id = 0;
-                        $client_id = 0;
-                        $product_category_id = 0;
-                        $product_id = 0;
-                        $result = 0;
-                        $transaction_master_id = 0;
+                        $result = $transaction_master_id = 0;
+                        $batch_id = $broker_id = $client_id = $branch_id = $company_id = 0;
+                        $product_category_id = $product_id = $sponsor_id = 0;
                         $updateResult = [];
                         $for_import = '';
-                        $sponsor_id = 0;
                         // 04/05/22 Generic Type - sponsor dropdown added on File Fetch, so the $sponsor_id should be in the IMPORT CURRENT FILE table record
                         // if ($file_type == $this->GENERIC_file_type){
                         //     $sponsor_id = $check_data_val['sponsor_id'];
@@ -2988,15 +2981,24 @@
                                 }
 
                                 $trans_ins = new transaction();
-                                $get_branch_company_detail = $trans_ins->select_branch_company_ref($broker_id);
-                                $branch = isset($get_branch_company_detail['branch_id'])?$get_branch_company_detail['branch_id']:'';
-                                $company = isset($get_branch_company_detail['company_id'])?$get_branch_company_detail['company_id']:'';
                                 // Have to check stripos() with "!==false" because if the string is in the first position, it will return "0"
                                 if (!empty($check_data_val['comm_type']) AND (stripos($check_data_val['comm_type'], '12b')!==false OR stripos($check_data_val['comm_type'], 'trail')!==false)) {
                                     $isTrail = 1;
                                 } else if (!empty($check_data_val['commission_record_type_code']) AND $check_data_val['commission_record_type_code']=='3') {
                                     $isTrail = 1;
                                 }
+                                // 05/02/22 Store Broker branch & company
+                                $branch = $company = 0;        
+                                $broker_branch_company_detail = $instance_broker_master->select_broker_by_branch_company($broker_id);
+                                if (count($broker_branch_company_detail) > 0){
+                                    for ($i=1; $i < 4; $i++){
+                                        if (!empty($broker_branch_company_detail[0]["branch_id".$i])){
+                                            $branch = $broker_branch_company_detail[0]["branch_id".$i];
+                                            $company = $broker_branch_company_detail[0]["company_id".$i];
+                                            break;
+                                        }
+                                    }
+                                } 
                                 
                                 $q1 = "INSERT INTO `".TRANSACTION_MASTER."`"
                                         ." SET `file_id`='".$check_data_val['file_id']."'"

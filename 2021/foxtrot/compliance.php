@@ -13,6 +13,8 @@ $broker = '';
 $sponser = '';
 $output = '';
 $report_for = '';
+$do_not_contact = '';
+$ending_date = $beginning_date = '';
 $return_from_broker_client = array();
     
     if(isset($_POST['submit'])&& $_POST['submit']=='Proceed'){
@@ -22,7 +24,9 @@ $return_from_broker_client = array();
         $broker = isset($_POST['broker'])?$instance->re_db_input($_POST['broker']):0;
         $sponser = isset($_POST['sponser'])?$instance->re_db_input($_POST['sponser']):'';
         $report_for = isset($_POST['report_for'])?$instance->re_db_input($_POST['report_for']):'';
-        
+        $dont_contact_client = isset($_POST['dont_contact_client'])?$instance->re_db_input($_POST['dont_contact_client']):0;
+        $beginning_date = isset($_POST['beginning_date'])?$instance->re_db_input($_POST['beginning_date']):'';
+        $ending_date = isset($_POST['ending_date'])?$instance->re_db_input($_POST['ending_date']):'';
         if($report_for == 1)
         {//print_r($report_for);exit;
             if($output == 1)
@@ -31,11 +35,11 @@ $return_from_broker_client = array();
             }
             else if($output == 2)
             {
-                header("location:".SITE_URL."report_transaction_by_batch.php?open=output_print&filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_ac_pdf.php?open=output_print&filter=".$data_array);exit;
             }
             else if($output == 3){
                 
-                header("location:".SITE_URL."report_transaction_by_batch_excel.php?filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_review_excel.php?filter=".$data_array);exit;
             }
             else if($output == 4){
                 
@@ -50,7 +54,7 @@ $return_from_broker_client = array();
             }
             else if($output == 2)
             {
-                header("location:".SITE_URL."report_batch.php?open=output_print&filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_review_pdf.php?open=output_print&filter=".$data_array);exit;
             }
             else if($output == 3){
                 
@@ -58,7 +62,7 @@ $return_from_broker_client = array();
             }
             else if($output == 4){
                 
-                header("location:".SITE_URL."report_client_pdf.php?filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_review_pdf.php?filter=".$data_array);exit;
             }
         }
         else if($report_for == 3)
@@ -69,11 +73,11 @@ $return_from_broker_client = array();
             }
             else if($output == 2)
             {
-                header("location:".SITE_URL."report_batch.php?open=output_print&filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_review_pdf.php?open=output_print&filter=".$data_array);exit;
             }
             else if($output == 3){
                 
-                header("location:".SITE_URL."report_batch_excel.php?filter=".$data_array);exit;
+                header("location:".SITE_URL."report_client_review_excel.php?filter=".$data_array);exit;
             }
             else if($output == 4){
                 
@@ -89,6 +93,9 @@ $return_from_broker_client = array();
         $broker = isset($filter_array['broker'])?$instance->re_db_input($filter_array['broker']):'';
         $sponser = isset($filter_array['sponser'])?$instance->re_db_input($filter_array['sponser']):'';
         $report_for = isset($filter_array['report_for'])?$instance->re_db_input($filter_array['report_for']):'';
+        $dont_contact_client = isset($filter_array['dont_contact_client'])?$instance->re_db_input($filter_array['dont_contact_client']):0;
+         $beginning_date = isset($filter_array['beginning_date'])?$instance->re_db_input($filter_array['beginning_date']):'';
+          $ending_date = isset($filter_array['ending_date'])?$instance->re_db_input($filter_array['ending_date']):'';
     }
     
 $content = "compliance";

@@ -1,3 +1,4 @@
+<?php //echo ini_get("max_input_vars"); ?>
 <script type="text/javascript">
    $(document).ready(function(){
        console.log("works");
@@ -536,7 +537,7 @@
          *                options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
          */
         show: function (message, options) {
-
+             
             // Assigning defaults
             if (typeof options === 'undefined') {
                 options = {};
@@ -553,7 +554,8 @@
             if($("#email1_general").val()!=''){
                 if (!filter.test($("#email1_general").val())) {
                     $("#email1_general").css({"border":"1px solid red"})
-                     alert("Please enter valid Primary Email!")
+                     alert("Please enter valid Primary Email!");
+                      $dialog.modal('hide');
                     return false;
                 }
                 else{
@@ -564,13 +566,14 @@
                 if (!filter.test($("#email2_general").val())) {
                     $("#email2_general").css({"border":"1px solid red"})
                      alert("Please enter valid Secondary Email!")
+                     $dialog.modal('hide');
                     return false;
                 }
                 else{
                         $("#email2_general").css({"border":""})
                 }
-            }    
-   
+            }  
+            
             // Configuring dialog
             $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
             $dialog.find('.progress-bar').attr('class', 'progress-bar');
@@ -586,6 +589,7 @@
             }
             // Opening dialog
             $dialog.modal();
+            return true;
         },
         /**
          * Closes dialog
@@ -626,7 +630,7 @@
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="overrides"){ echo "active"; } ?>"><a href="#tab_g" data-toggle="pill">Overrides & Splits</a></li>
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="charges"){ echo "active"; } ?>"><a href="#tab_c" data-toggle="pill">Charges</a></li>
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="registers"){ echo "active"; } ?>"><a href="#tab_e" data-toggle="pill">Series Registrations</a></li>
-            <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="licences"){ echo "active"; } ?>"><a href="#tab_d" data-toggle="pill">Licences</a></li>
+            <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="licences"){ echo "active"; } ?>"><a href="#tab_d" data-toggle="pill">Licenses </a></li>
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="required_docs"){ echo "active"; } ?>"><a href="#tab_f" data-toggle="pill">Required Docs</a></li>
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="alias_appoinments"){ echo "active"; } ?>"><a href="#tab_h" data-toggle="pill">Aliases & Appointments</a></li>
             <li class="<?php if(isset($_GET['tab'])&&$_GET['tab']=="branches"){ echo "active"; } ?>"><a href="#tab_i" data-toggle="pill">Branches</a></li>
@@ -655,22 +659,15 @@
                </div>
             </div>
          </ul>
-         <form method="post">
-            <br />
+         <form method="post" onsubmit="return waitingDialog.show();">
+         
             <div class="tab-content">
                <div class="tab-pane <?php if(isset($_GET['tab'])&&$_GET['tab']=="general"){ echo "active"; }else if(!isset($_GET['tab'])){echo "active";}else{ echo '';} ?>" id="tab_a">
                   <div class="panel-overlay-wrap">
                      <div class="panel">
                         <div class="panel-heading">
-                           <div class="col-md-6" style="padding-left: 0px;">
-                              <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i><?php echo $action=='add_new'?'Add':'Edit'; ?> New Broker/Advisor</h3>
-                           </div>
-                           <!--   <div class="col-md-6">
-                              <div class="form-group" style="text-align:right ; padding-right: 0px;">
-                                 
-                              </div>
-                              </div>  -->
-                           <div class="col-md-6" style="text-align:right;padding-right: 0px;">
+                        
+                           <div class="col-md-3" style="padding-left: 0px;">
                               <div class="form-inline"  style="text-align: right !important; display: inline !important; ">
                                  <label>Status</label>
                                  <select name="active_status_cdd" id=" active_status_cdd" style="width: 50%; " class="form-control">
@@ -683,7 +680,28 @@
                                  </select>
                               </div>
                            </div>
-                           <br/>
+                           <div class="col-md-9 show-inline-elements" style="padding: 0px;">
+                                <div class="form-inline"> 
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                        <input type="checkbox" class="higher_risk" name="higher_risk" <?php if(isset($higher_risk) && $higher_risk==1){ echo'checked="true"'; }?> id="higher_risk" style="display: inline;" value="1" />
+                                        </span>
+                                        <label class="form-control">Higher Risk</label>
+                                    </div>
+
+                                </div>
+                                <div class="higher_risk_options">
+                                    <div class="form-inline">
+                                           <!--  <label>Exam Notes</label> -->
+                                             <textarea  style="resize: none;" placeholder="Exam Notes" name="exam_notes" id="exam_notes" class="form-control" rows="1" cols="25" maxlength="200" ><?php echo $exam_notes;?></textarea>
+                                    </div>
+                                     <div class="form-inline">
+                                          <!--   <label>FINRA Exam Date</label> -->
+                                            <input placeholder="FINRA Exam Date" type="text" class="form-control date-picker" name="finra_exam_date" id="finra_exam_date" value="<?php echo  $finra_exam_date; ?>">
+                                    </div>
+                                </div>
+                           </div>
+                         
                         </div>
                         <div class="panel-body">
                            <div class="row">
@@ -1046,13 +1064,13 @@
                            <div class="row">
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label>Web ID </label>
+                                    <label>FoxTrotOnline Portal Username </label>
                                     <input type="text" name="web_id_general" id="web_id_general" value="<?php if($action=='edit'){ echo $web_id; } ?>" class="form-control" />
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-grup">
-                                    <label>Web Password </label><br />
+                                    <label>FoxTrotOnline Portal Password</label><br />
                                     <div class="input-group">
                                        <input type="password" name="web_password_general" style="display: inline !important;" id="web_password_general" value="<?php if($action=='edit'){ echo $web_password; } ?>" class="form-control" />
                                        <span  class="input-group-addon" >
@@ -1092,7 +1110,7 @@
                               </div>
                               <div class="col-md-3">
                                  <div class="form-group">
-                                    <label>U4 </label><br />
+                                    <label>U4/Active Date </label><br />
                                     <div id="demo-dp-range">
                                        <div class="input-daterange input-group" id="datepicker">
                                           <input type="text" name="u4_general" id="u4_general" value="<?php if($action=='edit'){ echo date('m/d/Y',strtotime($u4)); } ?>" class="form-control" />
@@ -1256,7 +1274,7 @@
                                  <th>BROKER NAME</th>
                                  <th>CRD#</th>
                                  <th>CLEAR#</th>
-                                 <th>CRD</th>
+                                 <th>Internal Broker ID</th>
                                  <th>U4 DATE</th>
                                  <th class="text-center">STATUS</th>
                                  <th class="text-center">ACTION</th>
@@ -1272,7 +1290,7 @@
                                  <td><?php echo $val['id']; ?></td>
                                  <td><?php echo $val['fund']; ?></td>
                                  <!--td><?php echo $val['internal']; ?></td-->
-                                 <td><?php echo $val['crd']; ?></td>
+                                 <td class="internal"><?php echo $val['internal']; ?></td>
                                  <td><?php echo date('m/d/Y',strtotime($val['u4'])); ?></td>
                                  <td>
                                     <?php 
@@ -2182,7 +2200,7 @@
                                           <div class="col-md-4">
                                              <div class="form-group">
                                                 <label>Product Category </label>
-                                                <select class="form-control" name="product_category" style="display: inline !important;">
+                                                <select class="form-control" name="product_category" id="security_product_cat" style="display: inline !important;" onchange="filter_state_records(this);">
                                                    <option value="">Select Category</option>
                                                    <?php
                                                       $product_category_based_on_series = $instance->select_category_based_on_series($regval['id']);
@@ -2190,52 +2208,90 @@
                                                    <option value="<?php echo $val['id'];?>" <?php if(isset($row2) && $row2==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
                                                    <?php } ?>
                                                 </select>
-                                                <!--<select name="product_category"  class="form-control">
-                                                   <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==0){ ?> selected="true"<?php } } ?> value="0">Select Category</option>
-                                                   <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==1){ ?> selected="true"<?php } } ?> value="1">Active</option>
-                                                   <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==2){ ?> selected="true"<?php } } ?> value="2">Received</option>
-                                                   <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==3){ ?> selected="true"<?php } } ?> value="3">Terminated</option>
-                                                   <option <?php if(isset($_GET['action'])&&$_GET['action']=='edit'){if(isset($row2) && $row2==4){ ?> selected="true"<?php } } ?> value="4">Reason</option>
-                                                   </select>-->
+                                              
                                              </div>
                                           </div>
                                        </div>
                                        <input type="hidden" name="type" value="1"/>
-                                       <div class="row">
-                                          <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>Active </h4>
-                                                 <span style="font-size: 13px;">Select All</span> 
-                                                <input type="checkbox"  style=" display: inline;height: 12px;" name="check_all" class="check_all checkbox" value=""/>
-                                             </div>
-                                          </div>
-                                          
-                                          <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>State</h4>
-                                             </div>
-                                          </div>
-                                        <!--   <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>Fee</h4>
-                                             </div>
-                                          </div> -->
-                                          <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>Received</h4>
-                                             </div>
-                                          </div>
-                                          <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>Terminated</h4>
-                                             </div>
-                                          </div>
-                                          <div class="col-md-2">
-                                             <div class="form-group">
-                                                <h4>Reason</h4>
-                                             </div>
-                                          </div>
-                                       </div>
+                                       
+                                       <!-- <div class="license_cat_container">
+                                        <?php foreach($product_category_based_on_series as $row) : ?>
+                                            <div id="license_cat_wrap_<?php echo $row['id'];?>" class="license_cat_wrap">
+                                                <div class="row">
+                                                      <div class="col-md-2">
+                                                         <div class="form-group">
+                                                            <h4>Active </h4>
+                                                             <span style="font-size: 13px;">Select All</span> 
+                                                            <input type="checkbox"  style=" display: inline;height: 12px;" name="check_all" class="check_all checkbox" value=""/>
+                                                         </div>
+                                                      </div>
+                                                      
+                                                      <div class="col-md-2">
+                                                         <div class="form-group">
+                                                            <h4>State</h4>
+                                                         </div>
+                                                      </div>
+                                                   
+                                                      <div class="col-md-2">
+                                                         <div class="form-group">
+                                                            <h4>Received</h4>
+                                                         </div>
+                                                      </div>
+                                                      <div class="col-md-2">
+                                                         <div class="form-group">
+                                                            <h4>Terminated</h4>
+                                                         </div>
+                                                      </div>
+                                                      <div class="col-md-2">
+                                                         <div class="form-group">
+                                                            <h4>Reason</h4>
+                                                         </div>
+                                                      </div>
+                                                </div>
+                                                <?php  foreach($get_state_new   as $statekey=>$stateval): ?>
+                                                    <div  class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
+                                                      <div class="row">
+                                                         <div class="col-md-2">
+                                                            <div class="form-group" style="margin-bottom: 0px !important;">
+                                                               <input type="checkbox" name="data1[<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][active_check]"  value="1" <?php if($val['active_check']==1){ ?>checked="true"<?php }?> id="data1[<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
+                                                            </div>
+                                                         </div>
+                                                         
+                                                         <div class="col-md-2">
+                                                            <div class="form-group" style="margin-bottom: 0px !important;">
+                                                               <label><?php echo $stateval['name']; ?></label>
+                                                            </div>
+                                                         </div>
+                                                       
+                                                         <div class="col-md-2">
+                                                            <div class="form-group" style="margin-bottom: 0px !important;">
+                                                               <div id="demo-dp-range">
+                                                                  <div class="input-daterange input-group" id="datepicker">
+                                                                     <input type="text" name="data1[<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][received]" id="data1][<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][received]" value="<?php echo date('m/d/Y',strtotime(trim($val['received']))); ?>" class="form-control" />
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                         <div class="col-md-2">
+                                                            <div class="form-group" style="margin-bottom: 0px !important;">
+                                                               <div id="demo-dp-range">
+                                                                  <div class="input-daterange input-group" id="datepicker">
+                                                                     <input type="text" name="data1[<?php echo $row['id']; ?>][<?php echo $stateval['id'] ?>][terminated]" id="data1[<?php echo $row['id']; ?>][<?php echo $stateval['id'] ?>][terminated]" value="<?php echo date('m/d/Y',strtotime($val['terminated'])); ?>" class="form-control" />
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                         <div class="col-md-2">
+                                                            <div class="form-group" style="margin-bottom: 0px !important;">
+                                                               <input class="form-control" name="data1[<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][reason]" id="data1[<?php echo $row['id']; ?>_<?php echo $stateval['id'] ?>][reason]" value="<?php echo $val['reson']; ?>" type="text" />
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                <?php endforeach; ?>
+                                         </div>
+                                         <?php endforeach; ?>
+                                        </div> -->
                                       
                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_securities )){
                                           foreach($edit_licences_securities as $key=>$val){ //echo '<pre>'; print_r($row);
@@ -2253,12 +2309,7 @@
                                                    <label><?php echo $stateval['name']; ?></label>
                                                 </div>
                                              </div>
-                                           <!--   <div class="col-md-2">
-                                                <div class="input-group">
-                                                   <span class="input-group-addon">$</span>
-                                                   <input class="form-control charge" onkeypress="return isFloatNumber(this,event)"  value="<?php echo $val['fee']; ?>" name="data1[<?php echo $stateval['id'] ?>][fee]" type="text" maxlength="4" placeholder="$0-$9,999" />
-                                                </div>
-                                             </div> -->
+                                           
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
                                                    <div id="demo-dp-range">
@@ -2284,52 +2335,8 @@
                                              </div>
                                           </div>
                                        </div>
-                                       <?php } } } } else{?>
-                                       <?php foreach($get_state_new   as $statekey=>$stateval){?>
-                                       <div class="panel" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
-                                          <div class="row">
-                                             <div class="col-md-2">
-                                                <div class="form-group" style="margin-bottom: 0px !important;">
-                                                   <input type="checkbox" name="data1[<?php echo $stateval['id'] ?>][active_check]" value="1" id="data1[<?php echo $stateval['id'] ?>][active_check]" class="checkbox"  />
-                                                </div>
-                                             </div>
-                                             <div class="col-md-2">
-                                                <div class="form-group" style="margin-bottom: 0px !important;">
-                                                   <label><?php echo $stateval['name']; ?></label>
-                                                </div>
-                                             </div>
-                                             <div class="col-md-2">
-                                                <div class="input-group">
-                                                   <span class="input-group-addon">$</span>
-                                                   <input class="form-control charge" onkeypress="return isFloatNumber(this,event)" value="" name="data1[<?php echo $stateval['id'] ?>][fee]" type="text" maxlength="4" placeholder="$0-$9,999" />
-                                                </div>
-                                             </div>
-                                             <div class="col-md-2">
-                                                <div class="form-group" style="margin-bottom: 0px !important;">
-                                                   <div id="demo-dp-range">
-                                                      <div class="input-daterange input-group" id="datepicker">
-                                                         <input type="text" name="data1[<?php echo $stateval['id'] ?>][received]" id="data1[<?php echo $stateval['id'] ?>][received]" value="" class="form-control" />
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                             <div class="col-md-2">
-                                                <div class="form-group" style="margin-bottom: 0px !important;">
-                                                   <div id="demo-dp-range">
-                                                      <div class="input-daterange input-group" id="datepicker">
-                                                         <input type="text" name="data1[<?php echo $stateval['id'] ?>][terminated]" id="data1[<?php echo $stateval['id'] ?>][terminated]" value="" class="form-control" />
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                             <div class="col-md-2">
-                                                <div class="form-group" style="margin-bottom: 0px !important;">
-                                                   <input class="form-control" value="" name="data1[<?php echo $stateval['id'] ?>][reason]" id="data1[<?php echo $stateval['id'] ?>][reason]" type="text" />
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                       <?php } }?>
+                                       <?php } } } } ?>
+                                       
                                     </div>
                                     <div class="panel-overlay">
                                        <div class="panel-overlay-content pad-all unselectable">
@@ -3010,37 +3017,7 @@
                            </h4>
                         </div>
                         <div class="panel-body">
-                           <!--<div class="row">
-                              <div class="col-md-3">
-                                  <div class="form-group">
-                                      <label>Branch Manager </label><br />
-                                      <input type="checkbox" class="checkbox" name="branch_manager" value="1" id="branch_manager" class="regular-checkbox big-checkbox" <?php if($branch_manager == 1){echo "checked='true'";} ?> /><label for="checkbox-2-1"></label>
-                                  </div>
-                              </div>
-                              <div class="col-md-3">
-                                  <div class="form-group">
-                                      <label>Branch Name </label><br />
-                                      <select name="branch_name" id="branch_name" class="form-control">
-                                         <option value="">Select Branch</option>
-                                          <?php foreach($select_branch as $key=>$val){?>
-                                          <option value="<?php echo $val['id'];?>" <?php if(isset($branch_name) && $branch_name==$val['id']){echo "selected='selected'";} ?>><?php echo $val['name'];?></option>
-                                          <?php } ?>
-                                      </select>
-                                  </div>
-                              </div>
-                              <div class="col-md-6">
-                                  <div class="form-group">
-                                      <label>Branch Office</label><br />
-                                      <select name="branch_office" id="branch_office" class="form-control">
-                                          <option value="">Select Branch Office</option>
-                                          <option <?php if(isset($branch_office) && $branch_office == 1){echo "selected='selected'";}?> value="1">Branch Office</option>
-                                          <option <?php if(isset($branch_office) && $branch_office == 2){echo "selected='selected'";}?> value="2">Non OSJ Branch Office</option>
-                                          <option <?php if(isset($branch_office) && $branch_office == 3){echo "selected='selected'";}?> value="3">Residential Office Exemption</option>
-                                          <option <?php if(isset($branch_office) && $branch_office == 4){echo "selected='selected'";}?> value="4">OFOP Exemption</option>
-                                      </select>
-                                  </div>
-                              </div>
-                              </div>-->
+                           
                            <div class="row">
                               <div class="col-md-12">
                                  <div class="row">
@@ -3191,9 +3168,11 @@
                               </div>
                            </div>
                         </div>
-                 </div>
-              </div>
-              <div class="panel-footer fixedbtmenu">
+                    </div>
+                    </div>
+                  </div> 
+                </div>   
+                <div class="panel-footer fixedbtmenu">
                     <div class="selectwrap">
                          <?php if(isset($_GET['rep_no']) && ($_GET['rep_no'] != '' || $_GET['rep_no'] == '')){?>
                         <input type="hidden" name="for_import" id="for_import" class="form-control" value="true" />
@@ -3215,43 +3194,42 @@
                          <input type="submit" name="submit" value="Save" style="float: right;"/>
                          
                     </div>
-                 </div>   
+                </div>   
             </form>
                  <?php } ?>
-            <!-- Lightbox strart -->							
-        	<!-- Modal for add broker notes -->
-        	<div id="broker_notes" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-        		<div class="modal-dialog">
-        		<div class="modal-content">
-        		<div class="modal-header" style="margin-bottom: 0px !important;">
-        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-        			<h4 class="modal-title">Brokers's Notes</h4>
-        		</div>
-        		<div class="modal-body">
-                
-                <div class="inputpopup">
-                    <a class="btn btn-sm btn-success" style="float: right !important; margin-right: 5px !important;" onclick="open_newnotes();"><i class="fa fa-plus"></i> Add New</a></li>
-        		</div>
-                
-                <div class="col-md-12">
-                    <div id="msg_notes">
+            <!-- Lightbox strart -->                            
+            <!-- Modal for add broker notes -->
+            <div id="broker_notes" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="margin-bottom: 0px !important;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                        <h4 class="modal-title">Brokers's Notes</h4>
                     </div>
-                </div>
+                <div class="modal-body">
+                
+                        <div class="inputpopup">
+                            <a class="btn btn-sm btn-success" style="float: right !important; margin-right: 5px !important;" onclick="open_newnotes();"><i class="fa fa-plus"></i> Add New</a>
+                        </div>
+                
+                        <div class="col-md-12">
+                            <div id="msg_notes">
+                            </div>
+                        </div>
                
-                <div class="inputpopup">
-                    <div class="table-responsive" id="ajax_notes" style="margin: 0px 5px 0px 5px;">
-                        
-                    </div>
-        		</div>
-                </div><!-- End of Modal body -->
-        		</div><!-- End of Modal content -->
-        		</div><!-- End of Modal dialog -->
-        </div><!-- End of Modal -->
-        <!-- Lightbox strart -->							
-        	<!-- Modal for add broker notes -->
-        	<!-- End of Modal dialog -->
-            </div>
-            <div class="panel-footer fixedbtmenu">
+                        <div class="inputpopup">
+                            <div class="table-responsive" id="ajax_notes" style="margin: 0px 5px 0px 5px;">
+                                
+                            </div>
+                        </div>
+                </div>
+                <!-- End of Modal body -->
+                </div><!-- End of Modal content -->
+                </div><!-- End of Modal dialog -->
+            </div><!-- End of Modal -->
+       
+           
+           <!--  <div class="panel-footer fixedbtmenu">
                <div class="selectwrap">
                   <?php if(isset($_GET['rep_no']) && ($_GET['rep_no'] != '' || $_GET['rep_no'] == '')){?>
                   <input type="hidden" name="for_import" id="for_import" class="form-control" value="true" />
@@ -3269,9 +3247,9 @@
                   <a href="#client_transactions" data-toggle="modal"><input type="button" name="transactions" value="Transactions" /></a>
                   <a href="#broker_attach" data-toggle="modal"><input type="button"  onclick="get_broker_attach();" name="attach" value="Attachments" style="margin-right: 2% !important;"/></a>
                   <a href="<?php echo CURRENT_PAGE;?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
-                  <input type="submit" name="submit" onclick="return waitingDialog.show();" value="Save" style="float: right;"/>
+                  <input type="submit" name="submit"  value="Save" style="float: right;"/>
                </div>
-            </div>
+            </div> -->
          </form>
          <?php //} ?>
          <!-- Lightbox strart -->                           
@@ -3343,12 +3321,17 @@
             <div class="modal-content">
                <div class="modal-header" style="margin-bottom: 0px !important;">
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                  <h4 class="modal-title">YTD Earnings</h4>
+                    <div class="modal-heading-info" style="display: flex;justify-content: space-between;" >
+                        <h4 class="modal-title">YTD Earnings</h4>
+                        <?php  $url ='/CloudFox/manage_broker.php?action=edit&id='.$_GET['id']; ?>
+                        <a class="btn btn-sm btn-success"  href="/CloudFox/maintain_prior_payrolls.php?action=add_new&redirectto=<?php echo urlencode($url)?>" ><i class="fa fa-plus"></i> Add New</a>
+                    </div>
                </div>
                <div class="modal-body">
                   <div class="inputpopup">
                      <div class="table-responsive">
-                        <table id="data-table" class="table table-striped1 table-bordered" cellspacing="0" width="100%">
+                        <div id="ytd_res"> </div>
+                        <table id="data-table-modal" class="table table-striped1 table-bordered" cellspacing="0" width="100%">
                            <thead>
                               <tr>
                                  <th>Pay Date</th>
@@ -3356,7 +3339,7 @@
                                  <th> Non Taxable Adjustments</th>
                                  <th>Gross Commission</th>
                                  <th>Net Commission</th>
-                                 <th class="text-center" colspan="2">ACTION</th>
+                                 <th width="190px" class="text-center" colspan="2">ACTION</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -3372,6 +3355,7 @@
                                  <td><?php echo $val['net_production']; ?></td>
                                  <td class="text-center">
                                     <a href="/CloudFox/maintain_prior_payrolls.php?action=edit&id=<?php echo $val['id']; ?>&redirectto=<?php echo urlencode($_SERVER['REQUEST_URI'])?>" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                                      <a href="javascript:void(0);" onclick="return delete_payrol(<?php echo $val['id']; ?>,this);" class="btn btn-sm btn-danger confirm"><i class="fa fa-trash"></i> Delete</a>
                                  </td>
                               </tr>
                               <?php } ?>
@@ -3396,7 +3380,86 @@
       </div>
       <!-- End of Modal --> 
       <!-- Modal for view changes list -->
-      <div id="view_changes" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+     
+      <!-- End of Modal -->      
+      <!-- Lightbox strart -->                          
+      <!-- Modal for transaction list -->
+      <div id="client_transactions" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header" style="margin-bottom: 0px !important;">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                  <h4 class="modal-title">Broker Transactions</h4>
+               </div>
+               <div class="modal-body">
+                  <form method="post">
+                     <div class="inputpopup">
+                         <?php if(isset($_GET['role']) && $_GET['role'] =='open_t_popup') :
+                                   $msg= $_GET['msg']=="delete" ? "Transaction has been deleted successfully": " Transcation has been updated successfully";
+                           ?>
+                                <div class="alert alert-success"> <?php echo  $msg; ?></div>
+                         <?php  endif ;?>
+                        <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
+                           <table  class="table table-bordered table-stripped table-hover">
+                              <thead>
+                                 <!--  <th>#NO</th>-->
+                                 <th>Trade No</th>
+                                 <th>Date</th>
+                                 <th>Product</th>
+                                 <th>Client No</th>
+                                 <th>Trade Amount</th>
+                                 <th>Commision Received</th>
+                                 <th>Account#</th>
+                                 <th colspan="2">Action</th>
+
+                              </thead>
+                              <tbody>
+                                 <?php $doc_id=0; $date_now = new DateTime();
+                                    if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($broker_trans) ){
+                                    foreach($broker_trans as $key=>$val){
+                                         $product_name = '';
+                                    if(function_exists('get_product_from_cat_id_and_id')) {
+                                         $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
+                                    }
+                                   
+                                    ?>
+                                 <tr>
+                                    <td><?php echo $val['id']; ?></td>
+                                    <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
+                                    <td><?php echo $product_name; ?></td>
+                                    <td><?php echo $val['client_number']; ?></td>
+                                    <td><?php echo $val['invest_amount']; ?></td>
+                                    <td><?php echo $val['commission_received']; ?></td>
+                                    <td><?php echo $val['account_no']; ?></td>
+                                    <td>  
+                                        <?php   $settle_date= new DateTime($val['settlement_date']);
+                                                $isExpired= $settle_date < $date_now;
+
+                                                if(!$isExpired): 
+                                         ?>
+                                        <a href="http://foxtrotsoftware.com/CloudFox/transaction.php?action=edit_transaction&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>" class="btn btn-md btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a onclick="return ask_confirmation('http://foxtrotsoftware.com/CloudFox/transaction.php?action=transaction_delete&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>');" class="btn btn-md btn-danger confirm" ><i class="fa fa-trash"></i> Delete</a>
+                                     </tr>
+                                 <?php   endif; } }
+                                 else {
+                                              echo '<tr><td colspan="7">Records not found </td>';
+
+                                 }?>
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </form>
+               </div>
+               <!-- End of Modal body -->
+            </div>
+            <!-- End of Modal content -->
+         </div>
+         <!-- End of Modal dialog -->
+      </div>
+       <div id="view_changes" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
          <div class="modal-dialog">
             <div class="modal-content">
                <div class="modal-header" style="margin-bottom: 0px !important;">
@@ -3787,80 +3850,6 @@
          </div>
          <!-- End of Modal dialog -->
       </div>
-      <!-- End of Modal -->      
-      <!-- Lightbox strart -->                          
-      <!-- Modal for transaction list -->
-      <div id="client_transactions" class="modal fade inputpopupwrap" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-         <div class="modal-dialog">
-            <div class="modal-content">
-               <div class="modal-header" style="margin-bottom: 0px !important;">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-                  <h4 class="modal-title">Broker Transactions</h4>
-               </div>
-               <div class="modal-body">
-                  <form method="post">
-                     <div class="inputpopup">
-                         <?php if(isset($_GET['role']) && $_GET['role'] =='open_t_popup') :
-                                   $msg= $_GET['msg']=="delete" ? "Transaction has been deleted successfully": " Transcation has been updated successfully";
-                           ?>
-                                <div class="alert alert-success"> <?php echo  $msg; ?></div>
-                         <?php  endif ;?>
-                        <div class="table-responsive" id="table-scroll" style="margin: 0px 5px 0px 5px;">
-                           <table  class="table table-bordered table-stripped table-hover">
-                              <thead>
-                                 <!--  <th>#NO</th>-->
-                                 <th>Trade No</th>
-                                 <th>Date</th>
-                                 <th>Product</th>
-                                 <th>Client No</th>
-                                 <th>Trade Amount</th>
-                                 <th>Commision Received</th>
-                                 <th>Account#</th>
-                                 <th colspan="2">Action</th>
-
-                              </thead>
-                              <tbody>
-                                 <?php $doc_id=0; $date_now = new DateTime();
-                                    if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($broker_trans) ){
-                                    foreach($broker_trans as $key=>$val){
-                                    $product_name=$instance->get_product_from_cat_id_and_id($val['product'],$val['product_cate']);
-                                    ?>
-                                 <tr>
-                                    <td><?php echo $val['id']; ?></td>
-                                    <td><?php echo date('m/d/Y',strtotime($val['commission_received_date']));?></td>
-                                    <td><?php echo $product_name; ?></td>
-                                    <td><?php echo $val['client_number']; ?></td>
-                                    <td><?php echo $val['invest_amount']; ?></td>
-                                    <td><?php echo $val['commission_received']; ?></td>
-                                    <td><?php echo $val['account_no']; ?></td>
-                                    <td>  
-                                        <?php   $settle_date= new DateTime($val['settlement_date']);
-                                                $isExpired= $settle_date < $date_now;
-
-                                                if(!$isExpired): 
-                                         ?>
-                                        <a href="http://foxtrotsoftware.com/CloudFox/transaction.php?action=edit_transaction&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>" class="btn btn-md btn-primary"><i class="fa fa-edit"></i> Edit</a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a onclick="return ask_confirmation('http://foxtrotsoftware.com/CloudFox/transaction.php?action=transaction_delete&id=<?php echo $val['id']; ?>&redirectback=broker_page&broker_id=<?php echo $_GET['id'] ?>');" class="btn btn-md btn-danger confirm" ><i class="fa fa-trash"></i> Delete</a>
-                                     </tr>
-                                 <?php   endif; } }
-                                 else {
-                                              echo '<tr><td colspan="7">Recors not found </td>';
-
-                                 }?>
-                              </tbody>
-                           </table>
-                        </div>
-                     </div>
-                  </form>
-               </div>
-               <!-- End of Modal body -->
-            </div>
-            <!-- End of Modal content -->
-         </div>
-         <!-- End of Modal dialog -->
-      </div>
       <!-- End of Modal -->
       <!-- Lightbox strart -->                          
       <!-- Modal for joint account -->
@@ -3935,6 +3924,10 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function() {
+
+       <?php if(isset($_GET['open_ytp_modal'])) : ?>
+               $("#ytd_earnings_modal").modal('show');
+       <?php endif; ?>
        $('#data-table').DataTable({
        "pageLength": 25,
        "bLengthChange": false,
@@ -4177,6 +4170,20 @@
    }
 </script>
 <script type="text/javascript">
+
+    function delete_payrol(id,selector){
+           if(!confirm("are you sure want to delete ?")) return false;
+           $.ajax({
+                     url: "ajax_broker_payout.php",
+                     data:{action:"delete_payrol","id":id},
+                     success:function(){
+                           $("#ytd_res").html('<div class="alert alert-success">Transcation has been deleted Successfully</div>');
+                             $(selector).parents("tr").remove();
+                     }
+           })
+
+           
+    }
    function payout_schedule_submit()
    {
       $('#msg_payout').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> Please wait...</div>');
@@ -4369,6 +4376,7 @@
            });
        });
        
+       
        /*
        $('body').on('focus',".input-daterange", function(){
            $(this).datepicker({
@@ -4478,7 +4486,10 @@
    }
 </style>
 <script type="text/javascript">     
-
+   function filter_state_records(selector){
+           $("#license_cat_wrap_"+selector.value).siblings().hide().end().show();
+   }
+   filter_state_records($("#security_product_cat")[0]);
   function ask_confirmation(url){
 
         var answer = confirm(" are you sure want to delete transcation?");
@@ -4489,16 +4500,31 @@
             return false;
   }    
    $(document).ready(function(e){
+    $(document).on('change','.higher_risk',function(){
+          var isChecked = $(this).is(':checked');
+          if(isChecked) {
+            $('.higher_risk_options').show();
+          }
+          else {
+             $('.higher_risk_options').hide();
+          }
+
+    })
+    $('.higher_risk').trigger('change');
+        $('.date-picker').datepicker({
+               format: "mm/dd/yyyy",
+             
+           });
          <?php if(isset($_GET['role']) && $_GET['role'] =='open_t_popup') : ?>
             $('a[href="#client_transactions"]').trigger('click');
          <?php endif; ?>
        $('.check_all').click(function(){
-             console.log(   $(this).parents('.panel-body').find('.panel-row-wrap  [type="checkbox"]'));
+             console.log(   $(this).parents('.license_cat_wrap').find('.panel-row-wrap  [type="checkbox"]'));
               if($(this).is(":checked")){
-                   $(this).parents('.panel-body').find('.panel-row-wrap [type="checkbox"]').prop("checked",true);
+                   $(this).parents('.license_cat_wrap').find('.panel-row-wrap [type="checkbox"]').prop("checked",true);
               }
               else{
-                 $(this).parents('.panel-body').find('.panel-row-wrap  [type="checkbox"]').prop("checked",false);
+                 $(this).parents('.license_cat_wrap').find('.panel-row-wrap  [type="checkbox"]').prop("checked",false);
               }
        })
        $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li', function( event ) {
@@ -4551,3 +4577,8 @@
    
    
 </script>
+<style type="text/css">
+    .higher_risk_options > div {display: inline;}
+    .show-inline-elements {display: flex;flex-direction: row-reverse;}
+    .higher_risk_options {margin-right: 15px;}
+</style>

@@ -10,13 +10,17 @@ $client_maintenance_instance = new client_maintenance();
 $get_states = $client_maintenance_instance->select_state();
     $broker_instance = new broker_master();
     if(isset($_POST['submit']) && $_POST['submit']=='Save') {
-     
-       $res= $broker_instance->save_broker_state_fee($_POST);
-         header("location:/CloudFox/brokerstatefee.php?msg=success&broker_id=".$_POST['broker']);exit;
+        
+        for($i=0;$i<count($_POST['state_fee']);$i++) {
+            $state_fee = $_POST['state_fee'][$i];
+            $state_id = $_POST['state_id'][$i];
+            $res= $broker_instance->save_broker_state_fee($state_id,$state_fee);
+        }
+      
+         header("location:/CloudFox/brokerstatefee.php?msg=success");exit;
     }
-    $broker_id=isset($_GET['broker_id']) ? $_GET['broker_id']: 0;
-    if($broker_id){
-         $feeData= (array) $broker_instance->load_broker_state_fee($broker_id);
-    }
+ 
+    $feeData=  $broker_instance->load_broker_state_fee();
+    
 $content = "brokerstatefee";
 require_once(DIR_WS_TEMPLATES."main_page.tpl.php");

@@ -7,22 +7,22 @@
                 <div class="form-group">
                     <label>Select Report</label>
                     <select class="form-control" name="report_for" id="report_for">
-                        <option data-options="" <?php  echo ($report_for == 'Production by Product Category') ? "selected='selected'": ''; ?> value="Production by Product Category">Production by Product Category</option>
-                         <option data-options="" <?php  echo ($report_for == 'Category Summary Report') ? "selected='selected'": ''; ?> value="Category Summary Report">Category Summary Report</option>
-                        <option data-options="" <?php  echo ($report_for == 'Production by Sponsor Report') ? "selected='selected'": ''; ?> value="Production by Sponsor Report">Production by Sponsor Report</option>
+                        <option data-options=".sort_by_options,.broker-options,.companies-options,.date-ranger-options,.output-options" <?php  echo ($report_for == 'Production by Product Category') ? "selected='selected'": ''; ?> value="Production by Product Category">Production by Product Category</option>
+                         <option data-options=".companies-options,.date-ranger-options,.transaction-date-options,.output-options" <?php  echo ($report_for == 'Product Category Summary Report') ? "selected='selected'": ''; ?> value="Product Category Summary Report">Product Category Summary Report</option>
+                        <option data-options=".companies-options,.product-categories,.date-ranger-options,.output-options" <?php  echo ($report_for == 'Production by Sponsor Report') ? "selected='selected'": ''; ?> value="Production by Sponsor Report">Production by Sponsor Report</option>
                         <option data-options=".year_to_date_filter_wrap,.output-options" <?php  echo ($report_for == 'year_to_date') ? "selected='selected'": ''; ?> value="year_to_date">Year-to-Date Earnings Report</option>
                         <option data-options=".broker_ranking_filter_wrap,.product-categories,.output-options" <?php  echo ($report_for == 'broker_ranking') ? "selected='selected'": ''; ?> value="broker_ranking">Broker Rankings Report</option>
-                        <option data-options=".companies-options,.output-options,.date-ranger-options" <?php  echo ($report_for == 'monthly_broker_production') ? "selected='selected'": ''; ?> value="monthly_broker_production">Monthly Broker Production Report</option>
-                       <option data-options=".companies-options,.branch-options,.output-options,.date-ranger-options" <?php  echo ($report_for == 'monthly_branch_office') ? "selected='selected'": ''; ?> value="monthly_branch_office">Monthly Branch Office Production</option>
+                        <option data-options=".companies-options,.output-options,.date-ranger-options" <?php  echo ($report_for == 'monthly_broker_production') ? "selected='selected'": ''; ?> value="monthly_broker_production">Broker Production Report</option>
+                       <option data-options=".companies-options,.branch-options,.output-options,.date-ranger-options" <?php  echo ($report_for == 'monthly_branch_office') ? "selected='selected'": ''; ?> value="monthly_branch_office"> Branch Office Production</option>
                        <option data-options=".annual-broker-date-type,.broker-options,.exclude-trails,.year-options,.companies-options,.output-options" <?php  echo ($report_for == 'annual_broker_report') ? "selected='selected'": ''; ?> value="annual_broker_report">Annual Broker Production</option>
-                       <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Client Rankings Report</option>
+                       <!-- <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Client Rankings Report</option>
                        <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker State Production Report</option>
                        <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker Monthly Production by Product Category</option>
                        <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker Gross Production by Category</option>
                     <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Brokers without Production</option>
                     <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker-Dealer Retention</option>
                     <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker Gross Production by Product Category</option>
-                    <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker Production by Product</option>
+                    <option data-options="" <?php  echo ($report_for == 'batch') ? "selected='selected'": ''; ?> value="batch">Broker Production by Product</option> -->
                     </select> 
                 </div>
              </div>
@@ -489,7 +489,7 @@ function get_product(cat){
                    siblings.find("input,select").attr("disabled","disabled").end().hide();;
                    $("#broker_ranking_filter_wrap").hide();
 
-                   if(_option=="Category Summary Report")
+                   if(_option=="Product Category Summary Report")
                    {
                         $('#div_sort_by').hide();
                         $('#broker_filter_wrap').hide();  
@@ -522,7 +522,7 @@ function get_product(cat){
                         $('.fox-reporting-options').attr('id',_option);
                         $('.fox-reporting-options .row:not('+reporting_options+')').hide().find("input,select").attr("disabled","disabled");
                         $(reporting_options).show().find("input,select").removeAttr("disabled");
-
+                         $('#prod_cat').trigger('chosen:updated')
                         
                        /* $('.fox-reporting-options .row:not('+reporting_options+')').;*/
                         
@@ -636,9 +636,7 @@ function get_product(cat){
 {
     width: 100% !important;
 }
-div#monthly_branch_office .beginning_date {
-    display: none;
-}
+
 input[type=checkbox] + label , input[type=radio] + label {
     font-weight: normal;
 }

@@ -45,6 +45,10 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
     $subheading=strtoupper($report_for)." REPORT ";
     
 }   
+
+  $prod_cat =array_filter($prod_cat,function($value) {
+                return $value > 0;
+            });
    if(isset($filter_array['date_earning_by'])) {
         $earning_by = $instance->re_db_input($filter_array['date_earning_by']);
     }
@@ -533,19 +537,20 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                 </tr>
                 </thead>';
             $html.= '<tbody>';
-            $total_trades = $gross = $total_comm = 0;
-            $notFoundRow = ['no_of_trades'=>0,'gross_conession'=>0,'commission_received'=>0];
+            $total_trades = $net_commission = $total_comm = 0;
+            $notFoundRow = ['no_of_trades'=>0,'net_commission'=>0,'commission_received'=>0];
             for($i= 1 ;$i <=12 ; $i++) {
                 $get_month_transaction = isset($rows[$i]) ? $rows[$i] : $notFoundRow; 
                 $dateObj   = DateTime::createFromFormat('!m', $i);
                 $total_comm+= $get_month_transaction['commission_received'];
-                $gross+= $get_month_transaction['gross_conession'];
+                $net_commission+= $get_month_transaction['net_commission'];
                 $total_trades+= $get_month_transaction['no_of_trades'];
                 $html.= '<tr>';
                 $html.= '<td align="right">'.$dateObj->format('F').' </td>';
                 $html.= '<td align="right">'.$get_month_transaction['no_of_trades'].'</td> ';
-                $html.= '<td align="right">'.number_format($get_month_transaction['gross_conession'],2).'</td> ';
                 $html.= '<td align="right">'.number_format($get_month_transaction['commission_received'],2).'</td> ';
+                $html.= '<td align="right">'.number_format($get_month_transaction['net_commission'],2).'</td> ';
+                
                 $html.= '</tr>';
             }
             $html.= '</tbody>';
@@ -553,8 +558,9 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             $html.= '<tr class="t-footer-items" style="background-color: #f1f1f1;">';
             $html.= '<td align="right" style="font-weight:bold;" > *** REPORT TOTALS ***</td>';
             $html.= '<td align="right" style="font-weight:bold;">'.$total_trades.'</td> ';
-            $html.= '<td align="right" style="font-weight:bold;">'.number_format($gross,2).'</td> ';
             $html.= '<td align="right" style="font-weight:bold;">'.number_format($total_comm,2).'</td> ';
+            $html.= '<td align="right" style="font-weight:bold;">'.number_format($net_commission,2).'</td> ';
+           
             $html.= '</tr>';
             $html.= '</tfoot>';
             $html.= '</table>';
@@ -574,13 +580,13 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                 exit;
     }
     else if($report_for == 'monthly_broker_production') {
-        $subheading = 'MONTHLY BROKER PRODUCTION REPORT ';
+        $subheading = 'BROKER PRODUCTION REPORT ';
         $subheading2 = 'Trade Dates: '.$beginning_date." - ".$ending_date;
          $earning_by = 2;
             $earning_filter = compact('earning_by','beginning_date','ending_date');
             $rows = $instance_trans->select_monthly_broker_production_report($company,$earning_filter);
          //  echo '<pre>'; print_r($rows); echo '</pre>';
-            $subheading = 'MONTHLY BROKER PRODUCTION REPORT ';
+            $subheading = 'BROKER PRODUCTION REPORT ';
             $subheading2 = 'Trade Dates: '.$beginning_date." - ".$ending_date;
             /*echo '<table border="0" width="100%">
                     <tr>
@@ -666,7 +672,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                         </tr>';
                     }
                      $html.= '<tr class="t-footer-items" style="background-color: #f1f1f1;"> 
-                            <td align="right"> *** BROKER SUBTOTAL ***</td>
+                            <td align="right"> ** BROKER SUBTOTAL **</td>
                             <td align="right" ><span> '.number_format($total_inv,2).'</span></td>
                             <td align="right" ><span>'.number_format($comm_rev,2).'</span></td>
                             <td align="right" ><span>'.number_format($net_commission,2).'</span></td>
@@ -696,11 +702,12 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                 exit;
     }
     else if($report_for == 'monthly_branch_office') {
-        $subheading = 'MONTHLY BRANCH OFFICE PRODUCTION REPORT';
+        $subheading = 'BRANCH OFFICE PRODUCTION REPORT';
         $subheading2 = 'Ending Date: '.date('F d, Y',strtotime($ending_date));
-        $subheading = 'MONTHLY BRANCH OFFICE PRODUCTION REPORT';
-            $subheading2 = 'Ending Date: '.date('F d, Y',strtotime($ending_date));
-            $rows = $instance_trans->select_monthly_branch_office_report($company,$branch,$ending_date);
+        $subheading = 'BRANCH OFFICE PRODUCTION REPORT';
+             $subheading2 = 'Trade Dates: '.$beginning_date." - ".$ending_date;
+           // $subheading2 = 'Ending Date: '.date('F d, Y',strtotime($ending_date));
+            $rows = $instance_trans->select_monthly_branch_office_report($company,$branch,$ending_date,$beginning_date);
 
              $pdf = new RRPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
                 // add a page
@@ -843,6 +850,35 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             }
     
 
+  if($filter_by == "1"){
+        $subheading2=$beginning_date." thru ".$ending_date;
+
+    }
+    if($sort_by=="1")
+    {
+        $subheading1="Sort by Sponsor";
+    }
+    else if($sort_by=="2")
+    {
+        $subheading1="Sort by Investment Amount";
+    } 
+
+    if($report_for == "Product Category Summary Report") :
+                $date_heading = ($date_by == 1) ? 'Trade Dates: ' : ' Commission Received Dates: ';
+                $subheading2 = $date_heading.$subheading2;
+            endif;
+
+            if($report_for == "Production by Sponsor Report") :
+                if(!empty($prod_cat)) {
+                    $selected_pro_categories = $instance_trans->select_category($prod_cat);
+                    if(!empty($selected_pro_categories)) {
+                        $cat_names = array_column($selected_pro_categories, 'type');
+                        $companyhead .= '<br> '. implode(', ', $cat_names); 
+                    }
+                }
+                else $companyhead.= '<br> All Categories';
+            endif;
+            
     // create new PDF document
     $pdf = new RRPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     // add a page
@@ -857,7 +893,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                 <tr>';
                  $html .='<td width="20%" align="left">'.date("m/d/Y").'</td>';
                 
-                $html .='<td width="60%" style="font-size:14px;font-weight:bold;text-align:center;">'.$img.'<br/><strong><h9>'.$companyhead.'<br/>'.$subheading.'<br/>'.$subheading2.'<br/>'.$subheading1.'</h9></strong></td>';
+                $html .='<td width="60%" style="font-size:14px;font-weight:bold;text-align:center;">'.$img.'<br/><strong><h9>'.$subheading.'<br/>'.$companyhead.'<br/>'.$subheading2.'<br/>'.$subheading1.'</h9></strong></td>';
                                  
                     $html.='<td width="20%" align="right">Page 1</td>';
                 
@@ -881,17 +917,17 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
     $html='<table border="0" cellpadding="1" width="100%">
                 <tr style="background-color: #f1f1f1;">';
                  if($report_for == "Production by Sponsor Report") 
-                        {$html.='<td style="text-align:left;font-weight:bold;"><h5>SPONSER </h5></td>';}
+                        {$html.='<td style="text-align:left;font-weight:bold;font-size:12px;">SPONSOR </td>';}
                 else 
-                        {$html.='<td style="text-align:left;font-weight:bold;"><h5>PRODUCT </h5></td>';}
+                        {$html.='<td style="text-align:left;font-weight:bold;font-size:12px;">SPONSOR </td>';}
                  
                 $html.='
-                   <td style="text-align:right;font-weight:bold;"><h5>AMOUNT INVESTED</h5></td>
-                        <td style="text-align:right;font-weight:bold;"><h5>COMMISSION RECEIVED</h5></td>
-                        <td style="text-align:right;font-weight:bold;"><h5>COMMISSION PAID</h5></td>';
-                if($report_for == "Category Summary Report") {
-                    $html.='<td style="text-align:right;font-weight:bold;"><h5>#TRANS </h5></td>
-                        <td style="text-align:right;font-weight:bold;"><h5>%TOTAL</h5></td>';
+                   <td style="text-align:right;font-weight:bold;font-size:12px;">AMOUNT INVESTED</td>
+                        <td style="text-align:right;font-weight:bold;font-size:12px;">COMMISSION RECEIVED</td>
+                        <td style="text-align:right;font-weight:bold;font-size:12px;">COMMISSION PAID</td>';
+                if($report_for == "Product Category Summary Report") {
+                    $html.='<td style="text-align:right;font-weight:bold;font-size:12px;">#TRANS </td>
+                        <td style="text-align:right;font-weight:bold;font-size:12px;">%TOTAL</td>';
                 }
                 
     $html.='</tr>';
@@ -918,7 +954,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             {
                 if($report_for == "Production by Product Category"){               
                     $html.= ' <tr>
-                                    <td colspan="3" style="font-size:12px;font-weight:bold;text-align:left;">'.$key.'</td>
+                                    <td colspan="3" style="font-size:10px;font-weight:bold;text-align:left;">Product Category: '.$key.'</td>
                                 </tr>' ;               
                              
                 }
@@ -938,7 +974,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                         $total_inv_cat+=$trans_data['invest_amount'];
                         $total_no_of_trans_cat+=1;
                 
-                    if($report_for != "Category Summary Report")
+                    if($report_for != "Product Category Summary Report")
                     {
                         $html.='<tr>';
                         if($report_for == "Production by Sponsor Report") {
@@ -948,13 +984,13 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                              $html.='<td style="font-size:10px;font-weight:normal;text-align:left;">'.$trans_data['product_name'].'</td>';
                         }
                         $html.='
-                               <td style="font-size:8px;font-weight:normal;text-align:right;">$'.number_format($trans_data['invest_amount'],2).'</td>
-                               <td style="font-size:8px;font-weight:normal;text-align:right;">$'.number_format($trans_data['commission_received'],2).'</td>
-                               <td style="font-size:8px;font-weight:normal;text-align:right;">$'.number_format($trans_data['charge_amount'],2).'</td>';
+                               <td style="font-size:10px;font-weight:normal;text-align:right;">$'.number_format($trans_data['invest_amount'],2).'</td>
+                               <td style="font-size:10px;font-weight:normal;text-align:right;">$'.number_format($trans_data['commission_received'],2).'</td>
+                               <td style="font-size:10px;font-weight:normal;text-align:right;">$'.number_format($trans_data['charge_amount'],2).'</td>';
                         $html.='</tr>';
                     }
                 }
-            if($report_for == "Category Summary Report") 
+            if($report_for == "Product Category Summary Report") 
             {
                 $html.=' <tr >
                                     <td style="font-size:10px;font-weight:normal;text-align:left;">'.$key.'</td>
@@ -968,7 +1004,7 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             else if($report_for == "Production by Product Category") 
             { 
              $html.='<tr style="background-color: #f1f1f1;">
-                            <td style="font-size:10px;font-weight:bold;text-align:right;"><b>*** PRODUCT CATEGORY SUBTOTALS ***</b></td>
+                            <td style="font-size:10px;font-weight:bold;text-align:right;"><b>** PRODUCT CATEGORY SUBTOTAL **</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_inv_cat,2).'</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_comm_received_cat,2).'</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_comm_paid_cat,2).'</b></td></tr>';
@@ -977,11 +1013,11 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
         
         }
             $html.='<tr style="background-color: #f1f1f1;">
-                            <td  style="font-size:10px;font-weight:bold;text-align:right;"><b>**REPORT TOTAL **</b></td>
+                            <td  style="font-size:10px;font-weight:bold;text-align:right;"><b>***REPORT TOTALS ***</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_inv,2).'</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_comm_received,2).'</b></td>
                             <td style="font-size:10px;font-weight:bold;text-align:right;"><b>$'.number_format($total_comm_paid,2).'</b></td>';
-            if($report_for == "Category Summary Report") {
+            if($report_for == "Product Category Summary Report") {
                 $html.='<td style="font-size:10px;font-weight:bold;text-align:right;"><b>'.number_format($total_no_of_trans,0).'</b></td>
                         <td style="font-size:10px;font-weight:bold;text-align:right;"><b></b></td>';
             }

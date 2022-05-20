@@ -1,33 +1,33 @@
 <div class="container">
 <h1>Report</h1>
     <div class="col-md-12 well">
-        <form method="POST">
+        <form method="POST" id="report_form" action="/CloudFox/compliance.php">
          <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Select Report </label>
                     <select class="form-control" name="report_for" id="report_for">
                         
-                        <option value="1" <?php if(isset($report_for) && $report_for == 1){echo "selected='true'";}?>>Client Review Report</option>
+                        <option value="3" <?php if(isset($report_for) && $report_for == 3){echo "selected='true'";}?>>Client Review Report</option>
                         <option value="2" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Broker License Renewal Statements</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>E&O Statements</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Broker Registrations Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Branch Audit Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Broker State Licenses Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Client Activity/Churning Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Compliance Exceptions Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 1){echo "selected='true'";}?>>E&O Statements</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Broker Registrations Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Branch Audit Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Broker State Licenses Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Client Activity/Churning Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Compliance Exceptions Report</option>
 
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Continuing Education Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>Broker Sponsor Appointments Listing</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>OFAC Activity Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>FINCEN Activity Report</option>
-                        <option value="1" <?php if(isset($report_for) && $report_for == 2){echo "selected='true'";}?>>CIP Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Continuing Education Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>Broker Sponsor Appointments Listing</option>
+                   <!--      <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>OFAC Activity Report</option>
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>FINCEN Activity Report</option> -->
+                        <option value="1" <?php if(isset($report_for) && $report_for == 4){echo "selected='true'";}?>>CIP Report</option>
 
                     </select>
                 </div>
              </div>
         </div> 
-        <input type="hidden" name="report_for" id="report_for" value="3"/>
+       <!--  <input type="hidden" name="report_for" id="report_for" value="3"/> -->
         <br />
         <div class="panel" id="report_filters">
         <div class="titlebox">Client Review Report</div><br />
@@ -53,7 +53,7 @@
                             <select class="form-control" name="broker" id="broker_dropdown">
                                 <option value="0">All Brokers</option>
                                 <?php foreach($get_brokers as $brokerN): ?>
-                                    <option value="<?php echo $brokerN['id']; ?>" <?php echo isset($broker) && $broker==$brokerN['id'] ? 'selected' : '' ?>><?php echo $brokerN['first_name'].' '.$brokerN['last_name']; ?></option>
+                                    <option value="<?php echo $brokerN['id']; ?>" <?php echo isset($broker) && $broker==$brokerN['id'] ? 'selected' : '' ?>><?php echo $brokerN['last_name'].', '.$brokerN['first_name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -72,6 +72,15 @@
                         </div>
                     </div>
                 </div>
+                  <div class="row dont-contact-client">
+                      <div class="col-md-12 ">
+                            <div class="form-group"> 
+                               
+                                    <input <?php echo !empty($dont_contact_client) ? 'checked' : ''; ?> type="checkbox" id="dont_contact_client" name="dont_contact_client" value="1" style="display:inline;"> 
+                                    <label for="dont_contact_client">Exclude "Do Not Contact" Clients</label>
+                            </div>
+                      </div>
+                  </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group beginning_date">
@@ -97,10 +106,10 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <input type="radio" class="radio" name="output" id="output_to_screen" style="display: inline;" value="1" <?php if(isset($output) && ($output == 1 || $output == '')){echo "checked='checked'";}?>/> Output to Screen&nbsp;&nbsp;&nbsp;
-                            <!-- <input type="radio" class="radio" name="output" id="output_to_printer" style="display: inline;" value="2" <?php if(isset($output) && $output == 2){echo "checked='checked'";}?>/> Output to Printer&nbsp;&nbsp;&nbsp; -->
-                            <!-- <input type="radio" class="radio" name="output" id="output_to_excel" style="display: inline;" value="3" <?php if(isset($output) && $output == 3){echo "checked='checked'";}?>/> Output to Excel&nbsp;&nbsp;&nbsp; -->
-                            <input type="radio" class="radio" name="output" id="output_to_pdf" style="display: inline;" value="4" <?php if(isset($output) && $output == 4){echo "checked='checked'";}?>/> Output to PDF
+                            <input type="radio" class="radio" name="output" id="output_to_screen" style="display: inline;" value="1" <?php if(isset($output) && ($output == 1 || $output == '')){echo "checked='checked'";}?>/> <label for="output_to_screen">  Output to Screen </label>&nbsp;&nbsp;&nbsp;
+                            <input type="radio" class="radio" name="output" id="output_to_printer" style="display: inline;" value="2" <?php if(isset($output) && $output == 2){echo "checked='checked'";}?>/> Output to Printer&nbsp;&nbsp;&nbsp;
+                            <input type="radio" class="radio" name="output" id="output_to_excel" style="display: inline;" value="3" <?php if(isset($output) && $output == 3){echo "checked='checked'";}?>/> Output to Excel&nbsp;&nbsp;&nbsp;
+                            <input type="radio" class="radio" name="output" id="output_to_pdf" style="display: inline;" value="4" <?php if(isset($output) && $output == 4){echo "checked='checked'";}?>/> <label for="output_to_pdf"> Output to PDF </label> 
                         </div>
                     </div>
                 </div>
@@ -179,6 +188,7 @@ $('#demo-dp-range .input-daterange').datepicker({
             $("#report_for").on('change', function(event) {
                 event.preventDefault();
                 let _option=$(this).children('option:selected').val();
+                $('.dont-contact-client').hide();
                 if (_option==2 || _option==3) {
                     $(".sponser").parents('.wrap').hide();
                 }
@@ -201,7 +211,30 @@ $('#demo-dp-range .input-daterange').datepicker({
                     $(".beginning_date").show();
                     $(".ending_date").show();
                 }
+
+                 if (_option==3) {
+                    $(".sponser").parents('.wrap').hide();
+                     $(".state").parents('.wrap').hide();
+                     $("#broker_dropdown").children('option:eq(0)').text("All Branch Managers")
+                    $(".beginning_date").show();
+                    $(".ending_date").show();
+                     $('.dont-contact-client').show();
+                 }
             }).trigger('change');
+
+
+            $("#report_form").submit(function(ev){
+                var _form = $(this);
+                var output_type = $(this).find("input[name='output']:checked").val();
+                if(output_type == 4 || output_type == 2) {
+                 
+                    _form.attr('target','_blank');
+                     //return false;
+                }
+                else {
+                    _form.removeAttr('target');
+                }
+             });
         });       
 </script>
 <style>
@@ -220,5 +253,8 @@ $('#demo-dp-range .input-daterange').datepicker({
     padding:0 5px;
     margin:-20px 0 0 30px;
     background:#fff;
+}
+input[type=checkbox] + label, input[type=radio] + label {
+    font-weight: normal;
 }
 </style>

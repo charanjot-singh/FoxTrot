@@ -28,7 +28,7 @@ require_once(DIR_FS."islogin.php");?>
 <!-- <script src="js/jquery.min.js"></script> -->
 <script src="<?php echo SITE_JS; ?>bootstrap-datepicker.min.js"></script>
 <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
-
+<script src="<?php echo SITE_JS; ?>/jquery.priceformat.min.js"></script>
 <!-- Datatables-->
 <link rel="stylesheet" href="<?php echo SITE_PLUGINS; ?>datatables/dataTables.bootstrap.min.css" />
 <link rel="stylesheet" href="<?php echo SITE_PLUGINS; ?>datatables/buttons.dataTables.min.css" />
@@ -39,8 +39,13 @@ require_once(DIR_FS."islogin.php");?>
 <script src="<?php echo SITE_PLUGINS; ?>datatables/pdfmake.min.js"></script>
 <script src="<?php echo SITE_PLUGINS; ?>datatables/vfs_fonts.js"></script>        
 <script src="<?php echo SITE_PLUGINS; ?>datatables/buttons.html5.min.js"></script>  
-<script src="<?php echo SITE_PLUGINS; ?>datatables/buttons.colVis.min.js"></script>      
-  
+<script src="<?php echo SITE_PLUGINS; ?>datatables/buttons.colVis.min.js"></script>    
+<!-- 4/14/22 Checkboxes -->
+<link rel="stylesheet" type="text/css" href="<?php echo SITE_PLUGINS; ?>datatables/extensions/Select/css/select.dataTables.css">
+<!-- // Move the ajax file to plugins folder if it works // -->
+<!-- <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> -->
+<script src="<?php echo SITE_PLUGINS; ?>datatables/extensions/Validate/jquery.validate.min.js"></script>
+<script type="text/javascript" language="javascript" src="<?php echo SITE_PLUGINS; ?>datatables/extensions/Select/js/dataTables.select.js"></script>
      
 <script src="<?php echo SITE_JS; ?>validator.js"></script>
 <script src="<?php echo SITE_JS; ?>multipleselection.js"></script>
@@ -69,9 +74,10 @@ body .container{
     border-radius: 0 6px 6px 6px;
 }
 
-.graphboxcontent{
+/* .graphboxcontent{ */
     /*padding: 10px 0;*/
-}
+/* } */
+
 .dropdown-submenu:hover>.dropdown-menu {
     display: block;
 }

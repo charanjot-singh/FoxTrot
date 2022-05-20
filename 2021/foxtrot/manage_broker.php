@@ -1,7 +1,10 @@
 <?php
+   
 	require_once("include/config.php");
 	require_once(DIR_FS."islogin.php");
-	
+	   $higher_risk =  0 ;
+        $exam_notes = '' ;
+        $finra_exam_date =  '' ;
     $error = '';
     $broker_trans=array();
     $return = array();
@@ -81,7 +84,7 @@
     $select_percentage= $instance->select_percentage();
     $broker_charge=$instance->select_broker_charge($id);
     $charge_type_arr=$instance->select_charge_type();
-    $get_broker = $instance->select();
+    $get_broker = $instance->select(1);
     $select_docs = $instance->select_docs();
     $select_broker_docs = $instance->get_broker_doc_name();
     $product_category = $instance->select_category();
@@ -93,7 +96,7 @@
     if((isset($_POST['submit'])&& $_POST['submit']=='Save') 
         || (isset($_POST['submit'])&& $_POST['submit']=='Previous')
         || (isset($_POST['submit'])&& $_POST['submit']=='Next') )
-    {//echo '<pre>';print_r($_POST);exit;
+    {
         $id = isset($_POST['id'])?$instance->re_db_input($_POST['id']):0;
         $fname = isset($_POST['fname'])?$instance->re_db_input($_POST['fname']):'';
     	$lname = isset($_POST['lname'])?$instance->re_db_input($_POST['lname']):'';
@@ -250,8 +253,9 @@
         }
         else if($return==true && $_POST['submit']=='Previous')
         {
+          //  print_r($_POST);
             $return = $instance->get_Previous_broker($id);
-            
+          //  var_dump($return); die;
             if($return!=false){
                 $id=$return['id'];
                 header("location:".CURRENT_PAGE."?action=edit&id=".$id."");exit;
@@ -497,6 +501,10 @@
 		$stamp = isset($edit_branches['stamp'])?$instance->re_db_output($edit_branches['stamp']):0;
 		$stamp_certification = isset($edit_branches['stamp_certification'])?$instance->re_db_output($edit_branches['stamp_certification']):0;
 		$stamp_indemnification = isset($edit_branches['stamp_indemnification'])?$instance->re_db_output($edit_branches['stamp_indemnification']):0;
+
+        $higher_risk = isset($edit_general['higher_risk']) ?  $edit_general['higher_risk'] : 0 ;
+        $exam_notes = isset($edit_general['exam_notes']) ?  $edit_general['exam_notes'] : '' ;
+        $finra_exam_date = isset($edit_general['finra_exam_date']) ?  date('m/d/Y',strtotime($edit_general['finra_exam_date'])) : '' ;
            
     }
     else if(isset($_GET['send'])&&$_GET['send']=='previous' && isset($_GET['id'])&&$_GET['id']>0 && $_GET['id']!='')

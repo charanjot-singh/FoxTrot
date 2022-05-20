@@ -6,7 +6,7 @@
             <?php  if(isset($_GET['msg']) && $_GET['msg']=='success'): ?>
                 <div class="alert alert-success"> fees has been updated successfully. </div>
             <?php endif; ?>
-            <div class="col-md-6">
+           <!--  <div class="col-md-6">
                 <div class="form-group">
                     <label>Brokers </label>
                     <select class="form-control" name="broker" id="broker_dropdown" onchange="loadStateFee(this)">
@@ -16,7 +16,7 @@
                                 <?php endforeach; ?>
                             </select>
                 </div>
-             </div>
+             </div> -->
         </div>
         <br />
         <div class="panel" id="report_filters">
@@ -31,10 +31,15 @@
                            <div id="state-dynamic-content">
                             <?php
                               
-                             foreach($get_states as $state): ?>
+                             // print_r($feeData);
+                             foreach($get_states as $state):
+
+                                $state_fee = isset($feeData[$state['id']]) ? $feeData[$state['id']] : 0.00;
+                              ?>
                                 <div class="col-md-3">
                                    <div class="form-group">
-                                         <input maxlength="8"  style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="currency-input form-control" name="state_fee[<?php echo $state['id']; ?>]" value="<?php echo isset($feeData[$state['id']]) ? $feeData[$state['id']]:"0.00" ?>"> 
+                                        <input type="hidden" name="state_id[]" value="<?php echo $state['id']; ?>">
+                                         <input maxlength="8"  style="WIDTH: 50%;FLOAT: LEFT;MARGIN-RIGHT: 10PX;" type="text" class="currency-input form-control" name="state_fee[]" value="<?php echo $state_fee; ?>"> 
                                           <label><?php  echo $state['name']; ?></label>
                                     </div>
                                 </div>    

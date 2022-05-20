@@ -58,6 +58,10 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
     $report_year = isset($filter_array['report_year'])?trim($filter_array['report_year']):date("Y");
 
     $prod_cat = isset($filter_array['prod_cat'])?$filter_array['prod_cat']:array();
+
+      $prod_cat =array_filter($prod_cat,function($value) {
+                return $value > 0;
+            });
     if($filter_by == "1"){
         $subheading2=$beginning_date." thru ".$ending_date;
 
@@ -488,24 +492,24 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
             )
         );
 
-        $total_trades = $gross = $total_comm = 0;
-        $notFoundRow = ['no_of_trades'=>0,'gross_conession'=>0,'commission_received'=>0];
+        $total_trades = $net_commission = $total_comm = 0;
+        $notFoundRow = ['no_of_trades'=>0,'net_commission'=>0,'commission_received'=>0];
         $excel_font_style = array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'));
         $row_count = 6;
         for($month= 1 ;$month <=12 ; $month++) {
                 $get_month_transaction = isset($rows[$month]) ? $rows[$month] : $notFoundRow; 
                 $dateObj   = DateTime::createFromFormat('!m', $month);
                 $total_comm+= $get_month_transaction['commission_received'];
-                $gross+= $get_month_transaction['gross_conession'];
+                $net_commission+= $get_month_transaction['net_commission'];
                 $total_trades+= $get_month_transaction['no_of_trades'];
 
                 $sheet_data[0]['A'.$row_count] = array($dateObj->format('F'),$excel_font_style);
 
                 $sheet_data[0]['B'.$row_count] = array($get_month_transaction['no_of_trades'],$excel_font_style);
 
-                $sheet_data[0]['C'.$row_count] = array(number_format($get_month_transaction['gross_conession'],2),$excel_font_style);
+                $sheet_data[0]['C'.$row_count] = array(number_format($get_month_transaction['commission_received'],2),$excel_font_style);
 
-                $sheet_data[0]['D'.$row_count] = array(number_format($get_month_transaction['commission_received'],2),$excel_font_style);
+                $sheet_data[0]['D'.$row_count] = array(number_format($get_month_transaction['net_commission'],2),$excel_font_style);
                 $row_count++;
         }
 
@@ -513,9 +517,9 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
 
         $sheet_data[0]['B'.$row_count] = array($total_trades,array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
             
-        $sheet_data[0]['C'.$row_count] = array(number_format($gross,2),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+        $sheet_data[0]['C'.$row_count] = array(number_format($total_comm,2),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
                      
-        $sheet_data[0]['D'.$row_count] = array(number_format($total_comm,2),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+        $sheet_data[0]['D'.$row_count] = array(number_format($net_commission,2),array('center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
 
         $Excel = new Excel();
             
@@ -543,11 +547,11 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
         $rows = $instance_trans->select_monthly_broker_production_report($company,$earning_filter);
 
 
-        $subheading = 'MONTHLY BROKER PRODUCTION REPORT ';
+        $subheading = 'BROKER PRODUCTION REPORT ';
         $subheading2 = 'Trade Dates: '.$beginning_date." - ".$ending_date;
-        $excel_name             = 'Monthly Broker Production Report';
-        $sub_sheet_title_array  = array("Monthly Broker Production");
-        $title                  = "Monthly Broker Production";
+        $excel_name             = 'Broker Production Report';
+        $sub_sheet_title_array  = array("Broker Production");
+        $title                  = "Broker Production";
 
         if(!empty($rows)) {
 
@@ -642,14 +646,15 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
 
     elseif($report_for == "monthly_branch_office"):
 
-        $subheading = 'MONTHLY BRANCH OFFICE PRODUCTION REPORT';
-        $subheading2 = 'Ending Date: '.date('F d, Y',strtotime($ending_date));
-        $rows = $instance_trans->select_monthly_branch_office_report($company,$branch,$ending_date);
+        $subheading = 'BRANCH OFFICE PRODUCTION REPORT';
+         $subheading2 = 'Trade Dates: '.$beginning_date." - ".$ending_date;
+           // $subheading2 = 'Ending Date: '.date('F d, Y',strtotime($ending_date));
+        $rows = $instance_trans->select_monthly_branch_office_report($company,$branch,$ending_date,$beginning_date);
 
 
-        $excel_name             = 'Monthly Branch Office Production Report';
-        $sub_sheet_title_array  = array("Monthly Branch Office");
-        $title                  = "Monthly Branch Office Production";
+        $excel_name             = 'Branch Office Production Report';
+        $sub_sheet_title_array  = array("Branch Office");
+        $title                  = "Branch Office Production";
 
         if(!empty($rows)) {
             $sheet_data = array( // Set sheet data.
@@ -748,9 +753,217 @@ if(isset($_GET['filter']) && $_GET['filter'] != '')
                 )
         );
 
+    elseif($report_for != "broker"):
+
+
+        if($report_for == "Product Category Summary Report") :
+                $date_heading = ($date_by == 1) ? 'Trade Dates: ' : ' Commission Received Dates: ';
+                $subheading2 = $date_heading.$subheading2;
+            endif;
+
+
+            if($report_for == "Production by Sponsor Report") :
+                if(!empty($prod_cat)) {
+                    $selected_pro_categories = $instance_trans->select_category($prod_cat);
+                    if(!empty($selected_pro_categories)) {
+                        $cat_names = array_column($selected_pro_categories, 'type');
+                        $companyhead .= "\r\n ". implode(', ', $cat_names); 
+                    }
+                }
+                else $companyhead.= "\r\n All Categories";
+            endif;
+
+      $get_trans_data = $instance_trans->select_transcation_history_report_v2($report_for,$sort_by,$branch,$broker,'',$client,$product,$beginning_date,$ending_date,$batch,$date_by,$filter_by,$is_trail,$prod_cat);
+
+      ///  print_r($get_trans_data);
+        if(!empty($get_trans_data))
+        {
+            $get_data_by_category = array();
+            foreach($get_trans_data as $key=>$val)
+            {
+                $get_data_by_category[$val['product_category_name']][] = $val;
+            }
+            $get_trans_data = $get_data_by_category;
+        }
+        $batch_desc = isset($get_trans_data[0]['batch_desc'])?$instance->re_db_input($get_trans_data[0]['batch_desc']):'';
+        $total_amount_invested = 0;
+        $total_commission_received = 0;
+        $total_charges = 0;
+
+         $sheet_data = array( // Set sheet data.
+                0=> // Excel sub sheet indexed.
+                array(
+                    
+                    'A1'=>array(date("m/d/Y"),array('bold','center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A1','A3'))),
+                    'B1'=>array($img."\r\n".$subheading." \r\n ".$subheading2." ",array('bold','center','color'=>array('000000'),'size'=>array(14),'font_name'=>array('Calibri'),'merge'=>array('B1','E3'))),
+
+                    'F1'=>array(' PAGE 1',array('bold','center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('F1','F3') )),
+
+                    'A4'=>array('',array('bold','center','color'=>array('000000'),'size'=>array(12),'font_name'=>array('Calibri'),'merge'=>array('A4','F4'))),
+
+                
+                    'B5'=>array('SPONSOR',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    
+                    'C5'=>array("AMOUNT INVESTED",array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'D5'=>array('COMMISSION RECEIVED',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'E5'=>array('COMMISSION PAID',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                )
+            );
+
+         if($report_for == "Product Category Summary Report")  {
+
+            $sheet_data = array( // Set sheet data.
+                0=> // Excel sub sheet indexed.
+                array(
+                    
+                    'A1'=>array(date("m/d/Y"),array('bold','center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('A1','A3'))),
+                    'B1'=>array($img."\r\n".$subheading." \r\n ".$subheading2." ",array('bold','center','color'=>array('000000'),'size'=>array(14),'font_name'=>array('Calibri'),'merge'=>array('B1','E3'))),
+
+                    'F1'=>array(' PAGE 1',array('bold','center','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('F1','F3') )),
+
+                    'A4'=>array('',array('bold','center','color'=>array('000000'),'size'=>array(12),'font_name'=>array('Calibri'),'merge'=>array('A4','F4'))),
+
+                
+                    'B5'=>array('SPONSOR',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    
+                    'C5'=>array("AMOUNT INVESTED",array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'D5'=>array('COMMISSION RECEIVED',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'E5'=>array('COMMISSION PAID',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'F5'=>array('NO. OF TRANSACTIONS',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                    'G5'=>array('%TOTAL',array('bold','left','color'=>array('000000'),'background'=>array('f1f1f1'),'size'=>array(10),'font_name'=>array('Calibri'))),
+                )
+            );
+
+         }
+
+        $row_count  = 6;
+        $excel_font_style = array('left','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'));
+        $right_excel_font_style = array('right','bold','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'));
+        if(!empty($get_trans_data)) {
+            $total_comm_received=0;
+            $total_comm_paid=0;
+            $total_inv=0;
+            $total_no_of_trans=0;
+            foreach($get_trans_data as $key => $category_data)
+            {
+                foreach($category_data as $trans_key=>$trans_data)
+                {
+                    $total_comm_received+=$trans_data['commission_received'];
+                    $total_comm_paid+=$trans_data['charge_amount'];
+                    $total_inv+=$trans_data['invest_amount'];
+                    $total_no_of_trans+=1;
+                }
+            }
+            foreach($get_trans_data as $key => $category_data) {
+
+                if($report_for == "Production by Product Category"){     
+
+                    $sheet_data[0]['B'.$row_count] = array('Product Category: '.$key,array('left','bold','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri'),'merge'=>array('B'.$row_count,'E'.$row_count)));
+                    $row_count = $row_count+1;      
+                }
+                $total_comm_received_cat=0;
+                $total_comm_paid_cat=0;
+                $total_inv_cat=0;
+                $total_no_of_trans_cat=0;
+                $cat_percentage=0;
+                foreach($category_data as $trans_key=>$trans_data) {
+                        $total_comm_received_cat+=$trans_data['commission_received'];
+                        $total_comm_paid_cat+=$trans_data['charge_amount'];
+                        $total_inv_cat+=$trans_data['invest_amount'];
+                        $total_no_of_trans_cat+=1;
+                        if($report_for != "Product Category Summary Report") {
+
+                            $sub_cat_name =  ($report_for == "Production by Sponsor Report") ?  $trans_data['sponsor_name'] : $trans_data['product_name']; 
+                            $sheet_data[0]['B'.$row_count] = array($sub_cat_name,$excel_font_style);
+
+                            $sheet_data[0]['C'.$row_count] = array($trans_data['invest_amount'],array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                            $sheet_data[0]['D'.$row_count] = array(number_format($trans_data['commission_received'],2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                            $sheet_data[0]['E'.$row_count] = array(number_format($trans_data['charge_amount'],2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+                            $row_count++;
+                        }
+                }
+                if($report_for == "Product Category Summary Report") {
+
+                    $sheet_data[0]['B'.$row_count] = array($key,$excel_font_style);
+
+                  $sheet_data[0]['C'.$row_count] = array(number_format($total_inv_cat,2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                    $sheet_data[0]['D'.$row_count] = array(number_format($total_comm_received_cat,2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+
+                    $sheet_data[0]['E'.$row_count] =array(number_format($total_comm_paid_cat,2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                    $sheet_data[0]['F'.$row_count] =array(number_format($total_no_of_trans_cat,2),array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                    $sheet_data[0]['G'.$row_count] = array(number_format($total_no_of_trans_cat*100/$total_no_of_trans,2).'%',array('right','color'=>array('000000'),'size'=>array(10),'font_name'=>array('Calibri')));
+
+                      $row_count++;
+                }  else if($report_for == "Production by Product Category")  {
+                    $sheet_data[0]['B'.$row_count] = array('** PRODUCT CATEGORY SUBTOTAL **',$right_excel_font_style);
+
+                    $sheet_data[0]['C'.$row_count] = array(number_format($total_inv_cat,2),$right_excel_font_style);
+
+                    $sheet_data[0]['D'.$row_count] = array(number_format($total_comm_received_cat,2),$right_excel_font_style);
+
+                    $sheet_data[0]['E'.$row_count] = array(number_format($total_comm_paid_cat,2),$right_excel_font_style);
+                      $row_count++;
+                }
+
+
+
+              
+            }
+         //   $row_count = $row_count +1;
+            $sheet_data[0]['B'.$row_count] = array('***REPORT TOTALS ***',$right_excel_font_style);
+
+            $sheet_data[0]['C'.$row_count] = array(number_format($total_inv,2),$right_excel_font_style);
+
+            $sheet_data[0]['D'.$row_count] = array(number_format($total_comm_received,2),$right_excel_font_style);
+
+            $sheet_data[0]['E'.$row_count] = array(number_format($total_comm_paid,2),$right_excel_font_style);
+            if($report_for == "Product Category Summary Report") {
+                $sheet_data[0]['F'.$row_count] = array(number_format($total_no_of_trans,0),$right_excel_font_style);
+
+                $sheet_data[0]['G'.$row_count] = array(' ',$right_excel_font_style);
+            }
+        } else {
+            $sheet_data[0]['A'.$row_count] = array($instance->re_db_output('No record found.'),array('center','size'=>array(10),'color'=>array('000000'),'merge'=>array('A'.$row_count,'H'.$row_count)));
+        }
+
+
+
+
+
+
+
+
+
+        $excel_name             =strtoupper($report_for);
+        $sub_sheet_title_array  = array(strtoupper($report_for));
+        $title                  = strtoupper($report_for);
+          $Excel = new Excel();
+         $formPost = $Excel->generate(
+                array(
+                    'creator'=>$creator,
+                    'last_modified_by'=>$last_modified_by,
+                    'title'=>$title,
+                    'subject'=>$subject,
+                    'description'=>$description,
+                    'keywords'=>$keywords,
+                    'category'=>$category,
+                    'total_sub_sheets'=>$total_sub_sheets,
+                    'sub_sheet_title'=>$sub_sheet_title_array,
+                    'default_open_sub_sheet'=>$default_open_sub_sheet,
+                    'sheet_data'=>$sheet_data,
+                    'excel_name'=>$excel_name
+                )
+        );
+
     else:
 
-        $get_trans_data = $instance_trans->select_transcation_history_report($branch,$broker,'',$client,$product,$beginning_date,$ending_date,$batch,$date_by);
+        $get_trans_data = $instance_trans->select_transcation_history_report_v2($report_for,$sort_by,$branch,$broker,'',$client,$product,$beginning_date,$ending_date,$batch,$date_by,$filter_by,$is_trail,$prod_cat);
         if(!empty($get_trans_data))
         {
             $get_data_by_category = array();

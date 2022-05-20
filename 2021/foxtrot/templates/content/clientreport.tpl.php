@@ -1,7 +1,7 @@
 <div class="container">
 <h1>Report</h1>
     <div class="col-md-12 well">
-        <form method="POST">
+        <form method="POST" id="report_form" action="/CloudFox/client_reports.php">
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -188,6 +188,21 @@ $('#demo-dp-range .input-daterange').datepicker({
                     $(".ending_date").show();
                 }
             }).trigger('change');
+
+
+            $("#report_form").submit(function(ev){
+                var _form = $(this);
+                var output_type = $(this).find("input[name='output']:checked").val();
+                if(output_type == 4 || output_type == 2) {
+                 
+                    _form.attr('target','_blank');
+                     //return false;
+                }
+                else {
+                    _form.removeAttr('target');
+                }
+             });
+
         });       
 </script>
 <style>

@@ -5,6 +5,8 @@ require_once(DIR_FS."islogin.php");
 
 if(isset($_GET['broker_id']) && $_GET['broker_id'] != '')
 {   
+    ob_start();
+
     $id=$_GET['broker_id'];
     $instance = new broker_master();
     $return = $instance->edit($id);
@@ -66,7 +68,7 @@ if(isset($_GET['broker_id']) && $_GET['broker_id'] != '')
             $reassign_broker = $r_broker_data['last_name'].", ".$r_broker_data['first_name'];
         }
         
-        print_r($r_broker_data);
+       // print_r($r_broker_data);
         $u4 = isset($edit_general['u4'])?date('m/d/Y',strtotime($instance->re_db_output($edit_general['u4']))):'';
         $u5 = isset($edit_general['u5'])?date('m/d/Y',strtotime($instance->re_db_output($edit_general['u5']))):'';
         $day_after_u5 = isset($edit_general['day_after_u5'])?$instance->re_db_output($edit_general['day_after_u5']):'';
@@ -140,6 +142,16 @@ if(isset($_GET['broker_id']) && $_GET['broker_id'] != '')
                 'excel_name'=>$excel_name
             )
         );
-        
+
+        $xlsData = ob_get_contents();
+ob_end_clean();
+
+
+     $response =  array(
+        'op' => 'ok',
+        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+    );
+
+die(json_encode($response));
 
 }    

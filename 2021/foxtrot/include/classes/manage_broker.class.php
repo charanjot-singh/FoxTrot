@@ -332,6 +332,11 @@
       $ria_general = isset($data['ria_general'])?$this->re_db_input($data['ria_general']):0;
 			$insurance_general = isset($data['insurance_general'])?$this->re_db_input($data['insurance_general']):0;
 
+
+			$higher_risk = isset($data['higher_risk']) ?  $data['higher_risk'] : 0 ;
+			$exam_notes = isset($data['exam_notes']) ?  $data['exam_notes'] : '' ;
+			$finra_exam_date = isset($data['finra_exam_date']) ?  date('Y-m-d',strtotime($data['finra_exam_date'])) : '' ;
+
 			/*if($home_general==''){
 				$this->errors = 'Please select one option.';
 			}
@@ -448,11 +453,12 @@
         {
 					if($id==0)
           {
-						$q = "INSERT INTO `".BROKER_GENERAL."` SET `broker_id`='".$_SESSION['last_insert_id']."',`home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."'".$this->insert_common_sql();
+						$q = "INSERT INTO `".BROKER_GENERAL."` SET `broker_id`='".$_SESSION['last_insert_id']."',`home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."',
+							higher_risk = '".$higher_risk."' ,  exam_notes = '".$exam_notes."' ,finra_exam_date = '".$finra_exam_date."'
+							 ".$this->insert_common_sql();
 						$res = $this->re_db_query($q);
-                        if($res){
-
-                            $_SESSION['success'] = INSERT_MESSAGE;
+            if($res){
+              $_SESSION['success'] = INSERT_MESSAGE;
 							return true;
 						}
 						/*else{
@@ -462,7 +468,7 @@
           }
           else
           {
-            $q = "UPDATE `".BROKER_GENERAL."`  SET `home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."'".$this->update_common_sql()." WHERE `broker_id`='".$id."'";
+            $q = "UPDATE `".BROKER_GENERAL."`  SET `home`='".$home_general."',`home_address1_general`='".$home_address1_general."',`home_address2_general`='".$home_address2_general."',`business_address1_general`='".$business_address1_general."',`business_address2_general`='".$business_address2_general."',`city`='".$city_general."',`state_id`='".$state_general."',`zip_code`='".$zip_code_general."',`telephone`='".$telephone_general."',`cell`='".$cell_general."',`fax`='".$fax_general."',`gender`='".$gender_general."',`marital_status`='".$status_general."',`spouse`='".$spouse_general."',`children`='".$children_general."',`email1`='".$email1_general."',`email2`='".$email2_general."',`web_id`='".$web_id_general."',`web_password`='".$web_password_general."',`dob`='".$dob_general."',`prospect_date`='".$prospect_date_general."',`reassign_broker`='".$reassign_broker_general."',`u4`='".$u4_general."',`u5`='".$u5_general."',`day_after_u5`='".$day_after_u5."',`dba_name`='".$dba_name_general."',`eft_information`='".$eft_info_general."',`start_date`='".$start_date_general."',`transaction_type`='".$transaction_type_general."',`routing`='".$routing_general."',`account_no`='".$account_no_general."',`cfp`='".$cfp_general."',`chfp`='".$chfp_general."',`cpa`='".$cpa_general."',`clu`='".$clu_general."',`cfa`='".$cfa_general."',`ria`='".$ria_general."',`insurance`='".$insurance_general."',	higher_risk = '".$higher_risk."' ,  exam_notes = '".$exam_notes."' ,finra_exam_date = '".$finra_exam_date."' ".$this->update_common_sql()." WHERE `broker_id`='".$id."'";
 						$res = $this->re_db_query($q);
 						if($res)
             {
@@ -1055,18 +1061,21 @@
           $product_category = (isset($data['product_category']) && strlen($data['product_category'] > 0))?$this->re_db_input($data['product_category']):'0';
 
           if($id==0){
-				    foreach($data['data1'] as $key=>$val)
+				    foreach($data['data1'] as $key=>$cat_row)
             {
-              $active_check=isset($val['active_check'])?$this->re_db_input($val['active_check']):'0';
-              $fee=isset($val['fee'])?$this->re_db_input($val['fee']):'';
-              $received=isset($val['received'])?$this->re_db_input(date('Y-m-d',strtotime($val['received']))):'0000-00-00';
-              $terminated=isset($val['terminated'])?$this->re_db_input(date('Y-m-d',strtotime($val['terminated']))):'0000-00-00';
-              $reason=isset($val['reason'])?$this->re_db_input($val['reason']):'';
 
-              $q = "INSERT INTO `".BROKER_LICENCES_SECURITIES."` SET `broker_id`='".$_SESSION['last_insert_id']."' ,`type_of_licences`='".$type_of_licences."' ,`state_id`='".$key."' ,
-              `waive_home_state_fee`='".$waive_home_state_fee."' , `product_category`='".$product_category."' ,`active_check`='".$active_check."' ,`fee`='".$fee."' ,
-              `received`='".$received."' ,`terminated`='".$terminated."',`reson`='".$reason."', `status`=1".$this->insert_common_sql();
-              $res = $this->re_db_query($q);
+            	foreach($cat_row as $cat_id=>$val){
+		              $active_check=isset($val['active_check'])?$this->re_db_input($val['active_check']):'0';
+		              $fee=isset($val['fee'])?$this->re_db_input($val['fee']):'';
+		              $received=isset($val['received'])?$this->re_db_input(date('Y-m-d',strtotime($val['received']))):'0000-00-00';
+		              $terminated=isset($val['terminated'])?$this->re_db_input(date('Y-m-d',strtotime($val['terminated']))):'0000-00-00';
+		              $reason=isset($val['reason'])?$this->re_db_input($val['reason']):'';
+
+		              $q = "INSERT INTO `".BROKER_LICENCES_SECURITIES."` SET `broker_id`='".$_SESSION['last_insert_id']."' ,`type_of_licences`='".$type_of_licences."' ,`state_id`='".$key."' ,
+		              `waive_home_state_fee`='".$waive_home_state_fee."' , `product_category`='".$product_category."' ,`active_check`='".$active_check."' ,`fee`='".$fee."' ,
+		              `received`='".$received."' ,`terminated`='".$terminated."',`reson`='".$reason."', `status`=1".$this->insert_common_sql();
+		              $res = $this->re_db_query($q);
+            }
             }
 
             if($res){
@@ -1611,10 +1620,16 @@
               }
               $originalHash = md5(json_encode($originalArray));
               $newHash = md5(json_encode($newValues));
+/*
+              echo '<pre>';
+              print_r($originalArray);
+              print_r($newValues);
+              var_dump($originalArray == $newValues );
+              die;*/
               /* ---- GET NEW VALUES END -------------*/
               if($variable>0)
               {
-                if ($originalHash != $newHash)
+                if ($originalArray != $newValues)
                 {
                   foreach ($newValues as $key => $value)
                   {
@@ -1908,7 +1923,26 @@
 					return $broker_trans;
 		}
 
-    public function select_category_based_on_series() {}
+    public function select_category_based_on_series() {
+
+         	$return = array();
+         /*(21,16,1,4,5,12,6,3,22)*/
+			 $q = "SELECT `at`.*
+					FROM `".PRODUCT_TYPE."` AS `at`
+                    WHERE `at`.`is_delete`='0' and id in (21)
+                    ORDER BY `at`.`id` ASC";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    			     array_push($return,$row);
+
+    			}
+            }
+			return $return;
+
+
+    }
         public function select_category(){
 			$return = array();
 
@@ -2020,7 +2054,7 @@
 			$q = "SELECT `at`.*,u.first_name as user_initial
 					FROM `".BROKER_HISTORY."` AS `at`
                     LEFT JOIN `".USER_MASTER."` as `u` on `u`.`id`=`at`.`modified_by`
-                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."'";
+                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."' order by at.id desc";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
     			while($row = $this->re_db_fetch_array($res)){
@@ -2262,37 +2296,56 @@
 			return $return;
 		}
         public function get_previous_broker($id){
-			$return = array();
 
-            $q = "SELECT `at`.*
+         	$q = "SELECT `at`.*,GROUP_CONCAT(last_name,' ',first_name) as full_name
 					FROM `".$this->table."` AS `at`
-                    WHERE `at`.`is_delete`='0' and `at`.`id`<".$id."
-                    ORDER BY `at`.`id` DESC LIMIT 1";
-			$res = $this->re_db_query($q);
-            if($this->re_db_num_rows($res)>0){
-                $return = $this->re_db_fetch_array($res);
-            }
-            else
-            {
-                return false;
-            }
+                    WHERE `at`.`is_delete`='0'   group by id
+                    ORDER BY GROUP_CONCAT(last_name,' ',first_name) DESC ";
+				   	$res = $this->re_db_query($q);
+				   	$isFind =false;
+		            if($this->re_db_num_rows($res)>0){
+
+		                while($row = $this->re_db_fetch_array($res)){
+		                	       if($isFind)
+		                	       	  return $row;
+		                	      
+		                	       if($row['id']== $id)
+                                 $isFind=true;
+		                	       
+
+		                }
+		            }
+		            else
+		            {
+		                return false;
+		            }
 			return $return;
 		}
         public function get_next_broker($id){
 			$return = array();
 
-            $q = "SELECT `at`.*
+            $q = "SELECT `at`.*,GROUP_CONCAT(last_name,' ',first_name) as full_name
 					FROM `".$this->table."` AS `at`
-                    WHERE `at`.`is_delete`='0' and `at`.`id`>".$id."
-                    ORDER BY `at`.`id` ASC LIMIT 1";
-			$res = $this->re_db_query($q);
-            if($this->re_db_num_rows($res)>0){
-                $return = $this->re_db_fetch_array($res);
-            }
-            else
-            {
-                return false;
-            }
+                    WHERE `at`.`is_delete`='0'   group by id
+                    ORDER BY GROUP_CONCAT(last_name,' ',first_name) ASC ";
+				   	$res = $this->re_db_query($q);
+				   	$isFind =false;
+		            if($this->re_db_num_rows($res)>0){
+
+		                while($row = $this->re_db_fetch_array($res)){
+		                	       if($isFind)
+		                	       	  return $row;
+		                	      
+		                	       if($row['id']== $id)
+                                 $isFind=true;
+		                	       
+
+		                }
+		            }
+		            else
+		            {
+		                return false;
+		            }
 			return $return;
 		}
         public function select_sponsor(){
@@ -2607,7 +2660,7 @@
 				return false;
 			}
 		}
-        public function select_charge_type(){
+    public function select_charge_type(){
 			$return = array();
 
 			$q = "SELECT * FROM `".CHARGE_TYPE_MASTER."`";
@@ -2621,7 +2674,7 @@
             }
 			return $return;
 		}
-        public function select_charge_name($charge_type_id){
+    public function select_charge_name($charge_type_id){
 			$return = array();
 
 			$q = "SELECT cnm.* FROM `".CHARGE_NAME_MASTER."` cnm, `".CHARGE_DETAIL."` cd
@@ -2636,7 +2689,7 @@
             }
 			return $return;
 		}
-        public function select_charge_detail($charge_type_id,$charge_name_id){
+    public function select_charge_detail($charge_type_id,$charge_name_id){
 			$return = array();
 
 			$q = "SELECT cd.* FROM `".CHARGE_DETAIL."` cd
@@ -2651,7 +2704,7 @@
             }
 			return $return;
 		}
-        public function select_broker_charge($id){
+    public function select_broker_charge($id){
 			$return = array();
 			$q="SELECT ctm.charge_type_id,cnm.charge_name_id,cd.account_type,cd.account_process,cv.value FROM `".CHARGE_TYPE_MASTER."` ctm, `".CHARGE_NAME_MASTER."` cnm, `".CHARGE_DETAIL."` cd, `".CHARGE_VALUE."` cv WHERE ctm.charge_type_id=cd.charge_type_id and cnm.charge_name_id=cd.charge_name_id and cd.charge_detail_id=cv.charge_detail_id and cv.broker_id='".$id."'";
 			$res = $this->re_db_query($q);
@@ -2664,40 +2717,151 @@
 			return $return;
 		}
 
-		 function load_broker_state_fee($broker_id){
-    	$return = array();
+		public function transcation_edit_override($id,$client_id){
+			$return = array();
 
-			$q = "SELECT * from ft_broker_state_fee_master where feeBrokerID='".$broker_id."' limit 1";
+			 $q = "SELECT `at`.*
+					FROM `".BROKER_PAYOUT_OVERRIDE."` AS `at`
+                    WHERE `at`.`is_delete`='0' AND `at`.`broker_id`='".$id."'";
 			$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
-             $row = $this->re_db_fetch_array($res);
-               return json_decode($row['feeData']);
-            } 
+                $a = 0;
+    			while($row = $this->re_db_fetch_array($res)){
+    			     array_push($return,$row);
 
-				return array();
-    }
+    			}
+            }
 
-    function save_broker_state_fee($data){
 
-    	
-    	  	  $q = "SELECT * from ft_broker_state_fee_master where feeBrokerID='".$_POST['broker']."'";
+         $client = new client_maintenance();
+         $client_row= $client->select_client_master($client_id);
 
-    	  	  foreach($_POST['state_fee'] as $index=>$fee){
-    	  	  	$_POST['state_fee'][$index]= filter_var($fee, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    	  	  }
+         if(!empty($client_row['split_broker'])) {
+
+             $return[]=array("id"=>"","rap"=>$client_row['split_broker'],"per"=>$client_row['split_rate'],"from"=>$client_row['split_rate_from'],"to"=>$client_row['split_rate_to'],"product_category"=>$client_row['split_rate_category']);
+         }
+
+
+
+			return $return;
+		}
+
+   function load_broker_state_fee(){
+    		$return = array();
+
+			$q = "SELECT feeStateId,stateFee from ft_broker_state_fee_master;";
+			$res = $this->re_db_query($q);
+            if($this->re_db_num_rows($res)>0){
+             	while($row = $this->re_db_fetch_array($res)){
+              	$return[$row['feeStateId']] = $row['stateFee'];
+
+              }
+            }
+
+			return $return;
+    	}
+
+    function save_broker_state_fee($state_id = 0,$state_fee= 0){
+
+
+    	  	  $q = "SELECT * from ft_broker_state_fee_master where feeStateId='".$state_id."'";
+
+
 						$res = $this->re_db_query($q);
             if($this->re_db_num_rows($res)>0){
-              	 $q = "update  `ft_broker_state_fee_master` SET `feeData`='".json_encode($_POST['state_fee'])."' where feeBrokerID='".$_POST['broker']."'";  
+              	 $q = "update  `ft_broker_state_fee_master` SET `stateFee`='".$state_fee."' where feeStateId='".$state_id."'";
               		$res = $this->re_db_query($q);
             }
             else{
-            	   	
-            	   	$q = "INSERT INTO `ft_broker_state_fee_master` SET `feeData`='".json_encode($_POST['state_fee'])."',feeBrokerID='".$_POST['broker']."' ".$this->insert_common_sql();
+
+            	   	$q = "INSERT INTO `ft_broker_state_fee_master` SET `stateFee`='".$state_fee."',feeStateId='".$state_id."' ".$this->insert_common_sql();
 									$res = $this->re_db_query($q);
             }
-    	  	  
-    	  	   return true;
-         }  
 
+    	  	   return true;
+         }
+
+    // Generic Typing - return based on parameter data type passed-> (NULL/Empty/default)$statusParameter->entire array, (integer)$statusParameter->return Description(statuses[key value/$statusParameter]), (string)$statusParameter->return key/index value(if string is found in the array)
+    function active_statuses($statusParameter=NULL){
+      $statuses = [0=>'*Unknown/Not Specified*', 1=>'Active', 2=>'Terminated', 3=>'Retired', 4=>'Deceased', 5=>'Inactive', 6=>'Suspended'];
+      $return = $statuses[0];
+
+      switch (gettype($statusParameter)){
+        case NULL:
+            $return = $statuses;
+            break;
+        case 'integer':
+          if (array_key_exists($statusParameter, $statuses)){
+            $return = $statuses[$statusParameter];
+          }
+          break;
+        case 'string':
+          $return = array_search(ucfirst(strtolower($statusParameter)), $statuses);
+          $return = ($return !== false) ? $return : 0;
+          break;
+        default:
+          // Do nothing - return "unknown"
+      }
+
+      return $return;
     }
+
+    // Listing of Broker, Branches, & Companies
+    // Can be queried by All or Individually
+    function select_broker_by_branch_company($broker=0, $branch=0, $company=0){
+      $return = [];
+      $con = $searchField = '';
+
+      if ($broker > 0){
+        $con .= " AND `bm`.`id` = ".(int)$this->re_db_input($broker);
+      }
+      if ($branch > 0){
+        $searchField = (int)$this->re_db_input($branch);
+
+        $con .= " AND (`br1`.`id` = $searchField OR `br2`.`id` = $searchField OR `br3`.`id` = $searchField)";
+      }
+      if ($company > 0){
+        $searchField = (int)$this->re_db_input($company);
+
+        $con .= " AND (`co1`.`id` = $searchField OR `co2`.`id` = $searchField OR `co3`.`id` = $searchField)";
+      }
+
+      $q =
+        "SELECT "
+            ." `bm`.`id`"
+            ." ,`bm`.`first_name`"
+            ." ,`bm`.`middle_name`"
+            ." ,`bm`.`last_name`"
+            ." ,`bm`.`fund`"
+            ." ,`bm`.`internal`"
+            ." ,`bm`.`active_status`"
+            ." ,`br1`.`id` AS `branch_id1`, `br1`.`name` AS `branch_name1`, `br1`.`company` AS `company_id1`, `co1`.`company_name` AS `company_name1`"
+            ." ,`br2`.`id` AS `branch_id2`, `br2`.`name` AS `branch_name2`, `br2`.`company` AS `company_id2`, `co2`.`company_name` AS `company_name2`"
+            ." ,`br3`.`id` AS `branch_id3`, `br3`.`name` AS `branch_name3`, `br3`.`company` AS `company_id3`, `co3`.`company_name` AS `company_name3`"
+          ." FROM `ft_broker_master` AS `bm`"
+          ." LEFT JOIN `ft_broker_branches` AS `repbr` ON `bm`.`id`=`repbr`.`broker_id` AND `repbr`.`is_delete`='0'"
+          ." LEFT JOIN `ft_branch_master` AS `br1` ON `br1`.`id`=`repbr`.`branch1` AND `br1`.`is_delete`=0"
+          ." LEFT JOIN `ft_branch_master` AS `br2` ON `br2`.`id`=`repbr`.`branch2` AND `br2`.`is_delete`=0"
+          ." LEFT JOIN `ft_branch_master` AS `br3` ON `br3`.`id`=`repbr`.`branch3` AND `br3`.`is_delete`=0"
+          ." LEFT JOIN `ft_company_master` AS `co1` ON `br1`.`company`=`co1`.`id` AND `co1`.`is_delete`=0"
+          ." LEFT JOIN `ft_company_master` AS `co2` ON `br2`.`company`=`co2`.`id` AND `co2`.`is_delete`=0"
+          ." LEFT JOIN `ft_company_master` AS `co3` ON `br3`.`company`=`co3`.`id` AND `co3`.`is_delete`=0"
+          ." WHERE `bm`.`is_delete` = 0"
+              .$con
+          ." ORDER BY "
+            ." `bm`.`last_name`"
+            ." ,`bm`.`first_name`"
+            ." ,`bm`.`middle_name`"
+            ." ,`bm`.`id`"
+      ;
+
+      $res = $this->re_db_query($q);
+
+      if($this->re_db_num_rows($res)>0){
+        $return = $this->re_db_fetch_all($res);
+      }
+
+      return $return;
+    }
+  }
 ?>
