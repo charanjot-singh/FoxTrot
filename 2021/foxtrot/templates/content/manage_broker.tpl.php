@@ -1,4 +1,8 @@
-<?php //echo ini_get("max_input_vars"); ?>
+<?php 
+
+//echo ini_get("max_input_vars"); ?>
+
+
 <script type="text/javascript">
    $(document).ready(function(){
        console.log("works");
@@ -21,34 +25,7 @@
            includeSelectAllOption: true
        });
    });
-   jQuery(function($){
-       
-       $("#export_broker_data_btn").click(function(ev){
-             console.log("click");
-             ev.preventDefault();
-             $("#export_modal").modal();
-             $.ajax({
-                        url: "ajax_export_broker_data.php",
-                        data:{ broker_id:$(this).data("broker_id")},
-                        type:"get",
-                        dataType:"json",
-                        success:function(data){
-                             $("#export_modal").modal("hide");
-                                var $a = $("<a>");
-                                console.log(data)
-                           $a.attr("href",data.file);
-                           $("body").append($a);
-                           $a.attr("download","export_broker_data.xls");
-                           $a[0].click();
-                           //$a.remove();
-                        },
-                        error:function(){
-   
-                        }
-             })
-       });
-   
-   })
+
 </script>
 <style>
    .btn-primary {
@@ -652,9 +629,9 @@
                   <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>
                   <ul class="dropdown-menu dropdown-menu-right">
                      <li><a href="<?php echo CURRENT_PAGE; ?>"><i class="fa fa-eye"></i> View List</a></li>
-                     <?php if(($action=='edit' && $id>0)): ?>
-                     <li><a id="export_broker_data_btn" data-broker_id="<?php echo $id; ?>" href="javascript:void(0);"><i class="fa fa-download"></i> Export Broker data</a></li>
-                     <?php endif; ?>
+                     <!-- <?php if(($action=='edit' && $id>0)): ?> -->
+                    <!--  <li><a id="export_broker_data_btn" data-broker_id="<?php echo $id; ?>" href="javascript:void(0);"><i class="fa fa-download"></i> Export Broker data</a></li> -->
+                     <!-- <?php endif; ?> -->
                   </ul>
                </div>
             </div>
@@ -2185,18 +2162,18 @@
                            <div class="tab-pane <?php if(!isset($_GET['sub_tab'])){echo "active";}else{ echo '';} ?>" id="tab_securities">
                               <div class="panel-overlay-wrap">
                                  <div class="panel">
-                                    <div class="panel-heading">
-                                       <h4 class="panel-title" style="font-size: 16px;">
-                                          <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?>
+                                <div class="panel-heading">
+                                        <h4 class="panel-title" style="font-size: 16px;">
+                                           <?php if(isset($_SESSION['broker_full_name'])){echo $_SESSION['broker_full_name'];}?> 
                                        </h4>
                                     </div>
                                     <?php if(isset($edit_licences_securities)){foreach($edit_licences_securities as $key=>$val)
                                        {   $row1 = $val['waive_home_state_fee']; $row2 = $val['product_category']; }}  ?>
-                                    <div class="panel-heading">
+                                   <div class="panel-heading">
                                        <h4 class="panel-title" style="font-size: 16px;"><input type="checkbox" class="checkbox" <?php if(isset($_GET['action']) && $_GET['action'] == 'edit' && (isset($row1) && $row1 == '1'))    { ?>checked="true"<?php }?> name="pass_through" value="1" style="display: inline !important;"/> Waive Home State Fee</h4>
-                                    </div>
+                                    </div>  
                                     <div class="panel-body">
-                                       <div class="row">
+                                <!--        <div class="row">
                                           <div class="col-md-4">
                                              <div class="form-group">
                                                 <label>Product Category </label>
@@ -2211,8 +2188,148 @@
                                               
                                              </div>
                                           </div>
-                                       </div>
+                                       </div> -->
                                        <input type="hidden" name="type" value="1"/>
+                                       <div class="securities_wrap">
+                                          <div class="row">
+                                              <!-- <div class="col-md-12 text-right">
+                                                 <a href="javscript:void(0);" id="add_new_securities_btn" class="btn btn-primary button"> Add New</a>
+                                              </div> -->
+                                              <div class="securities_data">
+                                                <table class="table table-bordered table-stripped table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                           <!-- <th style="width: 15%;">Active</th> -->
+                                                            <th width="200px">Category</th>
+                                                            <th>State</th>
+                                                            <th>From</th>
+                                                            <th>To</th>
+                                                            <th>Reason</th>
+                                                        </tr>
+                                                        </thead>
+                                                      <tbody  id="data_sec_row">
+                                                          
+                                                          <?php $row_counter=0; 
+                                                           if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_securities)){
+                                                            foreach($edit_licences_securities as $seckey=>$secval){?>
+                                                              <tr class="tr">
+
+                                                                 <!-- <?php echo'<pre>'; print_r($secval); ?> -->
+                                                                 <?php
+                                                                  $row_counter++; ?>
+                                                                 <!-- <td>
+                                                                      
+                                                                         <input type="checkbox" name="data_sec[active][<?php echo $row_counter; ?>]" value="1" <?php if($secval['active_check']==1){ ?>checked="true"<?php }?> class="checkbox"  /> 
+                                                                   </td>-->
+                                                                     <td> 
+                                                                       <input type="hidden" name="data_sec[row_id][<?php echo $row_counter; ?>]" value="<?php echo $secval['id'] ?>"> 
+                                                                      <select class="form-control" name="data_sec[category][<?php echo $row_counter; ?>]" id="data_sec[category][<?php echo $row_counter; ?>]" style="display: inline !important;">
+                                                                     <option value="">Select Category</option>
+                                                                     <?php
+                                                                     //select_category
+                                                                        $product_category_based_on_series = $instance->select_category_based_on_series();
+                                                                         foreach($product_category_based_on_series as $key=>$val){?>
+                                                                         <option value="<?php echo $val['id'];?>" <?php if($secval['product_category']==$val['id']){echo "selected='selected'";} ?>><?php echo $val['type'];?></option>
+                                                                         <?php } ?>
+                                                                  </select>
+
+                                                                     
+                                                                  </td>
+                                                                  <td>
+                                                                    <select class="form-control" name="data_sec[state][<?php echo $row_counter; ?>]" id="data_sec[state][<?php echo $row_counter; ?>]" style="display: inline !important;">
+                                                                       <?php  foreach($get_state_new as $statekey=>$stateval): ?>
+                                                                        <option value="<?php echo $stateval['id'];?>" <?php if($secval['state_id']==$stateval['id']){echo "selected='selected'";} ?>><?php echo $stateval['name'];?></option>
+                                                                       <?php endforeach; ?>
+                                                                   </select>
+                                                                    
+                                                                  </td>
+                                                                  <td>
+                                                        
+                                                                   <div id="demo-dp-range">
+                                                                      <div class="input-daterange input-group" id="datepicker">
+                                                                         <input type="text" name="data_sec[from][<?php echo $row_counter; ?>]"  value="<?php echo date('m/d/Y',strtotime(trim($secval['received']))); ?>" class="form-control" />
+                                                                           <label class="input-group-addon btn" for="data_sec[received][<?php echo $row_counter;?>]">
+                                                                        <span class="fa fa-calendar"></span>
+                                                                        </label>
+                                                                       </div>
+                                                                    </div>
+                                                                  </td>
+                                                                  <td>
+                                                              <div id="demo-dp-range">
+                                                              <div class="input-daterange input-group" id="datepicker">
+                                                                 <input type="text" name="data_sec[to][<?php echo $row_counter; ?>]" id="data_sec[to][<?php echo $row_counter; ?>]" value="<?php echo date('m/d/Y',strtotime(trim($secval['terminated']))); ?>" class="form-control" />
+                                                                 <label class="input-group-addon btn" for="override">
+                                                                  <span class="fa fa-calendar"></span>
+                                                                  </label>
+                                                               </div></div>
+                                                            </td>
+                                                                  <td> 
+                                                                     <input type="text" name="data_sec[reason][<?php echo $row_counter; ?>]" id="data_sec[reason][<?php echo $row_counter; ?>]" value="<?php echo $secval['reson']; ?>" class="form-control" />
+                                                                  </td>
+                                                                  <td>
+                                                                     <button type="button" tabindex="-1" class="btn remove-licrow btn-icon btn-circle"><i class="fa fa-minus"></i></button>
+                                                                  </td>
+                                                               </tr>
+                                                             <?php } } $row_counter++;  ?>
+
+
+                                                             <tr class="tr">
+                                                                   <!--<td>
+                                                                     
+                                                                      <input type="checkbox" name="data_sec[active][<?php echo $row_counter; ?>]" class="checkbox">  
+                                                                  </td>-->
+                                                                     <td> 
+                                                                      <input type="hidden" name="data_sec[row_id][<?php echo $row_counter; ?>]" value=""> 
+                                                                      <select class="form-control" name="data_sec[category][<?php echo $row_counter; ?>]" id="data_sec['category'][<?php echo $row_counter; ?>]" style="display: inline !important;">
+                                                                     <option value="">Select Category</option>
+                                                                     <?php
+                                                                        $product_category_based_on_series = $instance->select_category_based_on_series();
+                                                                         foreach($product_category_based_on_series as $key=>$val){?>
+                                                                       <option value="<?php echo $val['id'];?>"><?php echo $val['type'];?></option>
+                                                                       <?php } ?>
+                                                                  </select> 
+                                                                  </td>
+                                                                  <td>
+                                                                       <select class="form-control" name="data_sec[state][<?php echo $row_counter; ?>]" id="data_sec['state'][<?php echo $row_counter; ?>]" style="display: inline !important;">
+                                                                        <option value="">Select State</option>
+                                                                       <?php  foreach($get_state_new as $statekey=>$stateval): ?>
+                                                                           <option value="<?php echo $stateval['id'];?>"><?php echo $stateval['name'];?></option>
+                                                                       <?php endforeach; ?>
+                                                                   </select>
+                                                                    
+                                                                  </td>
+                                                                  <td>
+                                                                    <div id="demo-dp-range">
+                                                                    <div class="input-daterange input-group" id="datepicker">
+                                                                       <input type="text" name="data_sec[from][<?php echo $row_counter; ?>]" id="data_sec['from'][<?php echo $row_counter; ?>]" value="" class="form-control" />
+                                                                         <label class="input-group-addon btn" for="override">
+                                                                          <span class="fa fa-calendar"></span>
+                                                                          </label>
+                                                                     </div>
+                                                                    </div>
+                                                                  </td>
+                                                                  <td>
+                                                                    <div id="demo-dp-range">
+                                                                    <div class="input-daterange input-group" id="datepicker">
+                                                                       <input type="text" name="data_sec[to][<?php echo $row_counter; ?>]" id="data_sec['to'][<?php echo $row_counter; ?>]" value="" class="form-control" />
+                                                                         <label class="input-group-addon btn" for="override">
+                                                                          <span class="fa fa-calendar"></span>
+                                                                          </label>
+                                                                     </div>
+                                                                     </div>
+                                                                  </td>
+                                                                  <td> 
+                                                                     <input type="text" name="data_sec[reason][<?php echo $row_counter; ?>]" id="data_sec['reason'][<?php echo $row_counter; ?>]" value="" class="form-control" />
+                                                                  </td>
+                                                                  <td>
+                                                                    <button type="button" onclick="add_sec_row(<?php echo $row_counter; ?>);" class="btn btn-purple btn-icon btn-circle"><i class="fa fa-plus"></i></button>
+                                                                  </td>
+                                                               </tr>
+                                                      </tbody>
+                                                  </table>
+                                               </div> 
+                                          </div>
+                                       </div>
                                        
                                        <!-- <div class="license_cat_container">
                                         <?php foreach($product_category_based_on_series as $row) : ?>
@@ -2296,7 +2413,7 @@
                                        <?php if(isset($_GET['action']) && $_GET['action']=='edit' && !empty($edit_licences_securities )){
                                           foreach($edit_licences_securities as $key=>$val){ //echo '<pre>'; print_r($row);
                                           foreach($get_state_new as $statekey=>$stateval) { if($val['state_id']== $stateval['id']) {?>
-                                       <div class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
+                                      <!--  <div class="panel panel-row-wrap" style="border: 1px solid #cccccc !important; padding: 5px !important; margin-bottom: 5px !important;">
                                           <div class="row">
                                              <div class="col-md-2">
                                                 <div class="form-group" style="margin-bottom: 0px !important;">
@@ -2334,7 +2451,7 @@
                                                 </div>
                                              </div>
                                           </div>
-                                       </div>
+                                       </div> -->
                                        <?php } } } } ?>
                                        
                                     </div>
@@ -2363,6 +2480,7 @@
                                        <h4 class="panel-title" style="font-size: 16px;"><input type="checkbox" <?php if(isset($_GET['action'])&&$_GET['action']=='edit' && (isset($row1) && $row1==1 )){ ?>checked="true"<?php } ?> value="1 "  class="checkbox" name="pass_through" style="display: inline !important;"/> Waive Home State Fee</h4>
                                     </div>
                                     <input type="hidden" name="type" value="2"/>
+                                    <!-- SECURITY -->
                                     <div class="panel-body">
                                        <div class="row">
                                           <div class="col-md-2">
@@ -2494,6 +2612,9 @@
                                        </div>
                                        <?php } }?>
                                     </div>
+
+
+
                                     <div class="panel-overlay">
                                        <div class="panel-overlay-content pad-all unselectable">
                                           <span class="panel-overlay-icon text-dark"><i class="demo-psi-repeat-2 spin-anim icon-2x"></i></span>
@@ -3191,8 +3312,7 @@
                          <a href="#client_transactions" data-toggle="modal"><input type="button" name="transactions" value="Transactions" /></a>
                          <a href="#broker_attach" data-toggle="modal"><input type="button"  onclick="get_broker_attach();" name="attach" value="Attachments" style="margin-right: 2% !important;"/></a>
                          <a href="<?php echo CURRENT_PAGE."?action=cancel";?>"><input type="button" name="cancel" value="Cancel" style="float: right;"/></a>
-                         <input type="submit" name="submit" value="Save" style="float: right;"/>
-                         
+                         <input type="submit" name="submit" value="Save" style="float: right;"/ id="licences_security">
                     </div>
                 </div>   
             </form>
@@ -3945,10 +4065,41 @@
                        '<button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'+
                     '<ul class="dropdown-menu dropdown-menu-right" style="">'+
                         '<li><a href="<?php echo CURRENT_PAGE; ?>?action=add_new"><i class="fa fa-plus"></i> Add New</a></li>'+
+                        '<li><a id="export_broker_data_btn"><i class="fa fa-download"></i> Export Broker data</a></li>'+
                        '</ul>'+
                 '</div>'+
             '</div>');
-   } );
+   });
+   
+   jQuery(function($){
+       
+       $("#export_broker_data_btn").click(function(ev){
+        // alert("test");
+             console.log("click");
+             ev.preventDefault();
+             $("#export_modal").modal();
+             $.ajax({
+                        url: "ajax_export_broker_data.php",
+                        data: "",
+                        type:"get",
+                        dataType:"json",
+                        success:function(data){
+                             $("#export_modal").modal("hide");
+                                var $a = $("<a>");
+                                // console.log(data)
+                           $a.attr("href",data.file);
+                           $("body").append($a);
+                           $a.attr("download","export_broker_data.xls");
+                           $a[0].click();
+                           //$a.remove();
+                        },
+                        error:function(){
+   
+                        }
+             })
+       });
+   
+   })
 </script>
 <style type="text/css">
    .toolbar {
@@ -4577,8 +4728,73 @@
    
    
 </script>
+<!-- <script type="text/javascript">
+    $category = $("#licences_security").val();
+    alert($category);
+</script> -->
 <style type="text/css">
     .higher_risk_options > div {display: inline;}
     .show-inline-elements {display: flex;flex-direction: row-reverse;}
     .higher_risk_options {margin-right: 15px;}
 </style>
+
+<script type="text/javascript">
+    var row_counter = 0;
+    function add_sec_row(row){
+       $('#demo-dp-range .input-daterange').datepicker({
+           format: "mm/dd/yyyy",
+           todayBtn: "linked",
+           autoclose: true,
+           todayHighlight: true
+       });
+       if(row_counter == 0){
+          row_counter = row + 1;
+       }else{
+          row_counter++;
+       }
+       var html='';
+            html='<tr class="tr">'+
+                   //'<td>'+
+                     
+                      // '<input type="checkbox" name="data_sec[active]['+row_counter+']" class="checkbox">'+ 
+                 //  '</td>'+
+                   '<td>'+
+                     ' <input type="hidden" name="data_sec[row_id]['+row_counter+']" value=""> '+
+                      '<select class="form-control" name="data_sec[category]['+row_counter+']" id="data_sec[category]['+row_counter+']" style="display: inline !important;">'+
+                         '<option value="">Select Category</option>'+
+                         <?php
+                            $product_category_based_on_series = $instance->select_category_based_on_series($regval['id']);
+                             foreach($product_category_based_on_series as $key=>$val){?>
+                         '<option value="<?php echo $val['id'];?>"><?php echo $val['type'];?></option>'+
+                         <?php } ?>
+                      '</select>'+
+                   '</td>'+
+                   '<td>'+
+                      '<select class="form-control" name="data_sec[state]['+row_counter+']" id="data_sec[state]['+row_counter+']" style="display: inline !important;">'+
+                      '<option value="">Select State</option>'+
+                         <?php  foreach($get_state_new   as $statekey=>$stateval): ?>
+                         '<option value="<?php echo $stateval['id'];?>"><?php echo $stateval['name'];?></option>'+
+                         <?php endforeach; ?>
+                      '</select>'+
+                   '</td>'+
+                   '<td>'+
+                      ' <div id="demo-dp-range"><div class="input-daterange input-group" id="datepicker"><input type="text" name="data_sec[from]['+row_counter+']" id="data_sec[from]['+row_counter+']" value="" class="form-control" /><label class="input-group-addon btn" for="data_sec[received]['+row_counter+']"><span class="fa fa-calendar"></span></label></div>'+
+                   '</td>'+
+                   '<td>'+
+                      '  <div id="demo-dp-range"><div class="input-daterange input-group" id="datepicker"><input type="text" name="data_sec[to]['+row_counter+']" id="data_sec[to]['+row_counter+']" value="" class="form-control" /><label class="input-group-addon btn" for="data_sec[to]['+row_counter+']"><span class="fa fa-calendar"></span></label></div>'+
+                   '</td>'+
+                   '<td>'+ 
+                      '<input type="text" name="data_sec[reason]['+row_counter+']" id="data_sec[reason]['+row_counter+']" value="" class="form-control" />'+
+                   '</td>'+
+                   '<td>'+
+                        '<button type="button" tabindex="-1" class="btn btn-purple remove-licrow btn-icon btn-circle"><i class="fa fa-minus"></i></button>'+
+                   '</td>'+
+                '</tr>';
+
+                $(html).appendTo($("#data_sec_row"));
+}
+ $(document).on('click','.remove-licrow',function(){
+       $(this).closest('.tr').remove();
+   });
+
+</script>

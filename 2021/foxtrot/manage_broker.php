@@ -192,10 +192,13 @@
         $return5 = $instance->insert_update_payout_split($instance->reArrayFiles_split($_POST['split']),$_POST['id']);
         //echo '<pre>';print_r($return5);exit;
         //security tab
-        $return6 = $instance->insert_update_licences($_POST);
+
+        // $returnSecurity = $instance->insert_update_licences_security($_POST); 
+
         
+        $return6 = $instance->insert_update_licences1($_POST);
         //insurance tab
-        $return7 = $instance->insert_update_licences1($_POST);
+        $return7 = $instance->insert_update_licences_security($_POST);
         
         //ria tab
         $return8 = $instance->insert_update_licences2($_POST);
@@ -406,11 +409,12 @@
         exit;
     }
     else if($action=='edit' && $id>0){
-        $return = $instance->edit($id);
+        // $return = $instance->edit($id);
+        $return = $instance->alledit($id);
         $broker_data = $instance->get_broker_changes($id);
         $payrolls_instance = new payroll();
         $prior_payrolls_data = $payrolls_instance->select_prior_payrolls_master($id);
-        $edit_general = $instance->edit_general($id);//print_r($edit_general);exit;
+        $edit_general = $instance->edit_allgeneral($id);//print_r($edit_general);exit;
         $edit_licences_securities = $instance->edit_licences_securities($id);
         $edit_licences_ria = $instance->edit_licences_ria($id);
         $edit_licences_insurance = $instance->edit_licences_insurance($id);
